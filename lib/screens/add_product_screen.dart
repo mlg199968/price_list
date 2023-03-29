@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:price_list/components/custom_button.dart';
+import 'package:price_list/components/custom_textfield.dart';
 import 'package:price_list/constants.dart';
 import 'package:price_list/parts/create_group_panel.dart';
 import 'package:price_list/parts/final_list.dart';
-import 'package:currency_text_input_formatter/currency_text_input_formatter.dart'
-    as formatter;
-import 'package:price_list/screens/main_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:price_list/components/drop_list_model.dart';
 import 'dart:math';
-import 'package:price_list/data/data_price_store.dart';
-import 'package:price_list/data/notes_database.dart';
+import 'package:price_list/data/product.dart';
+import 'package:price_list/data/product_database.dart';
 
 class AddProductScreen extends StatefulWidget {
-  AddProductScreen(this.infoPanelData);
-  final List infoPanelData;
+  AddProductScreen({this.oldProduct});
+  final Product? oldProduct;
   static const String id = "addProductScreen";
 
   @override
@@ -21,10 +20,13 @@ class AddProductScreen extends StatefulWidget {
 }
 
 class _AddProductScreenState extends State<AddProductScreen> {
+  final _formKey=GlobalKey<FormState>();
+  late FinalList provider;
   TextEditingController productNameController = TextEditingController();
   TextEditingController buyPriceController = TextEditingController();
   TextEditingController sellPriceController = TextEditingController();
   String unitItem = myUnitList[0];
+  String? selectedGroup;
 
   int randomId() {
     var random = Random();
@@ -33,59 +35,54 @@ class _AddProductScreenState extends State<AddProductScreen> {
   }
 
   updateUI() {
-    setState(() {
-    });
+    setState(() {});
   }
+
   @override
   void initState() {
-    // TODO: implement initState
+    dataForEdit();
     super.initState();
-    if(widget.infoPanelData.length!=0)
-    return dataForEdit();
-
-
   }
-  late String editedItemId='nothing';
-  void dataForEdit(){
-    print(widget.infoPanelData.length);
-    setState(() {
-      productNameController.text=widget.infoPanelData[0];
-      sellPriceController.text=widget.infoPanelData[2];
-      buyPriceController.text=widget.infoPanelData[3];
-      unitItem=widget.infoPanelData[1];
-      Provider.of<FinalList>(context,listen: false).groupDropListValue=widget.infoPanelData[4];
-      editedItemId=widget.infoPanelData[5];
-    });
+  @override
+  void didChangeDependencies() {
+    provider = Provider.of<FinalList>(context, listen: false);
+    super.didChangeDependencies();
   }
 
-@override
+  void dataForEdit() {
+    if (widget.oldProduct != null) {
+      productNameController.text = widget.oldProduct!.productName;
+      sellPriceController.text = widget.oldProduct!.salePrice;
+      buyPriceController.text = widget.oldProduct!.costPrice;
+      unitItem = widget.oldProduct!.unit;
+      selectedGroup=widget.oldProduct!.groupName;
+    }
+  }
+
+  @override
   void dispose() {
-  productNameController;
-  buyPriceController ;
-  sellPriceController;
+    productNameController.dispose();
+    buyPriceController.dispose();
+    sellPriceController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-
-    final dataProduct = Provider.of<FinalList>(context, listen: false);
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body:
-
-        Container(
-          decoration: const BoxDecoration(gradient: kGradiantColor1),
-          child: Container(
-
-
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(topRight: Radius.circular(70),topLeft: Radius.circular(70)),
-
-            ),
-            margin: const EdgeInsets.only(top: 100),
-            padding: const EdgeInsets.all(20).copyWith(bottom: 0),
+      body: Container(
+        decoration: const BoxDecoration(gradient: kGradiantColor1),
+        child: Container(
+          decoration:  BoxDecoration(
+            color: Colors.white.withOpacity(.95),
+            borderRadius: BorderRadius.only(
+                topRight: Radius.circular(70), topLeft: Radius.circular(70)),
+          ),
+          margin: const EdgeInsets.only(top: 100),
+          padding: const EdgeInsets.all(20).copyWith(bottom: 0),
+          child: Form(
+            key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -95,39 +92,38 @@ class _AddProductScreenState extends State<AddProductScreen> {
                       //TODO:group Product TextField
                       Padding(
                         padding: const EdgeInsets.all(20.0),
-                        child:
-                            Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                          TextButtonTheme(
-                            data: kButtonStyle,
-                            child: TextButton(
-                              onPressed: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return CreateGroupPanel(updateUI);
-                                    });
-                              },
-                              child: const Text(
-                                'گروه جدید',
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              CustomButton(
+                                height: 40,
+                                text:'گروه جدید',
+                                onPressed: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return CreateGroupPanel();
+                                      }).then((value) {
+                                    provider.addToGroupList([value]);
+                                        selectedGroup=value;
+                                    setState(() {});
+                                  });
+                                },
                               ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          //TODO: Dropdown List Group Selection
-                         DropListModel(
-                              listItem: dataProduct.groupList,
-                              onChanged: (value) {
-                                setState(
-                                  () => Provider.of<FinalList>(context, listen: false)
-                                      .groupDropListValueUpdate(value.toString()),
-                                );
-                              },
-                              selectedValue: dataProduct.groupDropListValue,
-                            ),
+                              const SizedBox(
+                                width: 20,
+                              ),
+                              //TODO: Dropdown List Group Selection
+                              DropListModel(
+                                listItem: provider.groupList.isEmpty?["گروه 1",...provider.groupList] :provider.groupList,
+                                onChanged: (value) {
 
-                        ]),
+                                  selectedGroup=value.toString();
+                                  setState(() {});
+                                },
+                                selectedValue: provider.groupList.isEmpty? selectedGroup="گروه 1":(selectedGroup ?? provider.groupList.first),
+                              ),
+                            ]),
                       ),
                       //TODO:Product Name TextField
                       Padding(
@@ -142,71 +138,60 @@ class _AddProductScreenState extends State<AddProductScreen> {
                               const SizedBox(
                                 height: 10,
                               ),
-                              TextField(
+                              CustomTextField(
+                                validate: true,
+                                width: double.maxFinite,
+                                label: 'نام کالا',
                                 controller: productNameController,
                                 maxLength: 25,
-                                onChanged: (value){
-                                  setState(() {
-                                  });
-                                },
-                                textAlign: TextAlign.center,
-                                decoration: kInputDecoration,
+
                               ),
                             ]),
                       ),
                       //TODO:unit dropDownMenu
                       Padding(
                         padding: const EdgeInsets.all(20.0),
-                        child:
-                            Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                          StatefulBuilder(builder: (context, StateSetter setState) {
-                            return DropListModel(
-                                listItem: myUnitList,
-                                onChanged: (value) {
-                                  setState(() => unitItem = value);
-                                },
-                                selectedValue: unitItem);
-                          }),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          const Text(
-                            'واحد',
-                            style: kHeaderStyle,
-                          ),
-                        ]),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              StatefulBuilder(
+                                  builder: (context, StateSetter setState) {
+                                return DropListModel(
+                                    listItem: myUnitList,
+                                    onChanged: (value) {
+                                      setState(() => unitItem = value);
+                                    },
+                                    selectedValue: unitItem);
+                              }),
+                              const SizedBox(
+                                width: 20,
+                              ),
+                              const Text(
+                                'واحد',
+                                style: kHeaderStyle,
+                              ),
+                            ]),
                       ),
-                      //TODO:Cost Price TextField
+                      ///Cost Price TextField
                       Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: <Widget>[
-                              const Text(
-                                'قیمت خرید',
-                                style: kHeaderStyle,
-                              ),
                               const SizedBox(
                                 height: 10,
                               ),
-                              TextField(
+                              CustomTextField(
+                                width: double.maxFinite,
+                                label: 'قیمت خرید',
                                 controller: buyPriceController,
-                                maxLength:17 ,
-                                keyboardType: TextInputType.number,
-                                textAlign: TextAlign.center,
-                                decoration:
-                                    kInputDecoration.copyWith(hintText: 'قیمت خرید'),
-                                inputFormatters: [
-                                  formatter.CurrencyTextInputFormatter(
-                                    symbol: "ريال",
-                                    decimalDigits: 0,
+                                maxLength: 17,
+                                textFormat: TextFormatter.price,
 
-                                  )
-                                ],
                               ),
                             ]),
                       ),
-                      //TODO:Sale Price TextField
+                      ///Sale Price TextField
                       Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Column(
@@ -219,70 +204,56 @@ class _AddProductScreenState extends State<AddProductScreen> {
                               const SizedBox(
                                 height: 10,
                               ),
-                              TextField(
+                              CustomTextField(
+                                width: double.maxFinite,
+                                label: 'قیمت فروش',
                                 controller: sellPriceController,
-                                maxLength:17,
-                                keyboardType: TextInputType.number,
-                                textAlign: TextAlign.center,
-                                decoration:
-                                    kInputDecoration.copyWith(hintText: 'قیمت فروش'),
-                                inputFormatters: [
-                                  formatter.CurrencyTextInputFormatter(
-                                    symbol: "ريال",
-                                    decimalDigits: 0,
-                                  )
-                                ],
+                                maxLength: 17,
+                                textFormat: TextFormatter.price,
+
                               ),
                             ]),
                       ),
                       //TODO: add button section
-                      const SizedBox(height: 30,),
-
+                      const SizedBox(
+                        height: 30,
+                      ),
                     ],
                   ),
                 ),
-                TextButtonTheme(
-                  data: kButtonStyle,
-                  child: TextButton(
-                    onPressed: productNameController.text == '' || dataProduct.groupDropListValue=='همه'
-                        ? null
-                        : () async{
-                      Note insertAllUserData = Note(
+                CustomButton(
+                  width: double.maxFinite,
+                  text:'افزودن به لیست' ,
+                  onPressed: () async {
+                    if(_formKey.currentState!.validate()){
+                      Product product = Product(
                         productName: productNameController.text,
                         unit: unitItem,
-                        costPrice: sellPriceController.text,
-                        salePrice: buyPriceController.text,
-                        groupName: dataProduct.groupDropListValue,
-                        id: '${randomId()}',
-
+                        costPrice: buyPriceController.text,
+                        salePrice: sellPriceController.text,
+                        groupName: selectedGroup!,
+                        id: widget.oldProduct != null
+                            ? widget.oldProduct!.id
+                            : '${randomId()}',
                       );
-                      NotesDatabase.instance
-                          .create(insertAllUserData, dataTable);
-
-
-
-                      productNameController.clear();
-                      sellPriceController.clear();
-                      buyPriceController.clear();
-                      setState(() {
-                      });
-
-                      if (editedItemId!='nothing') {
-                        NotesDatabase.instance.delete(editedItemId);
-                        Navigator.pushNamed(context,MainScreen.id);
+                      if (widget.oldProduct != null) {
+                        ProductsDatabase.instance.update(product);
+                        Navigator.pop(context, false);
+                      } else {
+                        ProductsDatabase.instance.create(product, dataTable);
                       }
-                    },
-                    child: const Text(
-                      'افزودن به لیست',
-                      style: kHeaderStyle,
-                    ),
-                  ),
+                      Navigator.pop(context, false);
+                    }
+                  },
                 ),
-                const SizedBox(height: 15,)
+                const SizedBox(
+                  height: 15,
+                )
               ],
             ),
           ),
         ),
+      ),
     );
   }
 }

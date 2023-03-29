@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:price_list/screens/main_screen.dart';
+import 'package:price_list/screens/price_screen.dart';
 
 
 class LoadScreen extends StatelessWidget {
@@ -11,7 +11,7 @@ class LoadScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Timer(const Duration(milliseconds:1300 ), () {
-      Navigator.of(context).pushNamed(MainScreen.id);
+      Navigator.of(context).pushNamed(PriceScreen.id);
     });
 
     return Container(

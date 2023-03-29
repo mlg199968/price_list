@@ -1,60 +1,53 @@
 import 'package:flutter/material.dart';
-import 'package:price_list/constants.dart';
-import 'package:provider/provider.dart';
-import 'final_list.dart';
+import 'package:price_list/components/custom_button.dart';
+import 'package:price_list/components/custom_textfield.dart';
 
 
 // ignore: must_be_immutable
 class CreateGroupPanel extends StatelessWidget {
-  CreateGroupPanel(this.updateUINotifier);
+  CreateGroupPanel();
   TextEditingController groupPanelTextfieldController=TextEditingController();
-Function updateUINotifier;
 
+final _formKey=GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('ساخت گروه جدید'),
-      actions: [
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      actions:[
         Container(
           padding: const EdgeInsetsDirectional.all(20),
           child: Column(
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(20.0),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: <Widget>[
-                      TextField(
-                        controller: groupPanelTextfieldController,
-                        maxLength: 20,
-                        textAlign: TextAlign.center,
-                        decoration: kInputDecoration.copyWith(hintText: 'نام گروه'),
-                      ),
-                    ]),
-              ),
-              TextButtonTheme(
-                data: kButtonStyle,
-                child: TextButton(
-                  onPressed: () {
-                    Provider.of<FinalList>(context,listen: false).addToGroupList(groupPanelTextfieldController.text);
-                    Provider.of<FinalList>(context,listen: false).groupDropListValue=groupPanelTextfieldController.text;
-                    updateUINotifier();
-                    groupPanelTextfieldController.clear();
-                    Navigator.pop(context);
-                  },
-                  child: const Text(
-                    'افزودن گروه',
-                    style: kHeaderStyle,
-                  ),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        CustomTextField(
+                          validate: true,
+                          width: double.maxFinite,
+                          label: 'نام گروه',
+                          controller: groupPanelTextfieldController,
+                          maxLength: 30,
+
+                        ),
+                      ]),
                 ),
               ),
-
-
-
+              CustomButton(
+                width: double.maxFinite,
+                  text: 'افزودن گروه',
+                  onPressed: () {
+                    if(_formKey.currentState!.validate()) {
+                      //Provider.of<FinalList>(context,listen: false).addToGroupList(groupPanelTextfieldController.text);
+                      Navigator.pop(context, groupPanelTextfieldController.text);
+                    }
+                  })
             ],
           ),
-        ),
-      ],
+        ),]
     );
   }
 }

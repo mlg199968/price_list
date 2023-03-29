@@ -1,31 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:price_list/constants.dart';
-import 'package:price_list/data/notes_database.dart';
-import 'package:price_list/parts/final_list.dart';
+import 'package:price_list/data/product.dart';
+import 'package:price_list/data/product_database.dart';
 import 'package:price_list/screens/add_product_screen.dart';
-import 'package:price_list/screens/main_screen.dart';
-import 'package:provider/provider.dart';
 
 
 // ignore: must_be_immutable
 class InfoPanel extends StatelessWidget {
   InfoPanel(this.infoData, {super.key});
-  List<String> infoData;
+  Product infoData;
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       title: const Text('info Panel'),
       actions: [
         Container(
           padding: const EdgeInsetsDirectional.all(15),
           child: Column(
             children: <Widget>[
-              infoPanelRow(title: "نام محصول",infolist: infoData[0]),
-              infoPanelRow(title: "واحد",infolist: infoData[1]),
-              infoPanelRow(title: "قیمت خرید",infolist: infoData[3]),
-              infoPanelRow(title: "قیمت فروش",infolist: infoData[2]),
-              infoPanelRow(title: "سرگروه",infolist: infoData[4]),
-              infoPanelRow(title: "ID",infolist: infoData[5]),
+              infoPanelRow(title: "نام محصول",infolist: infoData.productName),
+              infoPanelRow(title: "واحد",infolist: infoData.unit),
+              infoPanelRow(title: "قیمت خرید",infolist: infoData.costPrice),
+              infoPanelRow(title: "قیمت فروش",infolist: infoData.salePrice),
+              infoPanelRow(title: "سرگروه",infolist: infoData.groupName),
+              infoPanelRow(title: "ID",infolist: infoData.id),
               const SizedBox(height: 20,),
               Container(
                 padding: const EdgeInsets.all(10),
@@ -35,10 +34,8 @@ class InfoPanel extends StatelessWidget {
                   children: <Widget>[
                   GestureDetector(
                     onTap:(){
-                      NotesDatabase.instance.delete(infoData[5]);
-                      Provider.of<FinalList>(context,listen: false).selectedGroup='همه';
-                      Provider.of<FinalList>(context,listen: false).groupDropListValue='همه';
-                      Navigator.pushNamed(context, MainScreen.id);
+                      ProductsDatabase.instance.delete(infoData.id);
+                      Navigator.pop(context,false);
 
 
                     },
@@ -46,9 +43,7 @@ class InfoPanel extends StatelessWidget {
                   ),
                   GestureDetector(
                     onTap:(){
-                      Navigator.push(context, MaterialPageRoute(
-                        builder: (context) => AddProductScreen(infoData),
-                      ));
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>AddProductScreen(oldProduct: infoData,)));
                     },
                     child: const Icon(Icons.drive_file_rename_outline_sharp,color: Colors.white70,),
                   ),

@@ -1,13 +1,13 @@
 
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'data_price_store.dart';
+import 'product.dart';
 
-class NotesDatabase {
-  static final NotesDatabase instance = NotesDatabase._init();
+class ProductsDatabase {
+  static final ProductsDatabase instance = ProductsDatabase._init();
 
   static Database? _database;
-  NotesDatabase._init();
+  ProductsDatabase._init();
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await _initDB('price_list_data.db');
@@ -28,65 +28,64 @@ class NotesDatabase {
 
     await db.execute('''
     CREATE TABLE $dataTable (
-    ${NoteFields.productName} $textType,
-    ${NoteFields.unit} $textType,
-    ${NoteFields.costPrice} $textType,
-    ${NoteFields.salePrice} $textType,
-    ${NoteFields.groupName} $textType,
-    ${NoteFields.id} $textType
+    ${ProductFields.productName} $textType,
+    ${ProductFields.unit} $textType,
+    ${ProductFields.costPrice} $textType,
+    ${ProductFields.salePrice} $textType,
+    ${ProductFields.groupName} $textType,
+    ${ProductFields.id} $textType
     )
     ''');
 
 
   }
 
-  Future<Note> create(Note note,String tableName) async {
+  Future<Product> create(Product product,String tableName) async {
     final db = await instance.database;
 
-    final id = await db.insert(tableName, note.toJson());
+    final id = await db.insert(tableName, product.toJson());
       print(id);
 
-    return note;//.copy(id: id.toString());
+    return product;//.copy(id: id.toString());
   }
 
-  Future<Note> readNote(String id) async {
+  Future<Product> readProduct(String id) async {
     final db = await instance.database;
     final maps = await db.query(
       dataTable,
-      columns: NoteFields.values,
-      where: '${NoteFields.id} = ?',
+      columns: ProductFields.values,
+      where: '${ProductFields.id} = ?',
       whereArgs: [id],
     );
     if (maps.isNotEmpty) {
-      return Note.fromJson(maps.first);
+      return Product.fromJson(maps.first);
     } else {
       throw Exception('ID $id not found');
     }
   }
-  Future<List> readAllNote() async {
+  Future<List<Product>> readAllProduct() async {
     final db = await instance.database;
     final result = await db.query(dataTable);
-      return result.map((json) => Note.fromJsonToList(json)).toList() ;
+      return result.map((json) => Product.fromJson(json)).toList() ;
 
   }
-  Future<List>
-  readAllGroupList() async {
+  Future<List> readAllGroupList() async {
     final db = await instance.database;
     final result = await db.query(dataTable);
     //in here you get the all group name add to list and by using 'toSet' we delete the repeated words.
-      return result.map((json) =>json[NoteFields.groupName] as String).toList().toSet().toList();
+      return result.map((json) =>json[ProductFields.groupName] as String).toList().toSet().toList();
 
   }
 
 
 
-  Future<int> update(Note note) async {
+  Future<int> update(Product product) async {
     final db = await instance.database;
     return db.update(
       dataTable,
-      note.toJson(),
-      where: '${NoteFields.id} = ?',
-      whereArgs: [note.id],
+      product.toJson(),
+      where: '${ProductFields.id} = ?',
+      whereArgs: [Product().id],
     );
   }
 
@@ -94,7 +93,7 @@ class NotesDatabase {
     final db = await instance.database;
     return await db.delete(
       dataTable,
-      where: '${NoteFields.id} = ?',
+      where: '${ProductFields.id} = ?',
       whereArgs: [id],
     );
   }

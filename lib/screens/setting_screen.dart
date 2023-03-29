@@ -64,7 +64,7 @@ class _SettingScreenState extends State<SettingScreen> {
                         //     await FilePicker.platform.pickFiles();
                         //
                         // if (result != null) {
-                        //   NotesDatabase.instance.close();
+                        //   ProductsDatabase.instance.close();
                         //   print(File(result.files.single.path!).path);
                         //   File backupFile = File(result.files.single.path!);
                         //   File oldFile= File(dbPath0);

@@ -1,7 +1,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:price_list/constants.dart';
-import 'info_panel.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
 // ignore: must_be_immutable
@@ -21,13 +20,13 @@ class CellContent extends StatelessWidget {
         child: GestureDetector(
           onTap: (){
            // Provider.of<FinalList>(context,listen: false).removeFromList(cells);
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return InfoPanel(cells);
-                  //Consumer<FinalList>(builder:(context,productList,child){return InfoPanel(productList.dataList[productList.currentIndex]);},);
-              },
-            );
+           //  showDialog(
+           //    context: context,
+           //    builder: (BuildContext context) {
+           //      return InfoPanel(cells);
+           //        //Consumer<FinalList>(builder:(context,productList,child){return InfoPanel(productList.dataList[productList.currentIndex]);},);
+           //    },
+           //  );
           },
           child: Container(
             height: 50,
