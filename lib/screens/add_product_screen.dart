@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:price_list/components/custom_button.dart';
 import 'package:price_list/components/custom_textfield.dart';
-import 'package:price_list/constants.dart';
+import 'package:price_list/constants/constants.dart';
 import 'package:price_list/parts/create_group_panel.dart';
 import 'package:price_list/parts/final_list.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +25,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
   TextEditingController productNameController = TextEditingController();
   TextEditingController buyPriceController = TextEditingController();
   TextEditingController sellPriceController = TextEditingController();
-  String unitItem = myUnitList[0];
+  TextEditingController quantityController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  String unitItem = kUnitList[0];
   String? selectedGroup;
 
   int randomId() {
@@ -148,21 +150,22 @@ class _AddProductScreenState extends State<AddProductScreen> {
                               ),
                             ]),
                       ),
-                      //TODO:unit dropDownMenu
+                      ///unit dropDownMenu
                       Padding(
                         padding: const EdgeInsets.all(20.0),
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              StatefulBuilder(
-                                  builder: (context, StateSetter setState) {
-                                return DropListModel(
-                                    listItem: myUnitList,
-                                    onChanged: (value) {
-                                      setState(() => unitItem = value);
-                                    },
-                                    selectedValue: unitItem);
-                              }),
+
+                              DropListModel(
+                                width: 100,
+                                  listItem: kUnitList,
+                                  onChanged: (value) {
+                                    unitItem = value;
+                                    setState(() {});
+                                  },
+                                  selectedValue: unitItem,
+                              ),
                               const SizedBox(
                                 width: 20,
                               ),
@@ -170,6 +173,11 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                 'واحد',
                                 style: kHeaderStyle,
                               ),
+                              // CustomTextField(
+                              //     textFormat:TextFormatter.number,
+                              //     maxLength: 12,
+                              //     label: "مقدار",
+                              //     controller: quantityController),
                             ]),
                       ),
                       ///Cost Price TextField
@@ -178,6 +186,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: <Widget>[
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              const Text(
+                                'قیمت خرید',
+                                style: kHeaderStyle,
+                              ),
                               const SizedBox(
                                 height: 10,
                               ),
@@ -212,6 +227,25 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                 textFormat: TextFormatter.price,
 
                               ),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                              // const Text(
+                              //   'توضیحات',
+                              //   style: kHeaderStyle,
+                              // ),
+                              // const SizedBox(
+                              //   height: 10,
+                              // ),
+                              // CustomTextField(
+                              //   width: double.maxFinite,
+                              //   label: 'توضیحات',
+                              //   controller: sellPriceController,
+                              //   maxLine: 4,
+                              //   maxLength: 150,
+                              //
+                              // ),
+
                             ]),
                       ),
                       //TODO: add button section
@@ -234,13 +268,18 @@ class _AddProductScreenState extends State<AddProductScreen> {
                         groupName: selectedGroup!,
                         id: widget.oldProduct != null
                             ? widget.oldProduct!.id
-                            : '${randomId()}',
+                            : randomId().toString(),
+                       // quantity:quantityController.text==""?1000:stringToDouble(quantityController.text).toDouble() ,
+                       // description: descriptionController.text,
+                       // date: DateTime.now(),
+
                       );
                       if (widget.oldProduct != null) {
-                        ProductsDatabase.instance.update(product);
+                        print("object");
+                        await ProductsDatabase.instance.update(product);
                         Navigator.pop(context, false);
                       } else {
-                        ProductsDatabase.instance.create(product, dataTable);
+                        await ProductsDatabase.instance.create(product, dataTable);
                       }
                       Navigator.pop(context, false);
                     }

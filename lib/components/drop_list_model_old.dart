@@ -1,6 +1,6 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:price_list/constants.dart';
+import 'package:price_list/constants/constants.dart';
 
 
 // ignore: must_be_immutable

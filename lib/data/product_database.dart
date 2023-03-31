@@ -85,7 +85,7 @@ class ProductsDatabase {
       dataTable,
       product.toJson(),
       where: '${ProductFields.id} = ?',
-      whereArgs: [Product().id],
+      whereArgs: [product.id],
     );
   }
 

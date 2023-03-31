@@ -7,7 +7,7 @@ class CustomTile extends StatelessWidget {
   const CustomTile(
       {super.key,
       this.height=60,
-      this.color=Colors.blue,
+      this.color=Colors.deepPurpleAccent,
       this.subTitle,
       required this.title,
       required this.topTrailing,
@@ -91,6 +91,7 @@ class MyListTile extends StatelessWidget {
       dense: true,
       title: Text(
         title,
+        style: TextStyle(fontSize: 15),
         overflow: TextOverflow.ellipsis,
         textAlign: TextAlign.right,
         maxLines: 2,
@@ -141,8 +142,8 @@ class MyListTile extends StatelessWidget {
             textDirection: TextDirection.ltr,
             maxLines: 2,
             style: kCellStyle,
-            minFontSize: 9,
-            maxFontSize: 12,
+            minFontSize: 12,
+            maxFontSize: 20,
           ),
         ],
       ),

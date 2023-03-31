@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:price_list/constants.dart';
+import 'package:price_list/constants/constants.dart';
 
 class SettingScreen extends StatefulWidget {
   static String id = 'settingScreen';

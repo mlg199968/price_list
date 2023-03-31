@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:price_list/components/custom_search_bar.dart';
 import 'package:price_list/components/custom_tile.dart';
 import 'package:price_list/components/drop_list_model.dart';
-import 'package:price_list/constants.dart';
+import 'package:price_list/constants/constants.dart';
+import 'package:price_list/constants/ware_tools.dart';
 import 'package:price_list/data/product.dart';
 import 'package:price_list/parts/final_list.dart';
 import 'package:price_list/parts/info_panel.dart';
@@ -18,17 +20,24 @@ class PriceScreen extends StatefulWidget {
 }
 
 class _PriceScreenState extends State<PriceScreen> {
+  TextEditingController searchController = TextEditingController();
   GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  String selectedDropListGroup = "همه";
+  final List<String> sortList = [
+    // 'تاریخ ثبت',
+    'حروف الفبا',
+    // 'موجودی کالا',
+  ];
+  String sortItem = 'حروف الفبا';
+  String? keyWord;
   late FinalList provider;
   List groupList = [];
-  String? selectedGroup;
+  String? selectedGroup='همه';
   @override
   void initState() {
     getGroupList();
     super.initState();
-
   }
-
 
   void getGroupList() async {
     groupList.clear();
@@ -36,6 +45,7 @@ class _PriceScreenState extends State<PriceScreen> {
     provider.groupList.clear();
     provider.addToGroupList(groupList);
   }
+
   @override
   void didChangeDependencies() {
     provider = Provider.of<FinalList>(context, listen: false);
@@ -47,6 +57,7 @@ class _PriceScreenState extends State<PriceScreen> {
     return Scaffold(
       key: scaffoldKey,
       floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.deepPurpleAccent,
           child: Icon(
             Icons.add,
             size: 30,
@@ -78,14 +89,15 @@ class _PriceScreenState extends State<PriceScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text("Price List"),
+
                     ///dropDown list for Group Select
                     DropListModel(
-                      listItem:["همه",...provider.groupList],
+                      listItem: ["همه", ...provider.groupList],
                       onChanged: (value) {
                         selectedGroup = value.toString();
                         setState(() {});
                       },
-                      selectedValue:selectedGroup ?? "همه" ,
+                      selectedValue: selectedGroup ?? "همه",
                     ),
                   ],
                 ),
@@ -100,37 +112,87 @@ class _PriceScreenState extends State<PriceScreen> {
         },
         body: Container(
             padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-            child: FutureBuilder<List<Product>>(
-                future: ProductsDatabase.instance.readAllProduct(),
-                builder: (context, snap) {
-                  getGroupList();
-                  if (snap.connectionState == ConnectionState.done) {
-                    List<Product> products = snap.data!;
-                    int length = snap.data!.length;
-                    return ListView.builder(
-                      itemCount: length,
-                      itemBuilder: (context, index) {
-                        Product product = products[index];
-                        return CustomTile(
-                            onTap: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) => InfoPanel(product)).then((value){setState(() {});});
+            child: Column(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(gradient: kGradiantColor1),
+                    child: CustomSearchBar(
+                        controller: searchController,
+                        hint: "جست و جو کالا ",
+                        onChange: (val) {
+                          keyWord=val;
+                          setState(() {});
+                        },
+                        selectedSort: sortItem,
+                        sortList: sortList,
+                        onSort: (val) {
+                          sortItem = val;
+                          setState(() {});
+                        })),
+                Expanded(
+                  child: FutureBuilder<List<Product>>(
+                      future: ProductsDatabase.instance.readAllProduct(),
+                      builder: (context, snap) {
+                        getGroupList();
+                        if (snap.connectionState == ConnectionState.done) {
+                          List<Product> products = snap.data!;
+
+                          List<Product> filteredList =
+                              WareTools.filterList(products, keyWord, sortItem);
+                          print(filteredList.length);
+                          int length = filteredList.length;
+                          if(length==0){
+                            return Align(alignment:Alignment.center,child: Text("کالایی یافت نشد"),);
+                          }
+                          return ListView.builder(
+                            itemCount: length,
+                            itemBuilder: (context, index) {
+                              Product product = filteredList[index];
+                              if (selectedGroup == "همه") {
+                                return CustomTile(
+                                    onTap: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              InfoPanel(product)).then((value) {
+                                        setState(() {});
+                                      });
+                                    },
+                                    title: product.productName,
+                                    topTrailing: product.unit,
+                                    trailing: product.salePrice);
+                              } else if (product.groupName == selectedGroup) {
+                                return CustomTile(
+                                    onTap: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              InfoPanel(product)).then((value) {
+                                        setState(() {});
+                                      });
+                                    },
+                                    title: product.productName,
+                                    topTrailing: product.unit,
+                                    trailing: product.salePrice);
+                              } else {
+                                return SizedBox();
+                              }
                             },
-                            title: product.productName,
-                            topTrailing: product.unit,
-                            trailing: product.salePrice);
-                      },
-                    );
-                  } else if (snap.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
-                  } else {
-                    return Align(
-                      child: Text("no data"),
-                      alignment: Alignment.center,
-                    );
-                  }
-                })),
+                          );
+                        } else if (snap.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                        } else {
+                          return Align(
+                            child: Text("no data"),
+                            alignment: Alignment.center,
+                          );
+                        }
+                      }),
+                ),
+              ],
+            )),
       ),
     );
   }

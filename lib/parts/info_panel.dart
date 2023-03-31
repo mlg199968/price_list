@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:price_list/constants.dart';
+import 'package:price_list/constants/constants.dart';
 import 'package:price_list/data/product.dart';
 import 'package:price_list/data/product_database.dart';
 import 'package:price_list/screens/add_product_screen.dart';
@@ -20,7 +20,7 @@ class InfoPanel extends StatelessWidget {
           child: Column(
             children: <Widget>[
               infoPanelRow(title: "نام محصول",infolist: infoData.productName),
-              infoPanelRow(title: "واحد",infolist: infoData.unit),
+              infoPanelRow(title: "مقدار",infolist: infoData.unit),
               infoPanelRow(title: "قیمت خرید",infolist: infoData.costPrice),
               infoPanelRow(title: "قیمت فروش",infolist: infoData.salePrice),
               infoPanelRow(title: "سرگروه",infolist: infoData.groupName),
@@ -36,7 +36,6 @@ class InfoPanel extends StatelessWidget {
                     onTap:(){
                       ProductsDatabase.instance.delete(infoData.id);
                       Navigator.pop(context,false);
-
 
                     },
                     child: const Icon(Icons.delete,color: Colors.white70,),
