@@ -28,7 +28,7 @@ class _MyAppState extends State<MyApp> {
             scaffoldBackgroundColor: const Color(0XFFf5f5f5)),
 
         debugShowCheckedModeBanner: false,
-        initialRoute:PriceScreen.id, //LoadScreen.id,
+        initialRoute:LoadScreen.id, //LoadScreen.id,
         routes: {
           PriceScreen.id: (context) => PriceScreen(),
           AddProductScreen.id: (context) => AddProductScreen(),

@@ -1,3 +1,4 @@
+import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
 import 'package:price_list/components/custom_search_bar.dart';
 import 'package:price_list/components/custom_tile.dart';
@@ -110,89 +111,92 @@ class _PriceScreenState extends State<PriceScreen> {
             )
           ];
         },
-        body: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-            child: Column(
-              children: [
-                Container(
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(gradient: kGradiantColor1),
-                    child: CustomSearchBar(
-                        controller: searchController,
-                        hint: "جست و جو کالا ",
-                        onChange: (val) {
-                          keyWord=val;
-                          setState(() {});
-                        },
-                        selectedSort: sortItem,
-                        sortList: sortList,
-                        onSort: (val) {
-                          sortItem = val;
-                          setState(() {});
-                        })),
-                Expanded(
-                  child: FutureBuilder<List<Product>>(
-                      future: ProductsDatabase.instance.readAllProduct(),
-                      builder: (context, snap) {
-                        getGroupList();
-                        if (snap.connectionState == ConnectionState.done) {
-                          List<Product> products = snap.data!;
+        body: DoubleBackToCloseApp(
+          snackBar: const SnackBar(
+            content: Text('برای خروج دوباره ضربه بزنید'),),
+          child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+              child: Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    decoration: BoxDecoration(gradient: kGradiantColor1),
+                      child: CustomSearchBar(
+                          controller: searchController,
+                          hint: "جست و جو کالا ",
+                          onChange: (val) {
+                            keyWord=val;
+                            setState(() {});
+                          },
+                          selectedSort: sortItem,
+                          sortList: sortList,
+                          onSort: (val) {
+                            sortItem = val;
+                            setState(() {});
+                          })),
+                  Expanded(
+                    child: FutureBuilder<List<Product>>(
+                        future: ProductsDatabase.instance.readAllProduct(),
+                        builder: (context, snap) {
+                          getGroupList();
+                          if (snap.connectionState == ConnectionState.done) {
+                            List<Product> products = snap.data!;
 
-                          List<Product> filteredList =
-                              WareTools.filterList(products, keyWord, sortItem);
-                          print(filteredList.length);
-                          int length = filteredList.length;
-                          if(length==0){
-                            return Align(alignment:Alignment.center,child: Text("کالایی یافت نشد"),);
+                            List<Product> filteredList =
+                                WareTools.filterList(products, keyWord, sortItem);
+                            int length = filteredList.length;
+                            if(length==0){
+                              return Align(alignment:Alignment.center,child: Text("کالایی یافت نشد"),);
+                            }
+                            return ListView.builder(
+                              itemCount: length,
+                              itemBuilder: (context, index) {
+                                Product product = filteredList[index];
+                                if (selectedGroup == "همه") {
+                                  return CustomTile(
+                                      onTap: () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                InfoPanel(product)).then((value) {
+                                          setState(() {});
+                                        });
+                                      },
+                                      title: product.productName,
+                                      topTrailing: product.unit,
+                                      trailing: product.salePrice);
+                                } else if (product.groupName == selectedGroup) {
+                                  return CustomTile(
+                                      onTap: () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                InfoPanel(product)).then((value) {
+                                          setState(() {});
+                                        });
+                                      },
+                                      title: product.productName,
+                                      topTrailing: product.unit,
+                                      trailing: product.salePrice);
+                                } else {
+                                  return SizedBox();
+                                }
+                              },
+                            );
+                          } else if (snap.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(child: CircularProgressIndicator());
+                          } else {
+                            return Align(
+                              child: Text("no data"),
+                              alignment: Alignment.center,
+                            );
                           }
-                          return ListView.builder(
-                            itemCount: length,
-                            itemBuilder: (context, index) {
-                              Product product = filteredList[index];
-                              if (selectedGroup == "همه") {
-                                return CustomTile(
-                                    onTap: () {
-                                      showDialog(
-                                          context: context,
-                                          builder: (context) =>
-                                              InfoPanel(product)).then((value) {
-                                        setState(() {});
-                                      });
-                                    },
-                                    title: product.productName,
-                                    topTrailing: product.unit,
-                                    trailing: product.salePrice);
-                              } else if (product.groupName == selectedGroup) {
-                                return CustomTile(
-                                    onTap: () {
-                                      showDialog(
-                                          context: context,
-                                          builder: (context) =>
-                                              InfoPanel(product)).then((value) {
-                                        setState(() {});
-                                      });
-                                    },
-                                    title: product.productName,
-                                    topTrailing: product.unit,
-                                    trailing: product.salePrice);
-                              } else {
-                                return SizedBox();
-                              }
-                            },
-                          );
-                        } else if (snap.connectionState ==
-                            ConnectionState.waiting) {
-                          return Center(child: CircularProgressIndicator());
-                        } else {
-                          return Align(
-                            child: Text("no data"),
-                            alignment: Alignment.center,
-                          );
-                        }
-                      }),
-                ),
-              ],
-            )),
+                        }),
+                  ),
+                ],
+              )),
+        ),
       ),
     );
   }
