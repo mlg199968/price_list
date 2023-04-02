@@ -24,7 +24,7 @@ const kMainGradiant = LinearGradient(
 // );
 const kWhiteColor=Colors.white;
 const kColor1=Colors.deepPurple;
-const List<String> kUnitList=['عدد','متر','کیلو گرم','متر مربع','متر مکعب','گرم','شاخه','بسته''دسته',];
+const List<String> kUnitList=['عدد','متر','کیلو گرم','متر مربع','متر مکعب','گرم','شاخه','بسته','دسته',];
 const List<String> kSortList=['تاریخ تسویه','حروف الفبا','تاریخ ثبت'];
 const List<String> kCurrencyList=["ریال","تومان","دلار","لیر","درهم"];
 

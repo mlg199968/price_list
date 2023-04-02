@@ -29,7 +29,7 @@ class CustomButton extends StatelessWidget {
           width: width,
           decoration: BoxDecoration(
             color: color,
-              gradient:color==null?kMainGradiant:LinearGradient(
+              gradient:color==null?kGradiantColor1:LinearGradient(
                 colors: [color!, color!.withAlpha(150)],
               ),
               borderRadius: BorderRadius.circular(5)),

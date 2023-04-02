@@ -5,7 +5,7 @@ import 'package:price_list/components/custom_tile.dart';
 import 'package:price_list/components/drop_list_model.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/ware_tools.dart';
-import 'package:price_list/data/product.dart';
+import 'package:price_list/model/product.dart';
 import 'package:price_list/parts/final_list.dart';
 import 'package:price_list/parts/info_panel.dart';
 import 'package:price_list/screens/add_product_screen.dart';

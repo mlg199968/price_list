@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:price_list/constants/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SideBarPanel extends StatelessWidget {
@@ -9,9 +10,12 @@ class SideBarPanel extends StatelessWidget {
 
 
 
-  Future<void> _launchUrl(String urlTarget) async {
+  Future<void> _launchUrl(String urlTarget,BuildContext context) async {
     Uri url = Uri.parse(urlTarget);
-    if (!await launchUrl(url)) {
+    if (await canLaunchUrl(url)) {
+      launchUrl(url);
+    }else{
+      showSnackBar(context, "Could not launch $url");
       throw 'Could not launch $url';
     }
   }
@@ -77,7 +81,7 @@ class SideBarPanel extends StatelessWidget {
                   children: [
                     IconButton(
                         onPressed: () {
-                          _launchUrl('https://instagram.com/mlg_grand?igshid=YmMyMTA2M2Y=');
+                          _launchUrl('https://instagram.com/mlg_grand?igshid=ZDdkNTZiNTM=',context);
                         },
                         icon: const Icon(
                           FontAwesomeIcons.instagram,
@@ -85,7 +89,9 @@ class SideBarPanel extends StatelessWidget {
                           size: 30,
                         )),
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _launchUrl('https://t.me/mlg_grand',context);
+                        },
                         icon: const Icon(
                           FontAwesomeIcons.telegram,
                           color: Colors.white,

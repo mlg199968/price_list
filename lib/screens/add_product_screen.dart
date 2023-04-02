@@ -7,7 +7,7 @@ import 'package:price_list/parts/final_list.dart';
 import 'package:provider/provider.dart';
 import 'package:price_list/components/drop_list_model.dart';
 import 'dart:math';
-import 'package:price_list/data/product.dart';
+import 'package:price_list/model/product.dart';
 import 'package:price_list/data/product_database.dart';
 
 class AddProductScreen extends StatefulWidget {

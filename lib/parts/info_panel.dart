@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:price_list/constants/constants.dart';
-import 'package:price_list/data/product.dart';
+import 'package:price_list/model/product.dart';
 import 'package:price_list/data/product_database.dart';
 import 'package:price_list/screens/add_product_screen.dart';
 

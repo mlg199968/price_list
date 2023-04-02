@@ -1,4 +1,4 @@
-import 'package:price_list/data/product.dart';
+import 'package:price_list/model/product.dart';
 
 
 class WareTools {

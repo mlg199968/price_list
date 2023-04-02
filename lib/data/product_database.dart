@@ -1,7 +1,7 @@
 
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'product.dart';
+import '../model/product.dart';
 
 class ProductsDatabase {
   static final ProductsDatabase instance = ProductsDatabase._init();
