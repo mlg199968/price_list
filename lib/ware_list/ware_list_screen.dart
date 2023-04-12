@@ -13,7 +13,7 @@ import 'package:price_list/data/hive_boxes.dart';
 import 'package:price_list/data/product_database.dart';
 import 'package:price_list/model/product.dart';
 import 'package:price_list/model/ware_hive.dart';
-import 'package:price_list/parts/sidebar_panel.dart';
+import 'package:price_list/side_bar/sidebar_panel.dart';
 import 'package:price_list/ware_list/panels/info_panel.dart';
 import 'package:price_list/ware_list/services/ware_tools.dart';
 import 'package:price_list/ware_provider.dart';
@@ -196,23 +196,7 @@ class ListPart extends StatelessWidget {
           itemCount: wareList.length,
           itemBuilder: (context, index) {
             WareHive ware = wareList[index];
-            if (category == wareList[index].groupName) {
-              return CustomTile(
-                onTap: (){
-                  showDialog(
-                      context: context,
-                      builder: (context) =>
-                          InfoPanel(context: context, wareInfo: ware));
-                },
-                enable: false,
-                height: 50,
-                color: Colors.orange,
-                type: ware.groupName,
-                title: ware.wareName,
-                topTrailing: ("${ware.quantity}  ".toPersianDigit() + ware.unit),
-                trailing: addSeparator(ware.sale),
-              );
-            } else if (category == "همه") {
+             if (category == "همه" || category == wareList[index].groupName) {
               return CustomTile(
                 onTap:(){
                   showDialog(
