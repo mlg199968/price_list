@@ -33,6 +33,11 @@ class WareTools {
           return a.date.compareTo(b.date);
         });
         break;
+    case "تاریخ ویرایش":
+        list.sort((b, a) {
+          return a.modifyDate!.compareTo(b.modifyDate!);
+        });
+        break;
     }
     return list;
   }

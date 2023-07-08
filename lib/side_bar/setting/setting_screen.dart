@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:price_list/components/custom_button.dart';
 import 'package:price_list/components/drop_list_model.dart';
-import 'package:price_list/constants/constants.dart';
 import 'package:price_list/permission_handler.dart';
+import 'package:price_list/screens/ware_list/ware_list_screen.dart';
 import 'package:price_list/side_bar/setting/backup/backup_tools.dart';
 import 'package:price_list/ware_provider.dart';
 
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingScreen extends StatefulWidget {
   static const String id = "/SettingScreen";
+
   const SettingScreen({Key? key}) : super(key: key);
 
   @override
@@ -17,28 +19,30 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends State<SettingScreen> {
+  late final SharedPreferences prefs;
   late String selectedValue;
   late WareProvider provider;
+  bool showCostPrice = false;
+  bool showQuantity = false;
 
-  // void storeInfoShop() {
-  //   ShopHive? shopInfo = HiveBoxes.getShopInfo().get(0);
-  //   if (shopInfo != null) {
-  //     shopInfo.currency = selectedValue;
-  //     provider.getData(shopInfo);
-  //    // HiveBoxes.getShopInfo().put(0, shopInfo);
-  //   }
-  // }
+  void storeInfoShop() {
+    prefs.setBool("showCast", showCostPrice);
+    prefs.setBool("showQuantity", showQuantity);
+    provider.updateSetting(showCostPrice, showQuantity);
 
-  // void getData() {
-  //   ShopHive? shopInfo = HiveBoxes.getShopInfo().get(0);
-  //   if (shopInfo != null) {
-  //     selectedValue = shopInfo.currency;
-  //   }
-  // }
+  }
+
+  void getData()async {
+    prefs = await SharedPreferences.getInstance();
+    showCostPrice=provider.showCostPrice;
+    showQuantity=provider.showQuantity;
+  setState(() {});
+  }
 
   @override
   void initState() {
-    selectedValue = kCurrencyList[0];
+    //selectedValue = kCurrencyList[0];
+    getData();
     super.initState();
   }
 
@@ -50,7 +54,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
   @override
   void dispose() {
-    // storeInfoShop();
+     //storeInfoShop();
     super.dispose();
   }
 
@@ -63,46 +67,80 @@ class _SettingScreenState extends State<SettingScreen> {
       body: Directionality(
         textDirection: TextDirection.rtl,
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Card(
-              child: Container(
-                padding: const EdgeInsets.all(15),
-                margin: const EdgeInsets.all(15),
-                decoration: BoxDecoration(border: Border.all(color: Colors.blue)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    CustomButton(
-                      text: "پشتیبان گیری",
-                      color: Colors.red.withRed(250),
-                      onPressed: () async {
-                        await storagePermission(context, Allow.externalStorage);
-                        // ignore: use_build_context_synchronously
-                        await storagePermission(context, Allow.storage);
-                        await BackupTools.createBackup();
-                      },
+            Column(
+              children: [
+                ///backup part
+                Card(
+                  margin: EdgeInsets.all(15),
+                  child: Container(
+                    padding: const EdgeInsets.all(15),
+                    decoration:
+                        BoxDecoration(border: Border.all(color: Colors.blue)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        CustomButton(
+                          text: "پشتیبان گیری",
+                          color: Colors.red.withRed(250),
+                          onPressed: () async {
+                            await storagePermission(context, Allow.externalStorage);
+                            // ignore: use_build_context_synchronously
+                            await storagePermission(context, Allow.storage);
+                            await BackupTools.createBackup();
+                          },
+                        ),
+                        CustomButton(
+                          text: "بارگیری فایل پشتیبان",
+                          color: Colors.green,
+                          onPressed: () async {
+                            await storagePermission(context, Allow.storage);
+                            await BackupTools.restoreBackup();
+                          },
+                        ),
+                      ],
                     ),
-                    CustomButton(
-                      text: "بارگیری فایل پشتیبان",
-                      color: Colors.green,
-                      onPressed: () async {
-                        await storagePermission(context, Allow.storage);
-                        await BackupTools.restoreBackup();
-                      },
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+
+                ///unit drop list
+                // DropListItem(
+                //     title: "واحد پول",
+                //     selectedValue: selectedValue,
+                //     listItem: kCurrencyList,
+                //     onChange: (val) {
+                //       selectedValue = val;
+                //       setState(() {});
+                //     }),
+                SwitchItem(
+                  title: "نمایش قیمت خرید",
+                  value: showCostPrice,
+                  onChange: (val) {
+                    showCostPrice=val;
+                    setState(() {});
+                  },
+                ),
+                SwitchItem(
+                  title: "نمایش موجودی",
+                  value: showQuantity,
+                  onChange: (val) {
+                    showQuantity=val;
+                    setState(() {});
+                  },
+                ),
+              ],
             ),
-            DropListItem(
-                title: "واحد پول",
-                selectedValue: selectedValue,
-                listItem: kCurrencyList,
-                onChange: (val) {
-                  selectedValue = val;
-                  setState(() {});
-                }),
-            //SwitchItem(title: "title", onChange: (val) {}),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CustomButton(
+                  text: "اعمال تغییرات",
+                  onPressed: (){
+                    storeInfoShop();
+                Navigator.pushNamed(context, WareListScreen.id);
+
+              }),
+            )
           ],
         ),
       ),
@@ -115,9 +153,11 @@ class SwitchItem extends StatelessWidget {
     super.key,
     required this.title,
     required this.onChange,
+    required this.value,
   });
 
   final String title;
+  final bool value;
   final void Function(bool) onChange;
 
   @override
@@ -131,7 +171,7 @@ class SwitchItem extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(title),
-            Switch(value: false, onChanged: onChange),
+            Switch(value: value, onChanged: onChange),
           ],
         ),
       ),

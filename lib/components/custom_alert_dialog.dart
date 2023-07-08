@@ -1,51 +1,58 @@
+import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:flutter/material.dart';
-import 'package:price_list/components/glass_bg.dart';
 
 // ignore: non_constant_identifier_names
 AlertDialog CustomAlertDialog(
     {required BuildContext context,
-    String? title,
-    required Widget child,
-    double height = double.maxFinite,
-    double width = double.maxFinite,
-    textDirection = TextDirection.rtl,
-      double opacity=.8,
+      String? title,
+      required Widget child,
+      double? height,
+      double width=450,
+      textDirection = TextDirection.rtl,
+      double opacity=.75,
     }) {
   return AlertDialog(
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-    icon: GlassBackground(
-      child: Align(
-        alignment: Alignment.topRight,
-        child: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(
-            Icons.close,
-            color: Colors.blue,
-            size: 30,
-          ),
-        ),
-      ),
-    ),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
     iconPadding: EdgeInsets.zero,
-    title: title == null
-        ? null
-        : Center(
-            child: Text(
-            title,
-            style: const TextStyle(color: Colors.black54),
-          )),
     contentPadding: EdgeInsets.zero,
     backgroundColor: Colors.white.withOpacity(opacity),
-    content: GlassBackground(
-      child: Directionality(
-        textDirection: textDirection,
-        child: Container(
-            height: height,
-            width: width,
-            padding: const EdgeInsets.all(20),
-            child: child),
+    scrollable: true,
+    content: BlurryContainer(
+      borderRadius: BorderRadius.circular(5),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Align(
+            alignment: Alignment.topRight,
+            child: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(
+                Icons.close,
+                color: Colors.red,
+                size: 30,
+              ),
+            ),
+          ),
+          Center(
+              child:title == null
+                  ? null
+                  :  Text(
+                title,
+                style: const TextStyle(color: Colors.black54,fontSize: 18),
+              )),
+          Directionality(
+            textDirection: textDirection,
+            child: Flexible(
+              child: Container(
+                  height:height,// ?? MediaQuery.of(context).size.height,
+                  width: width, // ?? MediaQuery.of(context).size.width,
+                  padding: const EdgeInsets.all(20),
+                  child: child),
+            ),
+          ),
+        ],
       ),
     ),
   );

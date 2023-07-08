@@ -1,22 +1,28 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:price_list/components/custom_bg_shape.dart';
 import '../../../constants/constants.dart';
 
 class CustomTile extends StatelessWidget {
-  const CustomTile(
-      {super.key,
-      this.height=60,
-      this.color=Colors.deepPurpleAccent,
-      this.subTitle,
-      required this.title,
-      required this.topTrailing,
-      required this.trailing,
-      this.leadingIcon,
-      this.topTrailingLabel,
-      this.onTap,
-      this.type,
-      this.enable = true});
+  const CustomTile({
+    super.key,
+    this.height = 60,
+    this.color = Colors.deepPurpleAccent,
+    this.subTitle,
+    required this.title,
+    required this.topTrailing,
+    required this.trailing,
+    this.leadingIcon,
+    this.topTrailingLabel,
+    this.onTap,
+    this.type,
+    this.enable = true,
+    this.middle,
+    this.middleLabel,
+    this.trailingLabel,
+    this.onLongPress,
+    this.selected = false,
+  });
+
   final double height;
   final Color color;
   final String? subTitle;
@@ -24,37 +30,45 @@ class CustomTile extends StatelessWidget {
   final String topTrailing;
   final String? topTrailingLabel;
   final String trailing;
+  final String? trailingLabel;
+  final String? middle;
+  final String? middleLabel;
   final String? type;
   final IconData? leadingIcon;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
   final bool enable;
+  final bool selected;
 
   @override
   Widget build(BuildContext context) {
     return Directionality(
-      textDirection: TextDirection.rtl,
-      child:
-
-        Builder(builder: (context) {
+        textDirection: TextDirection.rtl,
+        child: Builder(builder: (context) {
           return Card(
+            margin: selected ? const EdgeInsets.only(right: 20) : null,
             child: BackgroundClipper(
-              color: color,
+              color: selected ?Colors.blue:color,
               height: height,
               child: MyListTile(
-                onTap: onTap ?? (){},
-                  enable: enable,
-                  title: title,
-                  leadingIcon: leadingIcon,
-                  type: type,
-                  subTitle: subTitle,
-                  topTrailingLabel: topTrailingLabel,
-                  topTrailing: topTrailing,
-                  trailing: trailing),
+                selected: selected,
+                onTap: onTap ?? () {},
+                onLongPress: onLongPress,
+                enable: enable,
+                title: title,
+                leadingIcon: leadingIcon,
+                type: type,
+                subTitle: subTitle,
+                topTrailingLabel: topTrailingLabel,
+                topTrailing: topTrailing,
+                trailing: trailing,
+                trailingLabel: trailingLabel,
+                middle: middle,
+                middleLabel: middleLabel,
+              ),
             ),
           );
         }));
-
-
   }
 }
 
@@ -70,9 +84,15 @@ class MyListTile extends StatelessWidget {
     required this.topTrailing,
     required this.trailing,
     required this.onTap,
+    this.middle,
+    this.middleLabel,
+    this.trailingLabel,
+    this.onLongPress,
+    required this.selected,
   });
 
   final bool enable;
+  final bool selected;
   final String title;
   final IconData? leadingIcon;
   final String? type;
@@ -80,12 +100,18 @@ class MyListTile extends StatelessWidget {
   final String? topTrailingLabel;
   final String topTrailing;
   final String trailing;
+  final String? trailingLabel;
+  final String? middle;
+  final String? middleLabel;
   final VoidCallback onTap;
+  final VoidCallback? onLongPress;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      onTap:onTap,
+      selected: selected,
+      onLongPress: onLongPress,
+      onTap: onTap,
       iconColor: Colors.black26,
       contentPadding: const EdgeInsets.symmetric(horizontal: 5),
       dense: true,
@@ -107,7 +133,10 @@ class MyListTile extends StatelessWidget {
                   )),
                   Text(
                     type ?? "",
-                    style: const TextStyle(fontSize: 12, color: Colors.black38),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: selected ? Colors.blue : Colors.black38,
+                    ),
                   ),
                   const SizedBox(
                     height: 5,
@@ -116,7 +145,26 @@ class MyListTile extends StatelessWidget {
               ),
             )
           : null,
-      subtitle: Text(subTitle ?? ""),
+      subtitle: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(subTitle ?? ""),
+          RichText(
+            text: TextSpan(
+              text: middleLabel ?? "",
+              style:  TextStyle(color: selected ? Colors.blue :Colors.black54, fontSize: 11),
+              children: [
+                TextSpan(
+                    text: middle,
+                    style:  TextStyle(
+                        color: selected ? Colors.blue :Colors.black87,
+                        fontSize: 13,
+                        fontFamily: kCustomFont)),
+              ],
+            ),
+          ),
+        ],
+      ),
       trailing: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -124,26 +172,30 @@ class MyListTile extends StatelessWidget {
           RichText(
             text: TextSpan(
               text: topTrailingLabel ?? "",
-              style: const TextStyle(color: Colors.black54, fontSize: 11),
+              style:  TextStyle(color: selected ? Colors.blue :Colors.black54, fontSize: 11),
               children: [
                 TextSpan(
                     text: topTrailing,
-                    style: const TextStyle(
-                        color: Colors.black54,
-                        fontSize: 11,
+                    style:  TextStyle(
+                        color:selected ? Colors.blue : Colors.black54,
+                        fontSize: 12,
                         fontFamily: kCustomFont)),
               ],
             ),
           ),
-          AutoSizeText(
-            trailing,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.left,
-            textDirection: TextDirection.ltr,
-            maxLines: 2,
-            style: kCellStyle,
-            minFontSize: 12,
-            maxFontSize: 20,
+          RichText(
+            text: TextSpan(
+              text: trailingLabel ?? "",
+              style:  TextStyle(color: selected ? Colors.blue :Colors.black54, fontSize: 11),
+              children: [
+                TextSpan(
+                    text: trailing,
+                    style:  TextStyle(
+                        color: selected ? Colors.blue :Colors.black,
+                        fontSize: 14,
+                        fontFamily: kCustomFont)),
+              ],
+            ),
           ),
         ],
       ),
@@ -158,6 +210,7 @@ class DropButtons extends StatelessWidget {
       required this.icon,
       required this.onPress,
       required this.color});
+
   final String text;
   final IconData icon;
   final Color color;

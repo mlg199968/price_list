@@ -7,13 +7,13 @@ class CustomButton extends StatelessWidget {
       required this.text,
       required this.onPressed,
         this.color,
-      this.width = 100,
+      this.width ,
       this.height = 50})
       : super(key: key);
   final String text;
   // ignore: prefer_typing_uninitialized_variables
   final  onPressed;
-  final double width;
+  final double? width;
   final double height;
   final Color? color;
   @override

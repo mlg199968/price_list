@@ -29,14 +29,17 @@ class SideBarPanel extends StatelessWidget {
               ///top info part
               Stack(
                   children: [
-                Container(
-                  height: 150,
-                  decoration: const BoxDecoration(
-                      gradient: kMainGradiant ),
+                Opacity(
+                  opacity: .6,
+                  child: Container(
+                    height: 150,
+                    decoration: const BoxDecoration(
+                        gradient: kMainGradiant ),
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
-                  child: IconButton(onPressed: (){Navigator.pop(context);}, icon: const Icon(Icons.arrow_back,size: 30,)),
+                  child: IconButton(onPressed: (){Navigator.pop(context);}, icon: const Icon(Icons.arrow_back,size: 30,color: Colors.white,)),
                 ),
                 Center(
                   child: Padding(
@@ -52,12 +55,12 @@ class SideBarPanel extends StatelessWidget {
               ]),
               Column(
                 children: [
-                  menu_button(
-                    text: "مشخصات فروشگاه",
-                    icon: Icons.factory,
-                    onPress: () {
-                    },
-                  ),
+                  // menu_button(
+                  //   text: "مشخصات فروشگاه",
+                  //   icon: Icons.factory,
+                  //   onPress: () {
+                  //   },
+                  // ),
                   menu_button(
                     text: "تنظیمات",
                     icon: Icons.settings_outlined,
@@ -67,7 +70,6 @@ class SideBarPanel extends StatelessWidget {
                   ),
                   menu_button(
                     onPress: () {
-                      Navigator.pushNamed(context, SettingScreen.id);
                     },
                     text: "ارتباط با ما",
                     icon: Icons.support_agent_outlined,
@@ -82,7 +84,7 @@ class SideBarPanel extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Image.asset(
-                      'images/mlggrand.png',
+                      'assets/images/mlggrand.png',
                       width: 110,
                     ),
                     IconButton(

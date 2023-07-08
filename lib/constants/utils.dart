@@ -1,19 +1,75 @@
 import 'dart:io';
+import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' as intl;
 import 'package:path_provider/path_provider.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
+import 'package:price_list/components/shape/shape02.dart';
+import 'package:price_list/constants/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+
+enum SnackType{
+  normal,
+  success,
+  warning,
+  error,
+}
+
 ///Show snake bar in active context
-void showSnackBar(BuildContext context, String text) {
+void showSnackBar(BuildContext context, String title,
+    {SnackType type=SnackType.normal,double? height}) {
+  Color? color;
+  switch(type){
+    case SnackType.normal:
+      color=Colors.blue;
+      break;
+    case SnackType.success:
+      color=Colors.green;
+      break;
+    case SnackType.error:
+      color=Colors.red;
+      break;
+    case SnackType.warning:
+      color=Colors.orange;
+      break;
+
+  }
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      content: Text(text),
-    ),
+        showCloseIcon: true,
+        width: 350,
+        elevation: 0,
+        behavior: SnackBarBehavior.floating,
+        dismissDirection: DismissDirection.horizontal,
+        backgroundColor: Colors.transparent,
+        content: BlurryContainer(
+          padding: const EdgeInsets.all(0),
+          height:height ?? 50,
+          color: Colors.black.withOpacity(.8),
+          borderRadius: BorderRadius.circular(20),
+          child: BackgroundShape2(
+            color: color ,
+            height: height ?? 50,
+            child: Container(
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.all(8.0),
+              child: Text(title.toPersianDigit(),style: const TextStyle(fontFamily: kCustomFont,color: Colors.white),textDirection: TextDirection.rtl,),
+            ),
+          ),
+        )),
   );
 }
+
+// ///Show snake bar in active context
+// void showSnackBar(BuildContext context, String text) {
+//   ScaffoldMessenger.of(context).showSnackBar(
+//     SnackBar(
+//       content: Text(text),
+//     ),
+//   );
+// }
 
 ///Show snake bar in active context
 Divider customDivider({required BuildContext context, Color? color}) {
@@ -28,16 +84,16 @@ Divider customDivider({required BuildContext context, Color? color}) {
 }
 
 ///convert string to double
-num stringToDouble(String text) {
+double stringToDouble(String text) {
   String englishText = text.toEnglishDigit();
 
-  return double.parse(englishText.replaceAll(RegExp(r'[^0-9]'), ''))
-      .truncateToDouble();
+  return double.parse(englishText.replaceAll(RegExp(r'[^0-9.-]'), ''))
+      .toDouble();
 }
 
 ///add separator for show price number and persian number
 String addSeparator(num number) {
-  return NumberFormat('###,###,###,###').format(number).toPersianDigit();
+  return intl.NumberFormat('###,###,###,###').format(number).toPersianDigit();
 }
 
 /// for launch urls

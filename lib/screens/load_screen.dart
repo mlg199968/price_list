@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:price_list/ware_list/ware_list_screen.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:price_list/screens/ware_list/ware_list_screen.dart';
+
 
 
 
@@ -11,8 +13,11 @@ class LoadScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Timer(const Duration(milliseconds:1300 ), () {
-      Navigator.of(context).pushNamedAndRemoveUntil(WareListScreen.id,(context)=>false);
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      Timer(const Duration(milliseconds: 1100), () {
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            WareListScreen.id, (context) => false);
+      });
     });
 
     return Container(
@@ -27,11 +32,11 @@ class LoadScreen extends StatelessWidget {
         children: <Widget>[
           Expanded(
             flex: 5,
-            child: Image.asset('images/logo.png',width: 200,),
+            child: Image.asset('assets/images/logo.png',width: 200,),
           ),
           Expanded(
             flex: 1,
-            child: Image.asset('images/mlggrand.png',width: 100,),
+            child: Image.asset('assets/images/mlggrand.png',width: 100,),
           ),
         ],
       ),

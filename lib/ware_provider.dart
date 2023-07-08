@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 class WareProvider extends ChangeNotifier{
  List groupList=["default",];
  String selectedGroup="default";
- String connectionState="waiting";
-
+ String currency="ریال";
+ bool showCostPrice = false;
+ bool showQuantity = false;
 
 
 
@@ -20,6 +21,11 @@ void loadGroupList(List groups){
 void updateSelectedGroup(String newSelect){
   selectedGroup=newSelect;
   notifyListeners();
+}
+void updateSetting(bool cost,bool quantity){
+  showQuantity=quantity;
+  showCostPrice=cost;
+ // notifyListeners();
 }
 
 

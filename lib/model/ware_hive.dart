@@ -28,6 +28,8 @@ DateTime date=DateTime.now();
 bool? isChecked=false;
 @HiveField(10)
 String? color="";
+@HiveField(11)
+DateTime? modifyDate=DateTime.now();
 
 Map<String, dynamic> toMap() {
     return {
@@ -39,6 +41,7 @@ Map<String, dynamic> toMap() {
       'sale': sale,
       'quantity': quantity,
       'date': date.toIso8601String(),
+      'modifyDate': modifyDate!.toIso8601String(),
       'wareID': wareID,
       'isChecked': isChecked! ?1:0,
       'color' : color
@@ -55,6 +58,7 @@ WareHive fromMap(Map<String, dynamic> map) {
   ..sale= map['sale'] ?? 0
   ..quantity= map['quantity'] ?? 0
   ..date= DateTime.parse(map['date'])
+   ..modifyDate=DateTime.parse(map["modifyDate"])
   ..wareID= map['wareID'] ?? ""
   ..isChecked= map['isChecked']==1?true:false
  ..color=map['color'];

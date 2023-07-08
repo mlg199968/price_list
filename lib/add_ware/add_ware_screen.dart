@@ -49,7 +49,8 @@ class _AddWareScreenState extends State<AddWareScreen> {
       ..description =
           descriptionController.text.isEmpty ? "" : descriptionController.text
       ..wareID = const Uuid().v1()
-      ..date = DateTime.now();
+      ..date = DateTime.now()
+      ..modifyDate = DateTime.now();
     //Debuger.maxWare(wareHive, 50);
     HiveBoxes.getWares().put(wareHive.wareID,wareHive);
   }
@@ -71,7 +72,8 @@ class _AddWareScreenState extends State<AddWareScreen> {
       ..description =
           descriptionController.text.isEmpty ? "" : descriptionController.text
       ..wareID =widget.oldWare!.wareID
-      ..date = DateTime.now();
+      ..date = widget.oldWare!.modifyDate ?? DateTime.now()
+      ..modifyDate = DateTime.now();
     HiveBoxes.getWares().put(widget.oldWare!.wareID,wareHive);
   }
 
@@ -163,6 +165,7 @@ class _AddWareScreenState extends State<AddWareScreen> {
                     ),
                     CustomTextField(
                       label: "نام کالا",
+                      maxLength: 50,
                       controller: wareNameController,
                       validate: true,
                     ),
@@ -171,6 +174,7 @@ class _AddWareScreenState extends State<AddWareScreen> {
                     ),
                     CustomTextField(
                       label: "شماره سریال کالا",
+                      maxLength: 25,
                       controller: wareSerialController,
                     ),
                     const SizedBox(
@@ -193,6 +197,7 @@ class _AddWareScreenState extends State<AddWareScreen> {
                         ),
                         CustomTextField(
                           label: "مقدار",
+                          maxLength: 15,
                           controller: quantityController,
                           textFormat: TextFormatter.number,
                         ),
@@ -203,6 +208,7 @@ class _AddWareScreenState extends State<AddWareScreen> {
                     ),
                     CustomTextField(
                       label: "قیمت خرید",
+                      maxLength: 17,
                       controller: costPriceController,
                       textFormat: TextFormatter.price,
                     ),
@@ -211,6 +217,7 @@ class _AddWareScreenState extends State<AddWareScreen> {
                     ),
                     CustomTextField(
                       label: "قیمت فروش",
+                      maxLength: 17,
                       controller: salePriceController,
                       textFormat: TextFormatter.price,
                     ),
@@ -219,8 +226,9 @@ class _AddWareScreenState extends State<AddWareScreen> {
                     ),
                     CustomTextField(
                       label: "توضیحات",
+                      maxLength:200,
                       controller: descriptionController,
-                      maxLine: 4,
+                      maxLine: 5,
                     ),
                   ],
                 ),

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:price_list/add_ware/add_ware_screen.dart';
 import 'package:price_list/model/ware_hive.dart';
+import 'package:price_list/screens/ware_list/panels/ware_action_panel.dart';
+import 'package:price_list/screens/ware_list/ware_list_screen.dart';
 import 'package:price_list/side_bar/setting/setting_screen.dart';
-import 'package:price_list/ware_list/ware_list_screen.dart';
 
 Route generateRoute(RouteSettings routeSettings) {
   switch (routeSettings.name) {
@@ -21,7 +22,10 @@ Route generateRoute(RouteSettings routeSettings) {
               ));
 
     case SettingScreen.id:
-      return MaterialPageRoute(builder: (_) => SettingScreen());
+      return MaterialPageRoute(builder: (_) => SettingScreen());  
+
+ case WareActionsPanel.id:
+      return MaterialPageRoute(builder: (_) => WareActionsPanel(wares: [], subGroup: "subGroup"));
 
     default:
       return MaterialPageRoute(

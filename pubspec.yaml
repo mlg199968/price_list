@@ -4,7 +4,7 @@ description: Price List project
 publish_to: 'none'
 
 
-version: 2.1.4+5
+version: 2.2.6+7
 
 environment:
   sdk: '>=2.18.0-271.4.beta <3.0.0'
@@ -31,12 +31,15 @@ dependencies:
   url_launcher: ^6.1.6
   flutter_automation: ^2.0.0
   persian_number_utility: ^1.1.3
-  flutter_launcher_icons: ^0.11.0
+  #flutter_launcher_icons: ^0.11.0
   double_back_to_close_app: ^2.1.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   uuid: ^3.0.7
   shared_preferences: ^2.1.0
+  blurrycontainer: ^1.0.2
+  pdf: ^3.9.0
+  open_filex: ^4.3.2
 
 
 
@@ -59,20 +62,20 @@ dev_dependencies:
 flutter_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "images/app_icon.png"
+  image_path: "assets/images/app_icon.png"
   min_sdk_android: 21 # android min sdk min:16, default 21
   web:
     generate: true
-    image_path: "images/app_icon.png"
+    image_path: "assets/images/app_icon.png"
     background_color: "#hexcode"
     theme_color: "#hexcode"
   windows:
     generate: true
-    image_path: "images/app_icon.png"
+    image_path: "assets/images/app_icon.png"
     icon_size: 48 # min:48, max:256, default: 48
   macos:
     generate: true
-    image_path: "images/app_icon.png"
+    image_path: "assets/images/app_icon.png"
 
 
   flutter_lints: ^2.0.0
@@ -86,7 +89,8 @@ flutter:
 
 
   assets:
-  - images/
+  - assets/images/
+  - assets/fonts/
 
 
 
@@ -94,8 +98,9 @@ flutter:
   fonts:
     - family: Helvtica
       fonts:
-        - asset: fonts/OpenSans-Regular.ttf
+        - asset: assets/fonts/OpenSans-Regular.ttf
     - family: Persian
       fonts:
-        - asset: fonts/shabnam.ttf
+        - asset: assets/fonts/shabnam.ttf
+
 
