@@ -88,7 +88,7 @@ class _SettingScreenState extends State<SettingScreen> {
                             await storagePermission(context, Allow.externalStorage);
                             // ignore: use_build_context_synchronously
                             await storagePermission(context, Allow.storage);
-                            await BackupTools.createBackup();
+                            await BackupTools.createBackup(context);
                           },
                         ),
                         CustomButton(
@@ -96,7 +96,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           color: Colors.green,
                           onPressed: () async {
                             await storagePermission(context, Allow.storage);
-                            await BackupTools.restoreBackup();
+                            await BackupTools.restoreBackup(context);
                           },
                         ),
                       ],

@@ -99,8 +99,9 @@ String addSeparator(num number) {
 /// for launch urls
 Future<void> urlLauncher({required context, required String urlTarget}) async {
   Uri url = Uri.parse(urlTarget);
-  if (!await launchUrl(url)) {
-    showSnackBar(context, "Could not open this url!");
+  if (!await launchUrl(url,mode: LaunchMode.externalApplication)) {
+    showSnackBar(context, "Could not open this url!",
+        type: SnackType.error);
   }
 }
 

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:price_list/components/glass_bg.dart';
 import 'package:price_list/constants/constants.dart';
+import 'package:price_list/constants/utils.dart';
+import 'package:price_list/screens/group_management_screen.dart';
 import 'package:price_list/side_bar/setting/setting_screen.dart';
 
 class SideBarPanel extends StatelessWidget {
@@ -55,12 +57,13 @@ class SideBarPanel extends StatelessWidget {
               ]),
               Column(
                 children: [
-                  // menu_button(
-                  //   text: "مشخصات فروشگاه",
-                  //   icon: Icons.factory,
-                  //   onPress: () {
-                  //   },
-                  // ),
+                  menu_button(
+                    text: "مدیریت گروه ها",
+                    icon: Icons.account_tree_outlined,
+                    onPress: () {
+                      Navigator.pushNamed(context, GroupManagementScreen.id);
+                    },
+                  ),
                   menu_button(
                     text: "تنظیمات",
                     icon: Icons.settings_outlined,
@@ -70,6 +73,7 @@ class SideBarPanel extends StatelessWidget {
                   ),
                   menu_button(
                     onPress: () {
+                      urlLauncher(context: context, urlTarget: "http://mlggrand.ir");
                     },
                     text: "ارتباط با ما",
                     icon: Icons.support_agent_outlined,
@@ -89,7 +93,7 @@ class SideBarPanel extends StatelessWidget {
                     ),
                     IconButton(
                         onPressed: () {
-                          // _launchUrl('https://instagram.com/mlg_grand?igshid=YmMyMTA2M2Y=');
+                          urlLauncher(context: context,urlTarget: 'https://instagram.com/mlg_grand?igshid=YmMyMTA2M2Y=');
                         },
                         icon: const Icon(
                           FontAwesomeIcons.instagram,
@@ -97,7 +101,9 @@ class SideBarPanel extends StatelessWidget {
                           size: 25,
                         )),
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          urlLauncher(context: context, urlTarget: "http://t.me/mlg_grand");
+                        },
                         icon: const Icon(
                           FontAwesomeIcons.telegram,
                           color: Colors.white,

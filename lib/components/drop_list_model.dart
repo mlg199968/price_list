@@ -36,10 +36,8 @@ class DropListModel extends StatelessWidget {
           child: DropdownButton2(
             icon: const Icon(Icons.keyboard_arrow_down),
             iconOnClick: const Icon(Icons.keyboard_arrow_up),
-
             isExpanded: true,
             itemPadding: const EdgeInsets.all(0),
-
             customButton:icon,
             isDense: true,
             dropdownWidth: width,

@@ -6,11 +6,10 @@ import 'package:price_list/constants/utils.dart';
 import 'package:price_list/ware_provider.dart';
 import 'package:provider/provider.dart';
 
-// ignore: must_be_immutable
 class CreateGroupPanel extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   CreateGroupPanel({super.key});
-  TextEditingController groupPanelTextFieldController = TextEditingController();
+  final groupPanelTextFieldController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {

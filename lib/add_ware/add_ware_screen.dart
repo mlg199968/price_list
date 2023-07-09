@@ -72,7 +72,7 @@ class _AddWareScreenState extends State<AddWareScreen> {
       ..description =
           descriptionController.text.isEmpty ? "" : descriptionController.text
       ..wareID =widget.oldWare!.wareID
-      ..date = widget.oldWare!.modifyDate ?? DateTime.now()
+      ..date = widget.oldWare!.date
       ..modifyDate = DateTime.now();
     HiveBoxes.getWares().put(widget.oldWare!.wareID,wareHive);
   }
