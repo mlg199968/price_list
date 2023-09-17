@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
-import 'package:price_list/add_ware/add_ware_screen.dart';
 import 'package:price_list/components/custom_alert.dart';
 import 'package:price_list/components/custom_search_bar.dart';
 import 'package:price_list/components/custom_tile.dart';
@@ -15,6 +14,7 @@ import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/data/hive_boxes.dart';
 import 'package:price_list/model/ware_hive.dart';
+import 'package:price_list/screens/add_ware/add_ware_screen.dart';
 import 'package:price_list/screens/ware_list/panels/info_panel.dart';
 import 'package:price_list/screens/ware_list/panels/selected_action_panel.dart';
 import 'package:price_list/screens/ware_list/panels/ware_action_panel.dart';
@@ -47,9 +47,9 @@ class _WareListScreenState extends State<WareListScreen> {
   ];
   String sortItem = 'تاریخ ویرایش';
   String? keyWord;
-  List<WareHive> waresList=[];
+  List<WareHive> waresList = [];
 
-  void getStartupData() async{
+  void getStartupData() async {
     prefs = await SharedPreferences.getInstance();
     //get ware group list
     provider.loadGroupList(HiveBoxes.getGroupWares());
@@ -109,17 +109,27 @@ class _WareListScreenState extends State<WareListScreen> {
                     );
                   },
                 ),
+
                 ///dropDown list for Group Select
                 IconButton(
                     onPressed: () {
                       showDialog(
                           context: context,
                           builder: (context) => WareActionsPanel(
-                            wares: waresList,
-                            subGroup: selectedDropListGroup,
-                          ));
+                                wares: waresList,
+                                subGroup: selectedDropListGroup,
+                              ));
                     },
-                    icon: const Icon(Icons.more_vert)),
+                    icon: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          boxShadow: [BoxShadow(offset: Offset(-1, -1),blurRadius: 1,color: Colors.grey)],
+                          gradient: kGradiantColor1,
+                        ),
+                        padding: EdgeInsets.all(5),
+                        child: const Icon(
+                          Icons.print,
+                        ))),
               ],
               leading: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -138,8 +148,6 @@ class _WareListScreenState extends State<WareListScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text("Price List"),
-
-
                   ],
                 ),
               ),
@@ -183,7 +191,7 @@ class _WareListScreenState extends State<WareListScreen> {
                     valueListenable: HiveBoxes.getWares().listenable(),
                     builder: (context, box, _) {
                       final productList = box.values.toList().cast<WareHive>();
-                      waresList=productList;
+                      waresList = productList;
                       List<WareHive> filteredList =
                           WareTools.filterList(productList, keyWord, sortItem);
                       if (filteredList.isEmpty) {
@@ -223,6 +231,7 @@ class ListPart extends StatefulWidget {
 class _ListPartState extends State<ListPart> {
   List<int> selectedItems = [];
   WareHive? selectedWare;
+
   @override
   Widget build(BuildContext context) {
     bool showCount =
@@ -231,11 +240,13 @@ class _ListPartState extends State<ListPart> {
         Provider.of<WareProvider>(context, listen: false).showCostPrice;
     return WillPopScope(
       //if action bottom bar is shown,on will pop first close the action bar then on the second press close the screen
-      onWillPop:selectedItems.isEmpty?null: ()async{
-        selectedItems.clear();
-        setState(() {});
-        return false;
-      },
+      onWillPop: selectedItems.isEmpty
+          ? null
+          : () async {
+              selectedItems.clear();
+              setState(() {});
+              return false;
+            },
       child: Expanded(
         child: Column(
           children: [
@@ -244,21 +255,21 @@ class _ListPartState extends State<ListPart> {
                   itemCount: widget.wareList.length,
                   itemBuilder: (context, index) {
                     WareHive ware = widget.wareList[index];
-                    if (widget.category == "همه" || widget.category == widget.wareList[index].groupName) {
+                    if (widget.category == "همه" ||
+                        widget.category == widget.wareList[index].groupName) {
                       return CustomTile(
                         selected: selectedItems.contains(index),
-                        onTap:(){
+                        onTap: () {
                           if (selectedItems.isEmpty) {
                             if (widget.key != null) {
                               Navigator.pop(context, ware);
                             } else {
-                              selectedWare=ware;
+                              selectedWare = ware;
                               setState(() {});
                               showDialog(
                                   context: context,
                                   builder: (context) => InfoPanel(
-                                      context: context,
-                                      wareInfo: ware));
+                                      context: context, wareInfo: ware));
                             }
                           } else {
                             if (selectedItems.contains(index)) {
@@ -269,7 +280,6 @@ class _ListPartState extends State<ListPart> {
                             setState(() {});
                           }
                         },
-
                         onLongPress: () {
                           if (!selectedItems.contains(index)) {
                             selectedItems.add(index);
@@ -283,7 +293,8 @@ class _ListPartState extends State<ListPart> {
                         type: "کالا",
                         title: ware.wareName,
                         topTrailing: showCount
-                            ? ("${ware.quantity}  ".toPersianDigit() + ware.unit)
+                            ? ("${ware.quantity}  ".toPersianDigit() +
+                                ware.unit)
                             : "",
                         topTrailingLabel: showCount ? "موجودی:" : "",
                         trailing: addSeparator(ware.sale),
@@ -295,13 +306,13 @@ class _ListPartState extends State<ListPart> {
                     return const SizedBox();
                   }),
             ),
+
             ///selected items action bottom bar
             Opacity(
               opacity: selectedItems.isNotEmpty ? 1 : 0,
               child: Container(
                 decoration: const BoxDecoration(
-                    border:
-                    Border(top: BorderSide(color: Colors.black87))),
+                    border: Border(top: BorderSide(color: Colors.black87))),
                 height: selectedItems.isNotEmpty ? 50 : 0,
                 width: double.maxFinite,
                 child: Row(
@@ -311,8 +322,7 @@ class _ListPartState extends State<ListPart> {
                         onPressed: () {
                           customAlert(
                               context: context,
-                              title:
-                              "آیا از حذف موارد انتخاب شده مطمئن هستید؟",
+                              title: "آیا از حذف موارد انتخاب شده مطمئن هستید؟",
                               onYes: () {
                                 for (int item in selectedItems) {
                                   widget.wareList[item].delete();
@@ -362,8 +372,7 @@ class _ListPartState extends State<ListPart> {
                           showDialog(
                               context: context,
                               builder: (context) =>
-                                  SelectedWareActionPanel(
-                                      wares: selectedList));
+                                  SelectedWareActionPanel(wares: selectedList));
                         },
                         icon: const Icon(
                           FontAwesomeIcons.filePen,
@@ -374,7 +383,6 @@ class _ListPartState extends State<ListPart> {
                 ),
               ),
             ),
-
           ],
         ),
       ),

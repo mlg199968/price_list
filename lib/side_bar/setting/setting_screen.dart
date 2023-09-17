@@ -81,7 +81,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       child: Container(
                         padding: const EdgeInsets.all(15),
                         decoration:
-                            BoxDecoration(border: Border.all(color: Colors.blue)),
+                            BoxDecoration(),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [

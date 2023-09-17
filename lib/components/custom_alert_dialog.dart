@@ -10,11 +10,11 @@ AlertDialog CustomAlertDialog({
   double? height,
   double width = 450,
   textDirection = TextDirection.rtl,
-  double opacity = .75,
+  double opacity = .95,
   bool vip = true,
 }) {
   return AlertDialog(
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     iconPadding: EdgeInsets.zero,
     contentPadding: EdgeInsets.zero,
     backgroundColor: Colors.white.withOpacity(opacity),
@@ -22,7 +22,7 @@ AlertDialog CustomAlertDialog({
     content: Stack(
       children: [
         BlurryContainer(
-          borderRadius: BorderRadius.circular(5),
+          borderRadius: BorderRadius.circular(10),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

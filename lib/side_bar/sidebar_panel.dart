@@ -150,7 +150,8 @@ class PurchaseButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
-        showDialog(context: context, builder: (context)=>PurchaseScreen());
+        Navigator.pushNamed(context, PurchaseScreen.id);
+       // showDialog(context: context, builder: (context)=>PurchaseScreen());
       },
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
@@ -230,7 +231,7 @@ class menu_button extends StatelessWidget {
   Widget build(BuildContext context) {
     //decelerations
     Color textColor = Colors.black.withOpacity(.8);
-    Color borderColor = Colors.blue;
+    Color borderColor = Colors.deepPurple;
     return Container(
         padding: const EdgeInsets.symmetric(horizontal: 5),
         decoration: BoxDecoration(

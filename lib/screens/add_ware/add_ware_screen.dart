@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:price_list/add_ware/panels/create_group_panel.dart';
 import 'package:price_list/components/custom_button.dart';
 import 'package:price_list/components/custom_textfield.dart';
 import 'package:price_list/components/drop_list_model.dart';
@@ -7,6 +6,7 @@ import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/data/hive_boxes.dart';
 import 'package:price_list/model/ware_hive.dart';
+import 'package:price_list/screens/add_ware/panels/create_group_panel.dart';
 import 'package:price_list/ware_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';

@@ -16,8 +16,8 @@ class LoadScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-      Timer(const Duration(milliseconds: 1100), () {
-Provider.of<WareProvider>(context,listen: false).getVip();
+      Provider.of<WareProvider>(context,listen: false).getVip();
+      Timer(const Duration(milliseconds: 900), () {
         Navigator.of(context).pushNamedAndRemoveUntil(
             WareListScreen.id, (context) => false);
       });
