@@ -1,4 +1,3 @@
-
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -6,13 +5,17 @@ import 'package:price_list/components/glass_bg.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/screens/group_management_screen.dart';
+import 'package:price_list/screens/purchase_screen.dart';
 import 'package:price_list/side_bar/setting/setting_screen.dart';
+import 'package:price_list/ware_provider.dart';
+import 'package:provider/provider.dart';
 
 class SideBarPanel extends StatelessWidget {
   const SideBarPanel({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final wareProvider=Provider.of<WareProvider>(context,listen: false);
     return Drawer(
       width: 250,
       elevation: 0,
@@ -29,19 +32,25 @@ class SideBarPanel extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               ///top info part
-              Stack(
-                  children: [
+              Stack(children: [
                 Opacity(
                   opacity: .6,
                   child: Container(
                     height: 150,
-                    decoration: const BoxDecoration(
-                        gradient: kMainGradiant ),
+                    decoration: const BoxDecoration(gradient: kMainGradiant),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
-                  child: IconButton(onPressed: (){Navigator.pop(context);}, icon: const Icon(Icons.arrow_back,size: 30,color: Colors.white,)),
+                  child: IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(
+                        Icons.arrow_back,
+                        size: 30,
+                        color: Colors.white,
+                      )),
                 ),
                 Center(
                   child: Padding(
@@ -53,7 +62,7 @@ class SideBarPanel extends StatelessWidget {
                     ),
                   ),
                 ),
-                const AvatarHolder()
+                 AvatarHolder(vip: wareProvider.isVip,)
               ]),
               Column(
                 children: [
@@ -73,13 +82,18 @@ class SideBarPanel extends StatelessWidget {
                   ),
                   menu_button(
                     onPress: () {
-                      urlLauncher(context: context, urlTarget: "http://mlggrand.ir");
+                      urlLauncher(
+                          context: context, urlTarget: "http://mlggrand.ir");
                     },
                     text: "ارتباط با ما",
                     icon: Icons.support_agent_outlined,
                   ),
                 ],
               ),
+              ///purchase Button
+              //we check here if user is vip ,we hide the purchase button
+              wareProvider.isVip?SizedBox():
+              PurchaseButton(),
 
               ///links
               Padding(
@@ -91,18 +105,25 @@ class SideBarPanel extends StatelessWidget {
                       'assets/images/mlggrand.png',
                       width: 110,
                     ),
+                    //instagram button
                     IconButton(
                         onPressed: () {
-                          urlLauncher(context: context,urlTarget: 'https://instagram.com/mlg_grand?igshid=YmMyMTA2M2Y=');
+                          urlLauncher(
+                              context: context,
+                              urlTarget:
+                                  'https://instagram.com/mlg_grand?igshid=YmMyMTA2M2Y=');
                         },
                         icon: const Icon(
                           FontAwesomeIcons.instagram,
                           color: Colors.white,
                           size: 25,
                         )),
+                    //telegram button
                     IconButton(
                         onPressed: () {
-                          urlLauncher(context: context, urlTarget: "http://t.me/mlg_grand");
+                          urlLauncher(
+                              context: context,
+                              urlTarget: "http://t.me/mlg_grand");
                         },
                         icon: const Icon(
                           FontAwesomeIcons.telegram,
@@ -120,10 +141,55 @@ class SideBarPanel extends StatelessWidget {
   }
 }
 
-class AvatarHolder extends StatelessWidget {
-  const AvatarHolder({
+class PurchaseButton extends StatelessWidget {
+  const PurchaseButton({
     super.key,
   });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: (){
+        showDialog(context: context, builder: (context)=>PurchaseScreen());
+      },
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+        padding: EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+              colors: [Colors.yellow, Colors.orange],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight),
+          borderRadius: BorderRadius.circular(5),
+          boxShadow: [
+            BoxShadow(blurRadius: 2,color: Colors.grey,offset: Offset(1, 1))
+          ]
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("خرید نسخه کامل"),
+            SizedBox(
+              width: 8,
+            ),
+            Icon(
+              FontAwesomeIcons.crown,
+              color: Colors.yellowAccent,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+
+class AvatarHolder extends StatelessWidget {
+  const AvatarHolder({
+    super.key, this.vip=false,
+  });
+  final bool vip;
 
   @override
   Widget build(BuildContext context) {
@@ -137,19 +203,14 @@ class AvatarHolder extends StatelessWidget {
           backgroundColor: Colors.white70,
           radius: 50,
           child: CircleAvatar(
-            backgroundColor: Colors.indigo,
-            foregroundImage: logo != null
-                ? FileImage(
-                    File(logo),
-                  )
-                : null,
+            backgroundColor:Colors.indigo,
             radius: 48,
-            child: logo != null
-                ? null
+            child:vip?
+               Icon(FontAwesomeIcons.crown,color: Colors.yellow,size: 55,)
                 : Icon(
-              Icons.person,
-              size: 70,
-            ),
+                    Icons.person,
+                    size: 70,
+                  ),
           ),
         ),
       ),
@@ -160,9 +221,11 @@ class AvatarHolder extends StatelessWidget {
 class menu_button extends StatelessWidget {
   const menu_button(
       {super.key, required this.text, required this.onPress, this.icon});
+
   final String text;
   final IconData? icon;
   final VoidCallback onPress;
+
   @override
   Widget build(BuildContext context) {
     //decelerations

@@ -95,59 +95,63 @@ class GroupManagePanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<WareProvider>(context, listen: false);
     return CustomAlertDialog(
       context: context,
       title: 'ویرایش گروه',
       height: 250,
-      child: Container(
-        padding: const EdgeInsetsDirectional.all(20),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text("نام فعلی گروه : $oldName"),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: CustomTextField(
-                  label: "نام جدید",
-                  controller: groupTextController,
-                  validate: true,
-                  maxLength: 30,
-                  width: MediaQuery.of(context).size.width,
-                ),
+      child: Consumer<WareProvider>(
+
+        builder: (context,provider,child) {
+          return Container(
+            padding: const EdgeInsetsDirectional.all(20),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text("نام فعلی گروه : $oldName"),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: CustomTextField(
+                      label: "نام جدید",
+                      controller: groupTextController,
+                      validate: true,
+                      maxLength: 30,
+                      width: MediaQuery.of(context).size.width,
+                    ),
+                  ),
+                  CustomButton(
+                      text: "تغییر",
+                      width: MediaQuery.of(context).size.width,
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          for (var element in provider.groupList) {
+                            if (element == groupTextController.text) {
+                              provider.updateSelectedGroup(element);
+                              showSnackBar(
+                                  context, "نام گروه انتخاب شده قبلا افزوده شده");
+                            }
+                          }
+                          List<WareHive> wares =
+                              HiveBoxes.getWares().values.toList();
+                          for (WareHive ware in wares) {
+                            if (oldName == ware.groupName) {
+                              ware.groupName = groupTextController.text;
+                            }
+                            HiveBoxes.getWares().put(ware.wareID, ware);
+                          }
+                          provider.addGroup(groupTextController.text);
+                          provider.groupList.remove(oldName);
+                          provider.updateSelectedGroup(groupTextController.text);
+                          Navigator.pop(context, false);
+                          groupTextController.clear();
+                        }
+                      })
+                ],
               ),
-              CustomButton(
-                  text: "تغییر",
-                  width: MediaQuery.of(context).size.width,
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      for (var element in provider.groupList) {
-                        if (element == groupTextController.text) {
-                          provider.updateSelectedGroup(element);
-                          showSnackBar(
-                              context, "نام گروه انتخاب شده قبلا افزوده شده");
-                        }
-                      }
-                      List<WareHive> wares =
-                          HiveBoxes.getWares().values.toList();
-                      for (WareHive ware in wares) {
-                        if (oldName == ware.groupName) {
-                          ware.groupName = groupTextController.text;
-                        }
-                        HiveBoxes.getWares().put(ware.wareID, ware);
-                      }
-                      provider.addGroup(groupTextController.text);
-                      provider.groupList.remove(oldName);
-                      provider.updateSelectedGroup(groupTextController.text);
-                      Navigator.pop(context, false);
-                      groupTextController.clear();
-                    }
-                  })
-            ],
-          ),
-        ),
+            ),
+          );
+        }
       ),
     );
   }

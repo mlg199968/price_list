@@ -10,7 +10,6 @@ const String kCustomFont="persian";
 
 
 
-
 const kBgColor=Colors.white70;
 const kMainGradiant = LinearGradient(
   colors: [Colors.deepPurple, Colors.blueAccent],

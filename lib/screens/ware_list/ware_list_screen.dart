@@ -82,6 +82,7 @@ class _WareListScreenState extends State<WareListScreen> {
       key: scaffoldKey,
       floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.deepPurple,
+          foregroundColor: Colors.white,
           child: Icon(
             Icons.add,
             size: 35,
@@ -95,6 +96,20 @@ class _WareListScreenState extends State<WareListScreen> {
           return [
             SliverAppBar(
               actions: [
+                Consumer<WareProvider>(
+                  builder: (context, wareData, child) {
+                    return DropListModel(
+                      selectedValue: selectedDropListGroup,
+                      height: 40,
+                      listItem: ["همه", ...wareData.groupList],
+                      onChanged: (val) {
+                        selectedDropListGroup = val;
+                        setState(() {});
+                      },
+                    );
+                  },
+                ),
+                ///dropDown list for Group Select
                 IconButton(
                     onPressed: () {
                       showDialog(
@@ -104,7 +119,7 @@ class _WareListScreenState extends State<WareListScreen> {
                             subGroup: selectedDropListGroup,
                           ));
                     },
-                    icon: const Icon(Icons.more_vert))
+                    icon: const Icon(Icons.more_vert)),
               ],
               leading: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -124,20 +139,7 @@ class _WareListScreenState extends State<WareListScreen> {
                   children: [
                     const Text("Price List"),
 
-                    ///dropDown list for Group Select
-                    Consumer<WareProvider>(
-                      builder: (context, wareData, child) {
-                        return DropListModel(
-                          selectedValue: selectedDropListGroup,
-                          height: 40,
-                          listItem: ["همه", ...wareData.groupList],
-                          onChanged: (val) {
-                            selectedDropListGroup = val;
-                            setState(() {});
-                          },
-                        );
-                      },
-                    ),
+
                   ],
                 ),
               ),

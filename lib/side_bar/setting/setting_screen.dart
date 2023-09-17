@@ -4,6 +4,7 @@ import 'package:price_list/components/drop_list_model.dart';
 import 'package:price_list/permission_handler.dart';
 import 'package:price_list/screens/ware_list/ware_list_screen.dart';
 import 'package:price_list/side_bar/setting/backup/backup_tools.dart';
+import 'package:price_list/side_bar/sidebar_panel.dart';
 import 'package:price_list/ware_provider.dart';
 
 import 'package:provider/provider.dart';
@@ -60,89 +61,121 @@ class _SettingScreenState extends State<SettingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final wareProvider=Provider.of<WareProvider>(context,listen: false);
     return Scaffold(
       appBar: AppBar(
         title: const Text("تنظیمات"),
       ),
-      body: Directionality(
-        textDirection: TextDirection.rtl,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
+      body: Stack(
+        children: [
+          Directionality(
+            textDirection: TextDirection.rtl,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                ///backup part
-                Card(
-                  margin: EdgeInsets.all(15),
-                  child: Container(
-                    padding: const EdgeInsets.all(15),
-                    decoration:
-                        BoxDecoration(border: Border.all(color: Colors.blue)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        CustomButton(
-                          text: "پشتیبان گیری",
-                          color: Colors.red.withRed(250),
-                          onPressed: () async {
-                            await storagePermission(context, Allow.externalStorage);
-                            // ignore: use_build_context_synchronously
-                            await storagePermission(context, Allow.storage);
-                            await BackupTools.createBackup(context);
-                          },
+                Column(
+                  children: [
+                    ///backup part
+                    Card(
+                      margin: EdgeInsets.all(15),
+                      child: Container(
+                        padding: const EdgeInsets.all(15),
+                        decoration:
+                            BoxDecoration(border: Border.all(color: Colors.blue)),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            CustomButton(
+                              text: "پشتیبان گیری",
+                              color: Colors.red.withRed(250),
+                              onPressed: () async {
+                                await storagePermission(context, Allow.externalStorage);
+                                // ignore: use_build_context_synchronously
+                                await storagePermission(context, Allow.storage);
+                                await BackupTools.createBackup(context);
+                              },
+                            ),
+                            CustomButton(
+                              text: "بارگیری فایل پشتیبان",
+                              color: Colors.green,
+                              onPressed: () async {
+                                await storagePermission(context, Allow.storage);
+                                await BackupTools.restoreBackup(context);
+                              },
+                            ),
+                          ],
                         ),
-                        CustomButton(
-                          text: "بارگیری فایل پشتیبان",
-                          color: Colors.green,
-                          onPressed: () async {
-                            await storagePermission(context, Allow.storage);
-                            await BackupTools.restoreBackup(context);
-                          },
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
 
-                ///unit drop list
-                // DropListItem(
-                //     title: "واحد پول",
-                //     selectedValue: selectedValue,
-                //     listItem: kCurrencyList,
-                //     onChange: (val) {
-                //       selectedValue = val;
-                //       setState(() {});
-                //     }),
-                SwitchItem(
-                  title: "نمایش قیمت خرید",
-                  value: showCostPrice,
-                  onChange: (val) {
-                    showCostPrice=val;
-                    setState(() {});
-                  },
+                    ///unit drop list
+                    // DropListItem(
+                    //     title: "واحد پول",
+                    //     selectedValue: selectedValue,
+                    //     listItem: kCurrencyList,
+                    //     onChange: (val) {
+                    //       selectedValue = val;
+                    //       setState(() {});
+                    //     }),
+                    SwitchItem(
+                      title: "نمایش قیمت خرید",
+                      value: showCostPrice,
+                      onChange: (val) {
+                        showCostPrice=val;
+                        setState(() {});
+                      },
+                    ),
+                    SwitchItem(
+                      title: "نمایش موجودی",
+                      value: showQuantity,
+                      onChange: (val) {
+                        showQuantity=val;
+                        setState(() {});
+                      },
+                    ),
+                  ],
                 ),
-                SwitchItem(
-                  title: "نمایش موجودی",
-                  value: showQuantity,
-                  onChange: (val) {
-                    showQuantity=val;
-                    setState(() {});
-                  },
-                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CustomButton(
+                      text: "اعمال تغییرات",
+                      onPressed: (){
+                        storeInfoShop();
+                    Navigator.pushNamed(context, WareListScreen.id);
+
+                  }),
+                )
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CustomButton(
-                  text: "اعمال تغییرات",
-                  onPressed: (){
-                    storeInfoShop();
-                Navigator.pushNamed(context, WareListScreen.id);
+          ),
+          wareProvider.isVip
+              ? SizedBox()
+              : Container(
+            padding: EdgeInsets.all(10),
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height ,
+            //height: MediaQuery.of(context).size.height,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: Text(
+                    "برای استفاده از این پنل نسخه پرو برنامه را فعال کنید.",
+                    textDirection: TextDirection.rtl,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white, fontSize: 18),
 
-              }),
-            )
-          ],
-        ),
+                  ),
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                PurchaseButton(),
+              ],
+            ),
+            color: Colors.black87.withOpacity(.7),
+          ),
+        ],
       ),
     );
   }

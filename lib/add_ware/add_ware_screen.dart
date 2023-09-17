@@ -180,7 +180,7 @@ class _AddWareScreenState extends State<AddWareScreen> {
                     const SizedBox(
                       height: kSpaceBetween,
                     ),
-                    //TODO:unit dropdown list selection
+                    ///unit dropdown list selection
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [

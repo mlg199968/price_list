@@ -32,6 +32,7 @@ class _MyAppState extends State<MyApp> {
       child: MaterialApp(
         theme: ThemeData(
             fontFamily: "persian",
+            appBarTheme: AppBarTheme(foregroundColor: Colors.white),
             scaffoldBackgroundColor: const Color(0XFFf5f5f5)),
         debugShowCheckedModeBanner: false,
         onGenerateRoute: (setting) => generateRoute(setting),

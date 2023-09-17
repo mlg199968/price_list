@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:price_list/screens/ware_list/ware_list_screen.dart';
+import 'package:price_list/ware_provider.dart';
+import 'package:provider/provider.dart';
 
 
 
@@ -15,6 +17,7 @@ class LoadScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
       Timer(const Duration(milliseconds: 1100), () {
+Provider.of<WareProvider>(context,listen: false).getVip();
         Navigator.of(context).pushNamedAndRemoveUntil(
             WareListScreen.id, (context) => false);
       });
