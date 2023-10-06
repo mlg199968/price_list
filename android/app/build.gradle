@@ -49,6 +49,14 @@ android {
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
+    //myket market configuration for in app purchase
+    defaultConfig {
+        def marketApplicationId = "ir.mservices.market"
+        def marketBindAddress = "ir.mservices.market.InAppBillingService.BIND"
+        manifestPlaceholders += [marketApplicationId: "${marketApplicationId}",
+                                 marketBindAddress  : "${marketBindAddress}",
+                                 marketPermission   : "${marketApplicationId}.BILLING"]
+    }
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
@@ -72,9 +80,14 @@ android {
     }
     buildTypes {
         release {
-            signingConfig signingConfigs.release
+            if (keystorePropertiesFile.exists()) {
+                signingConfig signingConfigs.release
+                println "Signing with key.properties"
+            } else {
+                signingConfig signingConfigs.debug
+                println "Signing with debug keys"
+            }
         }
-
     }
 
     flutter {

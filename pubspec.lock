@@ -496,6 +496,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.4"
+  myket_iap:
+    dependency: "direct main"
+    description:
+      name: myket_iap
+      sha256: fa8c1b7cabc687b4f205a8ed1312641861ec53cf074a66fe6e7a35cde846715d
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.2"
   nested:
     dependency: transitive
     description:

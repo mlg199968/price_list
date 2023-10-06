@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:price_list/components/custom_button.dart';
 import 'package:price_list/components/custom_textfield.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/pay_services/pay_service.dart';
+import 'package:price_list/screens/purchase_screen.dart';
 
-class PurchaseScreen extends StatelessWidget {
-  static const String id = "/purchaseScreen";
+class BazaarPurchaseScreen extends StatelessWidget {
+  static const String id = "/bazaarPurchaseScreen";
 
-  PurchaseScreen({super.key});
+  BazaarPurchaseScreen({super.key});
 
   final licenseTextController = TextEditingController();
-  final formKey=GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +25,8 @@ class PurchaseScreen extends StatelessWidget {
         width: MediaQuery.of(context).size.width,
         height: double.maxFinite,
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
             gradient: kMainGradiant,
-          boxShadow: [BoxShadow(blurRadius: 5,color: Colors.black26,offset: Offset(5, 5))]
-        ),
+),
         child: Directionality(
           textDirection: TextDirection.rtl,
           child: Center(
@@ -68,59 +68,48 @@ class PurchaseScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 50),
+
                     ///info part
                     Center(
                         child: Text(
-                      "قابلیت های نسخه کامل :",
+                      "قابلیت های نسخه کامل برنامه :",
                       style: TextStyle(color: Colors.yellow, fontSize: 20),
                     )),
                     SizedBox(height: 20),
                     TextWithIcon(
-                        text:
-                            "امکان گرفتن خروجی پی دی اف کالا های انتخابی"),
+                        text: "امکان گرفتن خروجی پی دی اف کالا های انتخابی"),
                     TextWithIcon(
                         text:
                             "تغییر و چاپ گروهی کالا ها بصورت درصدی یا مبلغ ثابت"),
 
                     TextWithIcon(text: "شخصی سازی نمایش فیلد ها"),
                     SizedBox(
-                      height: 25,
+                      height: 50,
                     ),
-                    CustomTextField(
-                      label: "لایسنس خریداری شده را اینجا وارد کنید",
-                      validate: true,
-                      maxLength: 50,
-                      controller: licenseTextController,
-                      width: double.maxFinite,
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    CustomButton(
-                        text: "اعمال لایسنس",
-                        onPressed: () {
-                          if(formKey.currentState!.validate()) {
-                            PayService.checkLicense(
-                                context, licenseTextController.text);
-                          }
-                        }),
-                    SizedBox(height: 50,),
-                    ///buy license button
-                    Center(
-                      child: CustomButton(
-                        fontSize: 18,
-                        width: 200,
-                        radius: 20,
-                        color: Colors.orange,
-                        text: "خرید لایسنس",
-                        onPressed: () {
-                          urlLauncher(
-                            context: context,
-                            urlTarget: "https://mlggrand.ir/product/%D9%84%D8%A7%DB%8C%D8%B3%D9%86%D8%B3-%D8%A8%D8%B1%D9%86%D8%A7%D9%85%D9%87-%D9%84%DB%8C%D8%B3%D8%AA-%D9%82%DB%8C%D9%85%D8%AA/",
-                          );
-                        },
-                      ),
-                    ),
+
+                    ///buy from bazaar button
+                    //BazaarButton(),
+                       MyketButton(),
+                    ///alternative way for payment
+                    //    Divider(height: 40,),
+                    // Text("درصورت مواجه شدن با خطا درخرید از بازار می توانید از روش زیر اقدام به فعال سازی نسخه کامل اپ نمایید.",style: TextStyle(color: Colors.white70,fontSize: 12),),
+                    // SizedBox(height: 30,),
+                    // ///buy license button
+                    // Center(
+                    //   child: CustomButton(
+                    //     height: 35,
+                    //     fontSize: 15,
+                    //     width: 200,
+                    //     radius: 20,
+                    //     color: Colors.deepPurpleAccent,
+                    //     text: "فعال سازی با لایسنس",
+                    //     onPressed: ()  {
+                    //      Navigator.pushNamed(context, PurchaseScreen.id);
+                    //     },
+                    //   ),
+                    // ),
+                    
+                    
                   ],
                 ),
               ),
@@ -131,6 +120,51 @@ class PurchaseScreen extends StatelessWidget {
     );
   }
 }
+
+class BazaarButton extends StatelessWidget {
+  const BazaarButton({
+    super.key,
+  });
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: CustomButton(
+        fontSize: 18,
+        width: 200,
+        radius: 20,
+        color: Colors.green,
+        text: "خرید از بازار",
+        onPressed: ()async{
+        //  await PayService.connectToBazaar(context);
+        },
+      ),
+    );
+  }
+}
+
+class MyketButton extends StatelessWidget {
+  const MyketButton({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: CustomButton(
+        fontSize: 18,
+        width: 200,
+        radius: 20,
+        color: Colors.blue,
+        text: "خرید از مایکت",
+        onPressed: ()async{
+         await PayService.connectToMyket(context);
+        },
+      ),
+    );
+  }
+}
+
+
 
 class TextWithIcon extends StatelessWidget {
   const TextWithIcon({

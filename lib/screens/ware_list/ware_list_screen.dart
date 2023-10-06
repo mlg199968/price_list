@@ -14,6 +14,7 @@ import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/data/hive_boxes.dart';
 import 'package:price_list/model/ware_hive.dart';
+import 'package:price_list/pay_services/pay_service.dart';
 import 'package:price_list/screens/add_ware/add_ware_screen.dart';
 import 'package:price_list/screens/ware_list/panels/info_panel.dart';
 import 'package:price_list/screens/ware_list/panels/selected_action_panel.dart';
@@ -84,10 +85,10 @@ class _WareListScreenState extends State<WareListScreen> {
           backgroundColor: Colors.deepPurple,
           foregroundColor: Colors.white,
           child: Icon(
-            Icons.add,
-            size: 35,
+            FontAwesomeIcons.plus,
+            size: 30,
           ),
-          onPressed: () {
+          onPressed: () async{
             Navigator.pushNamed(context, AddWareScreen.id);
           }),
       drawer: SideBarPanel(),
@@ -287,7 +288,7 @@ class _ListPartState extends State<ListPart> {
                           }
                         },
                         height: 50,
-                        color: Colors.deepPurple,
+                        color: Colors.deepPurple.shade800,
                         leadingIcon: CupertinoIcons.cube_box_fill,
                         subTitle: ware.groupName,
                         type: "کالا",

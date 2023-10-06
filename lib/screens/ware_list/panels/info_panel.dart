@@ -20,6 +20,7 @@ InfoPanel({required BuildContext context, required WareHive wareInfo}) {
           child: ListView(
             children: <Widget>[
               InfoPanelRow(title: "نام کالا", infoList: wareInfo.wareName),
+              InfoPanelRow(title: "سریال کالا", infoList: wareInfo.wareSerial ?? ""),
               InfoPanelRow(title: "سرگروه", infoList: wareInfo.groupName),
               InfoPanelRow(
                   title: "قیمت خرید", infoList: addSeparator(wareInfo.cost)),

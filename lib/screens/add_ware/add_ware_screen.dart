@@ -34,6 +34,7 @@ class _AddWareScreenState extends State<AddWareScreen> {
   void addWare() {
     WareHive wareHive = WareHive()
       ..wareName = wareNameController.text
+      ..wareSerial=wareSerialController.text
       ..unit = unitItem
       ..groupName =
           Provider.of<WareProvider>(context, listen: false).selectedGroup
@@ -57,6 +58,7 @@ class _AddWareScreenState extends State<AddWareScreen> {
   void updateWare() {
     WareHive wareHive = WareHive()
       ..wareName = wareNameController.text
+      ..wareSerial=wareSerialController.text
       ..unit = unitItem
       ..groupName =
           Provider.of<WareProvider>(context, listen: false).selectedGroup
@@ -79,6 +81,7 @@ class _AddWareScreenState extends State<AddWareScreen> {
 
   void replaceOldWare() {
     wareNameController.text = widget.oldWare!.wareName;
+    wareSerialController.text=widget.oldWare!.wareSerial!;
     costPriceController.text = addSeparator(widget.oldWare!.cost);
     salePriceController.text = addSeparator(widget.oldWare!.sale);
     quantityController.text = widget.oldWare!.quantity.toString();
@@ -234,7 +237,7 @@ class _AddWareScreenState extends State<AddWareScreen> {
                 ),
               ),
               CustomButton(
-                  text: "افزودن به لیست",
+                  text:widget.oldWare !=null?"ذخیره تغییرات": "افزودن به لیست",
                   width: MediaQuery.of(context).size.width,
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {

@@ -30,10 +30,13 @@ bool? isChecked=false;
 String? color="";
 @HiveField(11)
 DateTime? modifyDate=DateTime.now();
+@HiveField(12)
+String? wareSerial="";
 
 Map<String, dynamic> toMap() {
     return {
       'wareName': wareName,
+      'wareSerial':wareSerial,
       'unit': unit,
       'groupName': groupName,
       'description': description,
@@ -51,6 +54,7 @@ Map<String, dynamic> toMap() {
 WareHive fromMap(Map<String, dynamic> map) {
  WareHive ware= WareHive()
   ..wareName= map['wareName'] ?? ""
+  ..wareSerial= map['wareSerial'] ?? ""
   ..unit= map['unit'] ?? ""
   ..groupName= map['groupName'] ?? ""
   ..description= map['description'] ?? ""

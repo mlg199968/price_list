@@ -1,9 +1,11 @@
 import 'dart:io';
+import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:price_list/components/glass_bg.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/utils.dart';
+import 'package:price_list/screens/bazaar_purchase_screen.dart';
 import 'package:price_list/screens/group_management_screen.dart';
 import 'package:price_list/screens/purchase_screen.dart';
 import 'package:price_list/side_bar/setting/setting_screen.dart';
@@ -22,11 +24,11 @@ class SideBarPanel extends StatelessWidget {
       backgroundColor: Colors.transparent,
       child: Container(
         margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.height / 3),
-        decoration: BoxDecoration(
-          color: Colors.white70.withOpacity(.5),
-          //borderRadius: BorderRadius.only(bottomRight: Radius.elliptical(500, 150),topRight: Radius.circular(10))
-        ),
-        child: GlassBackground(
+        child: BlurryContainer(
+          color: Colors.white.withOpacity(.3),
+          borderRadius: BorderRadius.only(topRight: Radius.circular(10),bottomRight: Radius.circular(40)),
+          elevation: 10,
+          padding: EdgeInsets.all(0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -150,7 +152,7 @@ class PurchaseButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
-        Navigator.pushNamed(context, PurchaseScreen.id);
+        Navigator.pushNamed(context, BazaarPurchaseScreen.id);
        // showDialog(context: context, builder: (context)=>PurchaseScreen());
       },
       child: Container(

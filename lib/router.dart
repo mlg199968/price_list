@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:price_list/model/ware_hive.dart';
 import 'package:price_list/screens/add_ware/add_ware_screen.dart';
+import 'package:price_list/screens/bazaar_purchase_screen.dart';
 import 'package:price_list/screens/group_management_screen.dart';
 import 'package:price_list/screens/purchase_screen.dart';
 import 'package:price_list/screens/ware_list/panels/ware_action_panel.dart';
@@ -35,6 +36,8 @@ Route generateRoute(RouteSettings routeSettings) {
 
     case PurchaseScreen.id:
       return MaterialPageRoute(builder: (_) => PurchaseScreen());
+    case BazaarPurchaseScreen.id:
+         return MaterialPageRoute(builder: (_) => BazaarPurchaseScreen());
 
     default:
       return MaterialPageRoute(
