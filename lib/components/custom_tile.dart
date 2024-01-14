@@ -157,7 +157,7 @@ class MyListTile extends StatelessWidget {
                     style:  TextStyle(
                         color: selected ? Colors.blue :Colors.black87,
                         fontSize: 13,
-                        fontFamily: kCustomFont)),
+                        fontFamily: Theme.of(context).textTheme.bodyMedium!.fontFamily)),
               ],
             ),
           ),
@@ -177,7 +177,7 @@ class MyListTile extends StatelessWidget {
                     style:  TextStyle(
                         color:selected ? Colors.blue : Colors.black54,
                         fontSize: 12,
-                        fontFamily: kCustomFont)),
+                        fontFamily: Theme.of(context).textTheme.bodyMedium!.fontFamily)),
               ],
             ),
           ),
@@ -191,7 +191,7 @@ class MyListTile extends StatelessWidget {
                     style:  TextStyle(
                         color: selected ? Colors.blue :Colors.black,
                         fontSize: 14,
-                        fontFamily: kCustomFont)),
+                        fontFamily: Theme.of(context).textTheme.bodyMedium!.fontFamily)),
               ],
             ),
           ),

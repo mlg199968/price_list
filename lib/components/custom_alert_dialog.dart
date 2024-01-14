@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:flutter/material.dart';
 import 'package:price_list/components/hide_keyboard.dart';
+import 'package:price_list/constants/constants.dart';
 import 'package:price_list/screens/side_bar/sidebar_panel.dart';
 class CustomDialog extends StatelessWidget {
   const CustomDialog({
@@ -82,7 +83,10 @@ class CustomDialog extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Center(
+                  Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.all(10),
+                    decoration: BoxDecoration(gradient: kMainGradiant),
                       child: title == null
                           ? null
                           : Text(

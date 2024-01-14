@@ -84,7 +84,6 @@ class _SettingScreenState extends State<SettingScreen> {
             appBar: AppBar(
               backgroundColor: Colors.transparent,
               title: const Text("تنظیمات"),
-              actions: [ActionButton(icon: Icons.timelapse,onPress: (){storeInfoShop();},),],
             ),
             extendBodyBehindAppBar: true,
             body: Container(

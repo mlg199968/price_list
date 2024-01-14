@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:price_list/components/custom_alert.dart';
+import 'package:price_list/components/custom_float_action_button.dart';
 import 'package:price_list/components/custom_search_bar.dart';
 import 'package:price_list/components/custom_tile.dart';
 import 'package:price_list/components/drop_list_model.dart';
@@ -69,13 +70,7 @@ class _WareListScreenState extends State<WareListScreen> {
     return HideKeyboard(
       child: Scaffold(
         key: scaffoldKey,
-        floatingActionButton: FloatingActionButton(
-            backgroundColor: Colors.deepPurple,
-            foregroundColor: Colors.white,
-            child: Icon(
-              FontAwesomeIcons.plus,
-              size: 30,
-            ),
+        floatingActionButton: CustomFloatActionButton(
             onPressed: () async{
               Navigator.pushNamed(context, AddWareScreen.id);
             }),
@@ -113,7 +108,7 @@ class _WareListScreenState extends State<WareListScreen> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
                             boxShadow: [BoxShadow(offset: Offset(-1, -1),blurRadius: 1,color: Colors.grey)],
-                            gradient: kGradiantColor1,
+                            gradient: kMainGradiant,
                           ),
                           padding: EdgeInsets.all(5),
                           child: const Icon(
@@ -129,7 +124,7 @@ class _WareListScreenState extends State<WareListScreen> {
                       child: Image.asset('assets/images/logo.png')),
                 ),
                 flexibleSpace: Container(
-                  decoration: const BoxDecoration(gradient: kGradiantColor1),
+                  decoration: const BoxDecoration(gradient: kMainGradiant),
                 ),
                 title: Container(
                   padding: const EdgeInsets.only(right: 5),
@@ -157,7 +152,7 @@ class _WareListScreenState extends State<WareListScreen> {
               child: Column(
                 children: <Widget>[
                   Container(
-                    decoration: const BoxDecoration(gradient: kGradiantColor1),
+                    decoration: const BoxDecoration(gradient: kMainGradiant),
                     padding: const EdgeInsets.all(10),
                     child: CustomSearchBar(
                       controller: searchController,
@@ -246,8 +241,7 @@ class _ListPartState extends State<ListPart> {
                         WareHive ware = widget.wareList[index];
                         if (widget.category == "همه" ||
                             widget.category == widget.wareList[index].groupName) {
-                          return CustomTile(
-                            selected: selectedItems.contains(index),
+                          return InkWell(
                             onTap: () {
                               if (selectedItems.isEmpty) {
                                 if (widget.key != null) {
@@ -275,21 +269,24 @@ class _ListPartState extends State<ListPart> {
                                 setState(() {});
                               }
                             },
-                            height: 50,
-                            color: Colors.deepPurple.shade800,
-                            leadingIcon: CupertinoIcons.cube_box_fill,
-                            subTitle: ware.groupName,
-                            type: "کالا",
-                            title: ware.wareName,
-                            topTrailing: wareProvider.showQuantity
-                                ? ("${ware.quantity}  ".toPersianDigit() +
-                                    ware.unit)
-                                : "",
-                            topTrailingLabel: wareProvider.showQuantity ? "موجودی:" : "",
-                            trailing: addSeparator(ware.sale),
-                            trailingLabel: "فروش:",
-                            middle: wareProvider.showCostPrice ? addSeparator(ware.cost) : null,
-                            middleLabel: wareProvider.showCostPrice ? "خرید:" : null,
+                            child: CustomTile(
+                              selected: selectedItems.contains(index),
+                              height: 50,
+                              color: Colors.deepPurple.shade800,
+                              leadingIcon: CupertinoIcons.cube_box_fill,
+                              subTitle: ware.groupName,
+                              type: "کالا",
+                              title: ware.wareName,
+                              topTrailing: wareProvider.showQuantity
+                                  ? ("${ware.quantity}  ".toPersianDigit() +
+                                      ware.unit)
+                                  : "",
+                              topTrailingLabel: wareProvider.showQuantity ? "موجودی:" : "",
+                              trailing: addSeparator(ware.sale),
+                              trailingLabel: "فروش:",
+                              middle: wareProvider.showCostPrice ? addSeparator(ware.cost) : null,
+                              middleLabel: wareProvider.showCostPrice ? "خرید:" : null,
+                            ),
                           );
                         }
                         return const SizedBox();
@@ -340,7 +337,7 @@ class _ListPartState extends State<ListPart> {
                               for (int item in selectedItems) {
                                 selectedList.add(widget.wareList[item]);
                               }
-                              final file = await PdfWareListApi.generate(
+                              final file = await PdfWareListApi.generateTicketWareList(
                                   selectedList, context);
                               PdfApi.openFile(file);
                             },

@@ -20,7 +20,7 @@ class BackupTools {
     await _saveJson(jsonEncode(ware),context);
   }
 
-  static Future<void> restoreBackup(BuildContext context) async {
+  static Future<void> restoreBackup(context) async {
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles();
       if (result != null) {
@@ -34,9 +34,7 @@ class BackupTools {
         for (int i = 0; i < restoredDb.length; i++) {
           HiveBoxes.getWares().put(restoredDb[i].wareID, restoredDb[i]);
         }
-        if(context.mounted) {
           showSnackBar(context, "فایل پشتیبان با موفقیت بارگیری شد !",type: SnackType.success);
-        }
       }
 
     }catch(e){

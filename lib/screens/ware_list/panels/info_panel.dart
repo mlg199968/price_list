@@ -12,6 +12,7 @@ import 'package:price_list/screens/ware_list/widgets/row_info.dart';
 InfoPanel({required BuildContext context, required WareHive wareInfo}) {
   return CustomDialog(
     height: MediaQuery.of(context).size.height * .6,
+    image: wareInfo.imagePath,
     title: "مشخصات کالا",
     child: Column(
       children: [
@@ -39,24 +40,29 @@ InfoPanel({required BuildContext context, required WareHive wareInfo}) {
           height: 20,
         ),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             ///delete button
-            ActionButton(
-                bgColor: Colors.red,
-                onPress: () {
-                  wareInfo.delete();
-                  Navigator.pop(context);
-                },
-                icon: Icons.delete),
-
+            Flexible(
+              child: ActionButton(
+                  label: "حذف",
+                  bgColor: Colors.red,
+                  onPress: () {
+                    wareInfo.delete();
+                    Navigator.pop(context);
+                  },
+                  icon: Icons.delete),
+            ),
+            SizedBox(width: 10,),
             ///edit button
-            ActionButton(
-              onPress: () {
-                Navigator.pushNamed(context, AddWareScreen.id,
-                    arguments: wareInfo);
-              },
-              icon: Icons.drive_file_rename_outline_sharp,
+            Flexible(
+              child: ActionButton(
+                label: "ویرایش",
+                onPress: () {
+                  Navigator.pushNamed(context, AddWareScreen.id,
+                      arguments: wareInfo);
+                },
+                icon: Icons.drive_file_rename_outline_sharp,
+              ),
             ),
           ],
         ),

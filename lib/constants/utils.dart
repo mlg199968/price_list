@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'package:blurrycontainer/blurrycontainer.dart';
+import 'package:image/image.dart' as img;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:image_compression_flutter/image_compression_flutter.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:path_provider/path_provider.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
@@ -179,4 +181,49 @@ DateTime findMinDate(List<DateTime> dateList) {
     }
   }
   return minDate;
+}
+
+///save image from cache to new path
+saveImage(String? path,String idName,String newPath)async{
+  if(path!=null){
+    //get image directory from consts_class file in constants folder
+    File newFile= await File(path).copy("$newPath/$idName.jpg");
+    //delete file picker cache file in android and ios because windows show original path file so when you delete it's delete orginal file
+    if(Platform.isAndroid || Platform.isIOS) {
+      await File(path).delete();
+    }
+    return newFile.path;
+  }
+  return null;
+}
+
+reSizeImage(String iPath,{int width=600})async{
+  await (img.Command()
+  // Read a jpj image from a file.
+    ..decodeJpgFile(iPath)
+  // Resize the image so its width is some number and height maintains aspect
+  // ratio.
+    ..copyResize(width: width)
+  // Save the image to a jpj file.
+    ..writeToFile(iPath))
+  // Execute the image commands in an isolate thread
+      .executeThread();
+  //******
+  //compress image
+  ImageFile input=ImageFile(filePath: iPath,rawBytes: File(iPath).readAsBytesSync()); // set the input image file
+  Configuration config = const Configuration(
+    outputType: ImageOutputType.jpg,
+    // can only be true for Android and iOS while using ImageOutputType.jpg or ImageOutputType.pngÏ
+    useJpgPngNativeCompressor:false,//(Platform.isAndroid || Platform.isIOS) ? true : false,
+    // set quality between 0-100
+    quality: 25,
+  );
+  final param = ImageFileConfiguration(input: input, config: config);
+  final output = await compressor.compress(param);
+  debugPrint("Input size : ${input.sizeInBytes}");
+  debugPrint("Output size : ${output.sizeInBytes}");
+
+  if(input.sizeInBytes>100100){
+    await img.writeFile(iPath, output.rawBytes);
+  }
 }

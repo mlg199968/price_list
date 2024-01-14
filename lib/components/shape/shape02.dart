@@ -10,35 +10,41 @@ class BackgroundShape2 extends StatelessWidget {
     required this.child,
      this.color=Colors.blue,
      this.height=60, this.width=200,
+    this.borderRadius=10
+
   });
   final Widget child;
 final Color color;
 final double height;
 final double width;
+  final double borderRadius;
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.bottomLeft,
-      children: [
-      ClipPath(
-        clipper: CustomShape(),
-        child: Container(
-          color: color.withOpacity(.5),
-          width:MediaQuery.of(context).size.width,
-          height: height,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(borderRadius),
+      child: Stack(
+        alignment: Alignment.bottomLeft,
+        children: [
+        ClipPath(
+          clipper: CustomShape(),
+          child: Container(
+            color: color.withOpacity(.5),
+            width:MediaQuery.of(context).size.width,
+            height: height,
+          ),
         ),
-      ),
-      ClipPath(
-        clipper: CustomShape(),
-        child: Container(
-          color: color.withOpacity(.7),
-          width: MediaQuery.of(context).size.width*.5,
-          height: height,
+        ClipPath(
+          clipper: CustomShape(),
+          child: Container(
+            color: color.withOpacity(.7),
+            width: MediaQuery.of(context).size.width*.5,
+            height: height,
+          ),
         ),
-      ),
-      child
-    ],);
+        child
+      ],),
+    );
   }
 
 

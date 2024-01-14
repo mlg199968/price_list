@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
+import 'package:price_list/components/custom_text.dart';
 
 class InfoPanelRow extends StatelessWidget {
   const InfoPanelRow({super.key, required this.infoList, required this.title});
@@ -23,17 +24,17 @@ class InfoPanelRow extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(title.toPersianDigit()),
+            CText(title.toPersianDigit(),color: Colors.black54,),
             const SizedBox(
               width: 10,
             ),
             Expanded(
               flex: 1,
-              child: Text(
+              child: CText(
                 infoList.toPersianDigit(),
-                textAlign: TextAlign.left,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
+                textDirection: TextDirection.rtl,
+                textAlign: TextAlign.end,
+                maxLine: 3,
               ),
             ),
           ],

@@ -31,7 +31,7 @@ class CustomFloatActionButton extends StatelessWidget {
         isExtended: label==null?false:true,
         elevation: 4,
         onPressed: onPressed,
-        backgroundColor: bgColor,
+        backgroundColor: bgColor ?? Colors.white,
         foregroundColor: fgColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),

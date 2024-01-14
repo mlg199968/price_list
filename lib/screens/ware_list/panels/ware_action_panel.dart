@@ -1,15 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:price_list/components/action_button.dart';
+import 'package:price_list/components/counter_textfield.dart';
 import 'package:price_list/components/custom_alert_dialog.dart';
-import 'package:price_list/components/custom_button.dart';
 import 'package:price_list/components/custom_textfield.dart';
 import 'package:price_list/components/drop_list_model.dart';
-import 'package:price_list/components/hide_keyboard.dart';
 import 'package:price_list/components/pdf/pdf_api.dart';
 import 'package:price_list/components/pdf/pdf_ware_list_api.dart';
+import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/utils.dart';
-import 'package:price_list/services/hive_boxes.dart';
 import 'package:price_list/model/ware_hive.dart';
 import 'package:price_list/providers/ware_provider.dart';
+import 'package:price_list/services/hive_boxes.dart';
 import 'package:provider/provider.dart';
 
 class WareActionsPanel extends StatefulWidget {
@@ -29,6 +32,8 @@ class _WareActionsPanelState extends State<WareActionsPanel> {
   final TextEditingController fixAmountController = TextEditingController();
   late String subGroup;
 
+  String printType=kPrintTypeList[0];
+
   @override
   void initState() {
     subGroup = widget.subGroup;
@@ -39,13 +44,11 @@ class _WareActionsPanelState extends State<WareActionsPanel> {
 
   @override
   Widget build(BuildContext context) {
-    final wareProvider=Provider.of<WareProvider>(context,listen: false);
     return CustomDialog(
-        vip: !wareProvider.isVip,
-        child: HideKeyboard(
-          child: Stack(
-            children: [
-              Column(
+        height: 350,
+        child: Consumer<WareProvider>(
+            builder: (context,wareProvider,child) {
+              return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
@@ -56,17 +59,35 @@ class _WareActionsPanelState extends State<WareActionsPanel> {
                       ),
 
                       ///dropDown list for Group Select
-                      Consumer<WareProvider>(
-                        builder: (context, wareData, child) {
-                          return DropListModel(
-                            selectedValue: subGroup,
-                            height: 40,
-                            listItem: ["همه", ...wareData.groupList],
-                            onChanged: (val) {
-                              subGroup = val;
-                              setState(() {});
-                            },
-                          );
+                      DropListModel(
+                        selectedValue: subGroup,
+                        height: 40,
+                        listItem: ["همه", ...wareProvider.groupList],
+                        onChanged: (val) {
+                          subGroup = val;
+                          setState(() {});
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    children: [
+                      const Text("قالب چاپ"),
+                      const SizedBox(
+                        width: 10,
+                      ),
+
+                      ///dropDown list for print type Select
+                      DropListModel(
+                        selectedValue: printType,
+                        height: 40,
+                        listItem: kPrintTypeList,
+                        onChanged: (val) {
+                          printType = val;
+                          setState(() {});
                         },
                       ),
                     ],
@@ -82,9 +103,10 @@ class _WareActionsPanelState extends State<WareActionsPanel> {
                   ///price text fields
                   Row(
                     children: [
-                      Expanded(
-                          flex: 3,
+                      Flexible(
+                          flex: 2,
                           child: CustomTextField(
+                            width:200,
                             label: "مبلغ ثابت",
                             controller: fixAmountController,
                             textFormat: TextFormatter.price,
@@ -92,83 +114,89 @@ class _WareActionsPanelState extends State<WareActionsPanel> {
                       const SizedBox(
                         width: 5,
                       ),
-                      Expanded(
-                          child: CustomTextField(
-                            label: "درصد",
-                            controller: percentController,
-                            textFormat: TextFormatter.number,
-                            onChange: (val) {
-                              if (val != "" &&
-                                  val != "-" &&
-                                  val != "." &&
-                                  val != "-." &&
-                                  stringToDouble(val) > 1000) {
-                                percentController.text = 1000.toString();
-                                setState(() {});
-                              }
-                            },
+                      Flexible(
+                          child: SizedBox(
+                            width: 120,
+                            child: CounterTextfield(
+                              label: "درصد",
+                              controller: percentController,
+                              onChange: (val) {
+                                if (val != "" &&
+                                    val != "-" &&
+                                    val != "." &&
+                                    val != "-." &&
+                                    stringToDouble(val!) > 1000) {
+                                  percentController.text = 1000.toString();
+                                  setState(() {});
+                                }
+                              },
+                            ),
                           )),
                     ],
                   ),
-                  const SizedBox(
-                    height: 15,
+                  const Expanded(
+                    child: SizedBox(
+                      height: 15,
+                    ),
                   ),
 
                   ///buttons
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Expanded(
-                        child: CustomButton(
-                            width: double.maxFinite,
-                            text: "ثبت",
-                            onPressed: () {
-                              for (WareHive ware in widget.wares) {
-                                double fixPrice = fixAmountController.text == ""
-                                    ? 0
-                                    : stringToDouble(fixAmountController.text);
-                                double percent = percentController.text == ""
-                                    ? 0
-                                    : stringToDouble(percentController.text);
-                                if (ware.groupName == subGroup || subGroup == "همه") {
-                                  ware.sale = ware.sale +
-                                      fixPrice +
-                                      (ware.sale * percent / 100);
-                                  ware.cost = ware.cost +
-                                      fixPrice +
-                                      (ware.cost * percent / 100);
-                                  HiveBoxes.getWares().put(ware.wareID, ware);
-                                }
+                      ActionButton(
+                          icon: Icons.save_alt,
+                          label: "ثبت",
+                          onPress: () {
+                            for (WareHive ware in widget.wares) {
+                              double fixPrice = fixAmountController.text == ""
+                                  ? 0
+                                  : stringToDouble(fixAmountController.text);
+                              double percent = percentController.text == ""
+                                  ? 0
+                                  : stringToDouble(percentController.text);
+                              if (ware.groupName == subGroup || subGroup == "همه") {
+                                ware.sale = ware.sale +
+                                    fixPrice +
+                                    (ware.sale * percent / 100);
+                                ware.cost = ware.cost +
+                                    fixPrice +
+                                    (ware.cost * percent / 100);
+                                HiveBoxes.getWares().put(ware.wareID, ware);
                               }
-                              Navigator.pop(context, false);
-                            }),
-                      ),
+                            }
+                            Navigator.pop(context, false);
+                          }),
                       const SizedBox(
                         width: 5,
                       ),
-                      Expanded(
-                        child: CustomButton(
-                            width: double.maxFinite,
-                            text: "چاپ",
-                            color: Colors.red,
-                            onPressed: () async {
-                              List<WareHive> filteredList = [];
-                              for (WareHive ware in widget.wares) {
-                                if (ware.groupName == subGroup || subGroup == "همه") {
-                                  filteredList.add(ware);
-                                }
+                      ActionButton(
+                          label: "چاپ",
+                          icon: Icons.print,
+                          bgColor: Colors.red,
+                          onPress: () async {
+                            List<WareHive> filteredList = [];
+                            for (WareHive ware in widget.wares) {
+                              if (ware.groupName == subGroup || subGroup == "همه") {
+                                filteredList.add(ware);
                               }
-                              final file = await PdfWareListApi.generate(
+                            }
+                            late File file;
+                            if(printType=="اتیکت") {
+                              file = await PdfWareListApi.generateTicketWareList(
                                   filteredList, context);
-                              PdfApi.openFile(file);
-                            }),
-                      ),
+                            }
+                            else{
+                              file = await PdfWareListApi.generateSimpleWareList(
+                                  filteredList, context);
+                            }
+                            PdfApi.openFile(file);
+                          }),
                     ],
                   ),
                 ],
-              ),
-
-            ],
-          ),
+              );
+            }
         ));
   }
 }
