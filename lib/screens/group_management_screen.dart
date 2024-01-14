@@ -4,9 +4,9 @@ import 'package:price_list/components/custom_button.dart';
 import 'package:price_list/components/custom_textfield.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/utils.dart';
-import 'package:price_list/data/hive_boxes.dart';
+import 'package:price_list/services/hive_boxes.dart';
 import 'package:price_list/model/ware_hive.dart';
-import 'package:price_list/ware_provider.dart';
+import 'package:price_list/providers/ware_provider.dart';
 import 'package:provider/provider.dart';
 
 class GroupManagementScreen extends StatefulWidget {
@@ -95,8 +95,7 @@ class GroupManagePanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomAlertDialog(
-      context: context,
+    return CustomDialog(
       title: 'ویرایش گروه',
       height: 250,
       child: Consumer<WareProvider>(

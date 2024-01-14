@@ -7,9 +7,10 @@ import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/screens/bazaar_purchase_screen.dart';
 import 'package:price_list/screens/group_management_screen.dart';
+import 'package:price_list/screens/notice_screen/notice_screen.dart';
 import 'package:price_list/screens/purchase_screen.dart';
-import 'package:price_list/side_bar/setting/setting_screen.dart';
-import 'package:price_list/ware_provider.dart';
+import 'package:price_list/screens/setting/setting_screen.dart';
+import 'package:price_list/providers/ware_provider.dart';
 import 'package:provider/provider.dart';
 
 class SideBarPanel extends StatelessWidget {
@@ -44,15 +45,21 @@ class SideBarPanel extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
-                  child: IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(
-                        Icons.arrow_back,
-                        size: 30,
-                        color: Colors.white,
-                      )),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const BackButton(color: Colors.white,),
+                      IconButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, NoticeScreen.id);
+                          },
+                          icon: const Icon(
+                            Icons.notifications,
+                            size: 30,
+                            color: Colors.white,
+                          )),
+                    ],
+                  ),
                 ),
                 Center(
                   child: Padding(

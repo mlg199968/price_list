@@ -8,7 +8,7 @@ import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:price_list/components/pdf/pdf_api.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/model/ware_hive.dart';
-import 'package:price_list/ware_provider.dart';
+import 'package:price_list/providers/ware_provider.dart';
 import 'package:provider/provider.dart';
 
 class PdfWareListApi {

@@ -7,15 +7,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:price_list/components/shape/shape02.dart';
 import 'package:price_list/constants/constants.dart';
+import 'package:price_list/constants/enums.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 
-enum SnackType{
-  normal,
-  success,
-  warning,
-  error,
-}
+
 
 ///Show snake bar in active context
 void showSnackBar(BuildContext context, String title,

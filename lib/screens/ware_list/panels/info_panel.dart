@@ -2,17 +2,16 @@
 
 import 'package:flutter/material.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
+import 'package:price_list/components/action_button.dart';
 import 'package:price_list/components/custom_alert_dialog.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/model/ware_hive.dart';
 import 'package:price_list/screens/add_ware/add_ware_screen.dart';
-import 'package:price_list/screens/ware_list/widgets/action_button.dart';
 import 'package:price_list/screens/ware_list/widgets/row_info.dart';
 
 InfoPanel({required BuildContext context, required WareHive wareInfo}) {
-  return CustomAlertDialog(
-    height: MediaQuery.of(context).size.height * .5,
-    context: context,
+  return CustomDialog(
+    height: MediaQuery.of(context).size.height * .6,
     title: "مشخصات کالا",
     child: Column(
       children: [

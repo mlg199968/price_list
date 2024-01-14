@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 
 const String uri = 'http://192.168.1.3:3000';
-
+const String hostUrl="https://mlggrand.ir/db";
 
 
 
@@ -14,6 +14,19 @@ const kBgColor=Colors.white70;
 const kMainGradiant = LinearGradient(
   colors: [Colors.deepPurple, Colors.blueAccent],
 );
+const kBlackWhiteGradiant = LinearGradient(
+    colors: [Color(0XFFffffff),Color(0XFFE0E0E0),Color(0XFFffffff),Color(0XFFE0E0E0),],
+    begin: Alignment.topRight,
+    end: Alignment.bottomLeft
+
+);
+const kMainColor=Color(0XFFED921B);
+const kSecondaryColor=Colors.teal;
+
+const kMainDisableColor=Colors.orangeAccent;
+const kMainActiveColor=Colors.deepOrange;
+const kMainColor2=Colors.black38;
+const kMainColor3=Colors.black87;
 
 // var kCardGradiant = const LinearGradient(
 //   begin: Alignment.bottomLeft,
@@ -26,6 +39,7 @@ const kColor1=Colors.deepPurple;
 const List<String> kUnitList=['عدد','متر','کیلو گرم','متر مربع','متر مکعب','گرم','شاخه','بسته','دسته',];
 const List<String> kSortList=['تاریخ تسویه','حروف الفبا','تاریخ ثبت'];
 const List<String> kCurrencyList=["ریال","تومان","دلار","لیر","درهم"];
+const List<String> kFonts=['Shabnam','Koodak','Roya','Terafik','Elham','Titr',];
 
 const kSpaceBetween=20.0;
 
@@ -67,7 +81,6 @@ final kInputDecoration=InputDecoration(
 );
 
 final kButtonStyle=TextButtonThemeData(
-
   style: ButtonStyle(
     backgroundColor:
     MaterialStateProperty.resolveWith((states) {

@@ -27,13 +27,15 @@ class WareHiveAdapter extends TypeAdapter<WareHive> {
       ..date = fields[7] as DateTime
       ..wareID = fields[8] as String?
       ..isChecked = fields[9] as bool?
-      ..color = fields[10] as String?;
+      ..color = fields[10] as String?
+      ..modifyDate = fields[11] as DateTime?
+      ..wareSerial = fields[12] as String?;
   }
 
   @override
   void write(BinaryWriter writer, WareHive obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(13)
       ..writeByte(0)
       ..write(obj.wareName)
       ..writeByte(1)
@@ -55,7 +57,11 @@ class WareHiveAdapter extends TypeAdapter<WareHive> {
       ..writeByte(9)
       ..write(obj.isChecked)
       ..writeByte(10)
-      ..write(obj.color);
+      ..write(obj.color)
+      ..writeByte(11)
+      ..write(obj.modifyDate)
+      ..writeByte(12)
+      ..write(obj.wareSerial);
   }
 
   @override

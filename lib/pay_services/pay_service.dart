@@ -6,11 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:myket_iap/myket_iap.dart';
 import 'package:myket_iap/util/iab_result.dart';
 import 'package:myket_iap/util/purchase.dart';
+import 'package:price_list/constants/enums.dart';
 
 import 'package:price_list/constants/private.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/screens/ware_list/ware_list_screen.dart';
-import 'package:price_list/ware_provider.dart';
+import 'package:price_list/providers/ware_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 

@@ -3,10 +3,11 @@ import 'package:price_list/model/ware_hive.dart';
 import 'package:price_list/screens/add_ware/add_ware_screen.dart';
 import 'package:price_list/screens/bazaar_purchase_screen.dart';
 import 'package:price_list/screens/group_management_screen.dart';
+import 'package:price_list/screens/notice_screen/notice_screen.dart';
 import 'package:price_list/screens/purchase_screen.dart';
 import 'package:price_list/screens/ware_list/panels/ware_action_panel.dart';
 import 'package:price_list/screens/ware_list/ware_list_screen.dart';
-import 'package:price_list/side_bar/setting/setting_screen.dart';
+import 'package:price_list/screens/setting/setting_screen.dart';
 
 Route generateRoute(RouteSettings routeSettings) {
   switch (routeSettings.name) {
@@ -36,8 +37,13 @@ Route generateRoute(RouteSettings routeSettings) {
 
     case PurchaseScreen.id:
       return MaterialPageRoute(builder: (_) => PurchaseScreen());
+
     case BazaarPurchaseScreen.id:
          return MaterialPageRoute(builder: (_) => BazaarPurchaseScreen());
+
+
+    case NoticeScreen.id:
+         return MaterialPageRoute(builder: (_) => NoticeScreen());
 
     default:
       return MaterialPageRoute(

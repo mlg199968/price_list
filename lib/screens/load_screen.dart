@@ -2,11 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:myket_iap/myket_iap.dart';
-import 'package:price_list/constants/private.dart';
+import 'package:price_list/constants/global_task.dart';
 import 'package:price_list/screens/ware_list/ware_list_screen.dart';
-import 'package:price_list/ware_provider.dart';
-import 'package:provider/provider.dart';
+
 
 
 
@@ -17,12 +15,12 @@ class LoadScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SchedulerBinding.instance.addPostFrameCallback((timeStamp) async{
-      var iabResult = await MyketIAP.init(rsaKey: Private.rsaKeyMyket, enableDebugLogging: true);
-      Provider.of<WareProvider>(context,listen: false).getVip();
-      Timer(const Duration(milliseconds: 900), () {
-        Navigator.of(context).pushNamedAndRemoveUntil(
-            WareListScreen.id, (context) => false);
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) async {
+      Timer(const Duration(milliseconds: 900), () async{
+        await GlobalTask().getStartUpData(context);
+
+        Navigator.of(context).pushReplacementNamed(
+            WareListScreen.id);
       });
     });
 

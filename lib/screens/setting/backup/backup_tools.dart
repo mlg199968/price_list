@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart' as intl;
+import 'package:price_list/constants/enums.dart';
 import 'package:price_list/constants/utils.dart';
-import 'package:price_list/data/hive_boxes.dart';
+import 'package:price_list/services/hive_boxes.dart';
 import 'package:price_list/model/ware_hive.dart';
 
 

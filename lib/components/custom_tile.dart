@@ -30,13 +30,13 @@ class CustomTile extends StatelessWidget {
   final String topTrailing;
   final String? topTrailingLabel;
   final String trailing;
-  final String? trailingLabel;
-  final String? middle;
-  final String? middleLabel;
   final String? type;
   final IconData? leadingIcon;
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
+  final String? middle;
+  final String? middleLabel;
+  final String? trailingLabel;
   final bool enable;
   final bool selected;
 
@@ -110,8 +110,6 @@ class MyListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       selected: selected,
-      onLongPress: onLongPress,
-      onTap: onTap,
       iconColor: Colors.black26,
       contentPadding: const EdgeInsets.symmetric(horizontal: 5),
       dense: true,
@@ -203,45 +201,4 @@ class MyListTile extends StatelessWidget {
   }
 }
 
-class DropButtons extends StatelessWidget {
-  const DropButtons(
-      {super.key,
-      required this.text,
-      required this.icon,
-      required this.onPress,
-      required this.color});
 
-  final String text;
-  final IconData icon;
-  final Color color;
-  final VoidCallback onPress;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        alignment: Alignment.center,
-        color: color,
-        child: TextButton(
-          onPressed: onPress,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Icon(
-                icon,
-                color: Colors.white,
-              ),
-              const SizedBox(
-                width: 5,
-              ),
-              Text(
-                text,
-                style: const TextStyle(color: Colors.white, fontSize: 16),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}

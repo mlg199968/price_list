@@ -3,8 +3,8 @@ import 'package:price_list/components/custom_alert_dialog.dart';
 import 'package:price_list/components/custom_button.dart';
 import 'package:price_list/components/custom_textfield.dart';
 import 'package:price_list/constants/utils.dart';
-import 'package:price_list/data/hive_boxes.dart';
 import 'package:price_list/model/ware_hive.dart';
+import 'package:price_list/services/hive_boxes.dart';
 
 class SelectedWareActionPanel extends StatefulWidget {
   const SelectedWareActionPanel(
@@ -31,8 +31,8 @@ class _SelectedWareActionPanelState extends State<SelectedWareActionPanel> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomAlertDialog(
-        context: context,
+    return CustomDialog(
+
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

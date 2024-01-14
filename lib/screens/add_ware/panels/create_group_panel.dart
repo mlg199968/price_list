@@ -3,7 +3,7 @@ import 'package:price_list/components/custom_alert_dialog.dart';
 import 'package:price_list/components/custom_button.dart';
 import 'package:price_list/components/custom_textfield.dart';
 import 'package:price_list/constants/utils.dart';
-import 'package:price_list/ware_provider.dart';
+import 'package:price_list/providers/ware_provider.dart';
 import 'package:provider/provider.dart';
 
 class CreateGroupPanel extends StatelessWidget {
@@ -14,8 +14,7 @@ class CreateGroupPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<WareProvider>(context, listen: false);
-    return CustomAlertDialog(
-      context: context,
+    return CustomDialog(
       title: 'افزودن گروه جدید',
       height: 250,
       child: Container(
