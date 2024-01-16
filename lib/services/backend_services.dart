@@ -3,9 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:price_list/constants/constants.dart';
-import 'package:price_list/constants/enums.dart';
 import 'package:price_list/constants/error_handler.dart';
-import 'package:price_list/constants/utils.dart';
 import 'package:price_list/model/notice.dart';
 
 
@@ -19,7 +17,7 @@ class BackendServices {
 
       http.Response res = await http.post(
           Uri.parse("$hostUrl/notification/read_notice.php"),
-          body: {"app-name": appName});
+          body: {"app-name": appName}).timeout(Duration(seconds: 10));
       if (res.statusCode == 200) {
         var backData = jsonDecode(res.body);
         if (backData["success"] == true) {

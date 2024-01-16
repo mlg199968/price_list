@@ -49,7 +49,7 @@ android {
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
-    //myket market configuration for in app purchase
+    //TODO:myket market configuration for in app purchase
     defaultConfig {
         def marketApplicationId = "ir.mservices.market"
         def marketBindAddress = "ir.mservices.market.InAppBillingService.BIND"

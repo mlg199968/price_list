@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/model/shop.dart';
+import 'package:price_list/screens/notice_screen/services/notice_tools.dart';
 import 'package:price_list/services/hive_boxes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,7 +13,8 @@ class WareProvider extends ChangeNotifier{
  List groupList=["default",];
  String selectedGroup="default";
  String currency="ریال";
- String fontFamily=kFonts[0];
+ String _fontFamily=kFonts[0];
+ String get fontFamily=>_fontFamily;
  bool _showCostPrice = false;
  bool get showCostPrice => _showCostPrice;
  bool _showQuantity = false;
@@ -47,7 +49,7 @@ class WareProvider extends ChangeNotifier{
     stampImage=shop.stampImage;
     shopCode=shop.shopCode;
     currency=shop.currency;
-    fontFamily=shop.fontFamily ?? kFonts[0];
+    _fontFamily=shop.fontFamily ?? kFonts[0];
     _userLevel=shop.userLevel;
     _showQuantity=shop.showQuantity;
     _showCostPrice=shop.showCost;
@@ -99,13 +101,14 @@ void getVip() async{
     isVip=subsInfo;
     //notifyListeners();
   }
-  else{
-  }
+
 
 }
-  getFontFamily(String font){
-    fontFamily=font;
-    notifyListeners();
+  getFontFamily(String? font){
+    if(font!=null) {
+      _fontFamily = font;
+      notifyListeners();
+    }
   }
 
 // Future<List> getWares(BuildContext context)async{

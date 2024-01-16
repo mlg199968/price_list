@@ -1,14 +1,13 @@
-import 'dart:io';
 import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:price_list/components/glass_bg.dart';
+import 'package:price_list/components/over_cage.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/screens/bazaar_purchase_screen.dart';
 import 'package:price_list/screens/group_management_screen.dart';
 import 'package:price_list/screens/notice_screen/notice_screen.dart';
-import 'package:price_list/screens/purchase_screen.dart';
+import 'package:price_list/screens/notice_screen/services/notice_tools.dart';
 import 'package:price_list/screens/setting/setting_screen.dart';
 import 'package:price_list/providers/ware_provider.dart';
 import 'package:provider/provider.dart';
@@ -49,15 +48,18 @@ class SideBarPanel extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const BackButton(color: Colors.white,),
-                      IconButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, NoticeScreen.id);
-                          },
-                          icon: const Icon(
-                            Icons.notifications,
-                            size: 30,
-                            color: Colors.white,
-                          )),
+                      OverCage(
+                        active: NoticeTools.checkNewNotifications(),
+                        child: IconButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, NoticeScreen.id);
+                            },
+                            icon: const Icon(
+                              Icons.notifications,
+                              size: 30,
+                              color: Colors.white,
+                            )),
+                      ),
                     ],
                   ),
                 ),

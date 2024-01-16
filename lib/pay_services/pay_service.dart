@@ -7,6 +7,7 @@ import 'package:myket_iap/myket_iap.dart';
 import 'package:myket_iap/util/iab_result.dart';
 import 'package:myket_iap/util/purchase.dart';
 import 'package:price_list/constants/enums.dart';
+import 'package:price_list/constants/error_handler.dart';
 
 import 'package:price_list/constants/private.dart';
 import 'package:price_list/constants/utils.dart';
@@ -51,29 +52,28 @@ class PayService {
       http.Response res = await http.get(
         Uri.parse("${Private.licenseApiAddress}/activate/$license"),
         headers: <String, String>{'authorization': basicAuth},
-      );
+      ).timeout(Duration(seconds: 10));
 
-      Map data = jsonDecode(res.body);
-      if (res.statusCode == 200) {
+      Map result = jsonDecode(res.body);
+      if (res.statusCode == 200 && result["data"]["timesActivated"]!=null) {
           Provider.of<WareProvider>(context, listen: false).setVip(true);
-          Navigator.pushNamedAndRemoveUntil(context, WareListScreen.id,(route)=>false);
+           Navigator.pushNamedAndRemoveUntil(context, WareListScreen.id,(route)=>false);
           showSnackBar(
               context, "لایسنس با موفقیت اعمال شد", type: SnackType.success);
       }
+      else if(res.statusCode == 200 && result["data"]["errors"]!=null){
+        ErrorHandler.errorManger(context, result["data"]["errors"],title:"خطا احراز لایسنس",showSnackbar: true);
+      }
       else if (res.statusCode == 404) {
-        String message=data["message"];
-        showSnackBar(
-            context,message, type: SnackType.warning);
-        print(message);
+        String message=result["message"];
+        ErrorHandler.errorManger(context,message,title:"404 error",showSnackbar: true);
       }
     } catch (e) {
-      showSnackBar(context, "مشکل ارتباط با سرور!", type: SnackType.error);
-      print("مشکل ارتباط با سرور!");
-      print(e);
+      ErrorHandler.errorManger(context,e,title:"مشکل ارتباط با سرور!",showSnackbar: true);
     }
   }
 
-
+//TODO: bazaar connect function
 // static connectToBazaar(BuildContext context) async {
 //
 //   try {
@@ -97,12 +97,12 @@ class PayService {
 //     print(e);
 //   }
 // }
-
+//TODO: myket connect function
 static connectToMyket(BuildContext context)async{
     try{
       Map result = await MyketIAP.launchPurchaseFlow(sku: "1", payload:"payload");
       IabResult purchaseResult = result[MyketIAP.RESULT];
-      Purchase purchase = result[MyketIAP.PURCHASE];
+     // Purchase purchase = result[MyketIAP.PURCHASE];
       print("وضعیت خرید از مایکت");
       print(purchaseResult.mMessage);
       print(purchaseResult.mResponse);
@@ -113,10 +113,54 @@ static connectToMyket(BuildContext context)async{
 
 
     }catch(e){
-      showSnackBar(context, "روند پرداخت با مشکل مواجه شده است");
-    print(e);
+      ErrorHandler.errorManger(context,e,title:"روند پرداخت با مشکل مواجه شده است!",showSnackbar: true);
     }
 
 
 }
 }
+
+
+// {success: true,
+// data: {
+//   errors: {
+//     lmfwc_rest_data_error: [License Key: 141 could not be found.]},
+// error_data: {
+//     lmfwc_rest_data_error: {status: 404}
+//   }
+// }
+// }
+
+
+// {
+// success: true,
+// data: {
+//       id: 1,
+//       orderId: null,
+//       productId: null,
+//       userId: 20,
+//       licenseKey: pl-123456,
+//       expiresAt: null,
+//       validFor: 120,
+//       source: 2,
+//       status: 3,
+//       timesActivated: 4,
+//       timesActivatedMax: 100,
+//       createdAt: 2023-09-10 07:59:45,
+//       createdBy: 1,
+//       updatedAt: 2024-01-15 05:19:15,
+//       updatedBy: 1,
+//       activationData: {
+//               id: 5,
+//               token: 7c23ef39f2e9f98e07b14387569374d80031566c,
+//               license_id: 1,
+//               label: null,
+//               source: 2,
+//               ip_address: 31.14.93.30,
+//               user_agent: Dart/3.2 (dart:io),
+//               meta_data: null,
+//               created_at: 2024-01-15 05:19:15,
+//               updated_at: null,
+//               deactivated_at: null}
+//             }
+//           }

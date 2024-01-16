@@ -3,27 +3,40 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:price_list/constants/global_task.dart';
+import 'package:price_list/providers/ware_provider.dart';
 import 'package:price_list/screens/ware_list/ware_list_screen.dart';
+import 'package:price_list/services/hive_boxes.dart';
+import 'package:provider/provider.dart';
 
 
 
 
 
-class LoadScreen extends StatelessWidget {
+class LoadScreen extends StatefulWidget {
   static String id = 'loadingScreen';
   const LoadScreen({Key? key}) : super(key: key);
 
   @override
+  State<LoadScreen> createState() => _LoadScreenState();
+}
+
+class _LoadScreenState extends State<LoadScreen> {
+
+  @override
+  void didChangeDependencies() async{
+    await GlobalTask().getStartUpData(context);
+    super.didChangeDependencies();
+  }
+  @override
   Widget build(BuildContext context) {
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) async {
       Timer(const Duration(milliseconds: 900), () async{
-        await GlobalTask().getStartUpData(context);
+       // await GlobalTask().getStartUpData(context);
 
         Navigator.of(context).pushReplacementNamed(
             WareListScreen.id);
       });
     });
-
     return Container(
       decoration: const BoxDecoration(
           gradient: LinearGradient(

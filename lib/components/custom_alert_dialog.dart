@@ -46,7 +46,7 @@ class CustomDialog extends StatelessWidget {
                   width: width,
                   height: 250,
                   decoration: BoxDecoration(
-                    image: image == null
+                    image: (image == null || image=="")
                         ? null
                         : DecorationImage(
                             image: FileImage(File(image!)),
@@ -98,11 +98,11 @@ class CustomDialog extends StatelessWidget {
                     textDirection: textDirection,
                     child: Flexible(
                       child: Container(
-                          margin: image == null
+                          margin: (image == null || image=="")
                               ? null
                               : const EdgeInsets.all(20).copyWith(top: 50),
                           //decoration for image if image is not null
-                          decoration: image == null
+                          decoration: (image == null || image=="")
                               ? null
                               : BoxDecoration(
                                   gradient: const LinearGradient(

@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:price_list/components/custom_button.dart';
-import 'package:price_list/components/custom_textfield.dart';
 import 'package:price_list/constants/constants.dart';
-import 'package:price_list/constants/utils.dart';
 import 'package:price_list/pay_services/pay_service.dart';
 import 'package:price_list/screens/purchase_screen.dart';
 
@@ -87,27 +84,29 @@ class BazaarPurchaseScreen extends StatelessWidget {
                       height: 50,
                     ),
 
-                    ///buy from bazaar button
+                    //TODO: bazaar purchase button
                     //BazaarButton(),
+                    //TODO: myket purchase button
                        MyketButton(),
+                    //TODO:license payment
                     ///alternative way for payment
-                    //    Divider(height: 40,),
-                    // Text("درصورت مواجه شدن با خطا درخرید از بازار می توانید از روش زیر اقدام به فعال سازی نسخه کامل اپ نمایید.",style: TextStyle(color: Colors.white70,fontSize: 12),),
-                    // SizedBox(height: 30,),
-                    // ///buy license button
-                    // Center(
-                    //   child: CustomButton(
-                    //     height: 35,
-                    //     fontSize: 15,
-                    //     width: 200,
-                    //     radius: 20,
-                    //     color: Colors.deepPurpleAccent,
-                    //     text: "فعال سازی با لایسنس",
-                    //     onPressed: ()  {
-                    //      Navigator.pushNamed(context, PurchaseScreen.id);
-                    //     },
-                    //   ),
-                    // ),
+                       Divider(height: 40,),
+                    Text("درصورت مواجه شدن با خطا درخرید از بازار می توانید از روش زیر اقدام به فعال سازی نسخه کامل اپ نمایید.",style: TextStyle(color: Colors.white70,fontSize: 12),),
+                    SizedBox(height: 30,),
+                    ///buy license button
+                    Center(
+                      child: CustomButton(
+                        height: 35,
+                        fontSize: 15,
+                        width: 200,
+                        radius: 20,
+                        color: Colors.deepPurpleAccent,
+                        text: "فعال سازی با لایسنس",
+                        onPressed: ()  {
+                         Navigator.pushNamed(context, PurchaseScreen.id);
+                        },
+                      ),
+                    ),
                     
                     
                   ],

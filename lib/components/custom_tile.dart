@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:price_list/components/custom_bg_shape.dart';
-import '../../../constants/constants.dart';
 
 class CustomTile extends StatelessWidget {
   const CustomTile({

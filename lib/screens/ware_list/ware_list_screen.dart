@@ -18,7 +18,6 @@ import 'package:price_list/constants/utils.dart';
 import 'package:price_list/screens/side_bar/sidebar_panel.dart';
 import 'package:price_list/services/hive_boxes.dart';
 import 'package:price_list/model/ware_hive.dart';
-import 'package:price_list/pay_services/pay_service.dart';
 import 'package:price_list/screens/add_ware/add_ware_screen.dart';
 import 'package:price_list/screens/ware_list/panels/info_panel.dart';
 import 'package:price_list/screens/ware_list/panels/selected_action_panel.dart';
@@ -181,10 +180,18 @@ class _WareListScreenState extends State<WareListScreen> {
                         if (filteredList.isEmpty) {
                           return const Expanded(
                             child: Center(
-                                child: Text(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(FontAwesomeIcons.boxOpen),
+                                    SizedBox(height: 8,),
+                                    Text(
                               " کالایی یافت نشد!",
                               textDirection: TextDirection.rtl,
-                            )),
+                            ),
+                                  ],
+                                )),
                           );
                         }
                         return ListPart(
@@ -306,8 +313,7 @@ class _ListPartState extends State<ListPart> {
                         ///delete icon
                         IconButton(
                             onPressed: () {
-                              customAlert(
-                                  context: context,
+                              showDialog(context: context, builder: (_)=>CustomAlert(
                                   title: "آیا از حذف موارد انتخاب شده مطمئن هستید؟",
                                   onYes: () {
                                     for (int item in selectedItems) {
@@ -321,7 +327,7 @@ class _ListPartState extends State<ListPart> {
                                   },
                                   onNo: () {
                                     Navigator.pop(context);
-                                  });
+                                  }));
                             },
                             icon: const Icon(
                               Icons.delete_forever,

@@ -5,6 +5,7 @@ import 'package:price_list/components/custom_button.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/model/notice.dart';
 
+
 class NoticeDetailPanel extends StatelessWidget {
   const NoticeDetailPanel({super.key, required this.notice});
   final Notice notice;

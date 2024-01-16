@@ -45,6 +45,7 @@ class _WareActionsPanelState extends State<WareActionsPanel> {
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
+      vip: !Provider.of<WareProvider>(context,listen: false).isVip,
         height: 350,
         child: Consumer<WareProvider>(
             builder: (context,wareProvider,child) {

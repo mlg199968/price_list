@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:price_list/constants/enums.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/services/hive_boxes.dart';
 import 'package:price_list/model/bug.dart';
@@ -20,7 +21,7 @@ class ErrorHandler {
       ..bugId = const Uuid().v1();
     HiveBoxes.getBugs().put(bug.bugId, bug);
     if(showSnackbar && title!=null) {
-      showSnackBar(context, title);
+      showSnackBar(context, title,type: SnackType.error);
     }
   }
 }

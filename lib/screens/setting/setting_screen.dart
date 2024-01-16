@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:price_list/components/action_button.dart';
-import 'package:price_list/components/custom_button.dart';
 import 'package:price_list/components/custom_text.dart';
 import 'package:price_list/components/custom_textfield.dart';
 import 'package:price_list/components/drop_list_model.dart';
@@ -10,7 +9,6 @@ import 'package:price_list/model/shop.dart';
 import 'package:price_list/permission_handler.dart';
 import 'package:price_list/screens/setting/backup/backup_tools.dart';
 import 'package:price_list/screens/side_bar/sidebar_panel.dart';
-import 'package:price_list/screens/ware_list/ware_list_screen.dart';
 import 'package:price_list/providers/ware_provider.dart';
 import 'package:price_list/services/hive_boxes.dart';
 
@@ -42,7 +40,6 @@ class _SettingScreenState extends State<SettingScreen> {
       fontFamily: selectedFont,
       currency: selectedCurrency,
     );
-    print(dbShop.currency);
     provider.getData(dbShop);
     HiveBoxes.getShopInfo().putAt(0, dbShop);
   }
@@ -124,7 +121,15 @@ class _SettingScreenState extends State<SettingScreen> {
                                     bgColor: Colors.teal,
                                     onPress: () async {
                                       await storagePermission(context, Allow.storage);
-                                      await BackupTools.restoreBackup(context);
+
+                                      if (context.mounted) {
+                                        await storagePermission(
+                                            context, Allow.externalStorage);
+                                      }
+                                      if (context.mounted) {
+                                        // await BackupTools.restoreBackup(context);
+                                        await BackupTools.readZipFile(context);
+                                      }
                                     },
                                   ),
                                 ],
