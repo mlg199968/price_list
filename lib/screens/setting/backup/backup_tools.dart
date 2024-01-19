@@ -9,27 +9,44 @@ import 'package:price_list/constants/consts_class.dart';
 import 'package:price_list/constants/enums.dart';
 import 'package:price_list/constants/error_handler.dart';
 import 'package:price_list/constants/utils.dart';
+import 'package:price_list/providers/ware_provider.dart';
 import 'package:price_list/services/hive_boxes.dart';
 import 'package:price_list/model/ware_hive.dart';
+import 'package:provider/provider.dart';
+
 
 
 class BackupTools {
   static const String _outPutName = "data-file.mlg";
-
-  static Future<void> createBackup(BuildContext context) async{
+  ///
+  static Future<String?> chooseDirectory() async {
+    String? result = await FilePicker.platform
+        .getDirectoryPath(dialogTitle: "انتخاب مکان ذخیره فایل پشتیبان");
+    if(result!=null){
+      return result;
+    }else{
+      return null;
+    }
+  }
+  static Future<void> createBackup(BuildContext context,{String? directory}) async{
     List<WareHive> wares = HiveBoxes.getWares().values.toList();
    List wareListJson=wares.map((e) => e.toJson()).toList();
     try {
 
       // await _saveJson(database.toJson(),context);
-      await createZipFile(
-          await Address.waresImage(),jsonEncode(wareListJson), context);
+      if(directory!=null && directory!="") {
+        await createZipFile(
+            await Address.waresImage(), jsonEncode(wareListJson), context,
+            directory: directory);
+      }else{
+        showSnackBar(context, "مسیر ذخیره سازی انتخاب نشده است!");
+      }
     } catch (e) {
       ErrorHandler.errorManger(context, e,
           title: "BackupTools - createBackup error", showSnackbar: true);
     }
   }
-
+///this triggered when just json file uploaded
   static Future<void> restoreMlgFileBackup(context,String filePath) async {
     try {
         File backupFile = File(filePath);
@@ -37,43 +54,22 @@ class BackupTools {
         Iterable l = json.decode(jsonFile);
         List<WareHive> restoredDb = List<WareHive>.from(
             l.map((e) => WareHive().fromJson(e)));
-
-        for (int i = 0; i < restoredDb.length; i++) {
-          HiveBoxes.getWares().put(restoredDb[i].wareID, restoredDb[i]);
+        for (WareHive ware in restoredDb) {
+          HiveBoxes.getWares().put(ware.wareID, ware);
         }
+        Provider.of<WareProvider>(context,listen: false).loadGroupList();
           showSnackBar(context, "فایل پشتیبان با موفقیت بارگیری شد !",type: SnackType.success);
 
 
     }catch(e){
-      print(e.toString());
-      if(context.mounted) {
-
-        showSnackBar(context, e.toString(),type: SnackType.error);
-      }
+ErrorHandler.errorManger(context, e,title: "BackupTools restoreMlgFileBackup function error",showSnackbar: true);
     }
   }
 
-
-  static Future<void> _saveJson(String json,BuildContext context) async {
-    String formattedDate= intl.DateFormat('yyyyMMdd-kkmmss').format(DateTime.now());
-
-    String? result = await FilePicker.platform.getDirectoryPath();
-    if (result != null) {
-      String path = result;
-      File createdFile =
-      File("$path/$formattedDate.json");
-      createdFile.create(recursive: true);
-      createdFile.writeAsString(json);
-
-      if(context.mounted) {
-        showSnackBar(context, "فایل پشتیبان با موفقیت ذخیره شد !",type: SnackType.success);
-      }
-
-    }
-  }
   ///read zip file
   static readZipFile(context) async {
     try {
+      await Address.waresImage();
       FilePickerResult? result = await FilePicker.platform.pickFiles();
       if (result != null) {
         String directory = (await getApplicationDocumentsDirectory()).path;
@@ -117,29 +113,22 @@ class BackupTools {
     }
   }
 ///create zip backup
-  static createZipFile(String imagesDir, String json, context) async {
+  static createZipFile(String imagesDir, String json, context,{required String directory}) async {
     try {
       String formattedDate =
       intl.DateFormat('yyyyMMdd-kkmmss').format(DateTime.now());
-      //select a directory to save zip file
-      String? result = await FilePicker.platform
-          .getDirectoryPath(dialogTitle: "انتخاب مکان ذخیره فایل پشتیبان");
-      if (result != null) {
         // Zip a directory to out.zip using the zipDirectory convenience method
         var encoder = ZipFileEncoder();
-        // encoder.zipDirectory(Directory(result),
-        //     filename: 'hitop-cafe$formattedDate.zip');
-
         // Manually create a zip of a directory and individual files.
-        encoder.create('$result/price_list$formattedDate.zip');
+        encoder.create('$directory/price_list$formattedDate.zip');
         encoder.addDirectory(Directory(imagesDir));
-        File jsonFile = await _createJsonFile(json, result);
+        File jsonFile = await _createJsonFile(json, directory);
         encoder.addFile(jsonFile);
         encoder.close();
         await jsonFile.delete(recursive: true);
         showSnackBar(context, "فایل پشتیبان با موفقیت ذخیره شد !",
             type: SnackType.success);
-      }
+
     } catch (e) {
       ErrorHandler.errorManger(context, e,
           title: "BackupTools - createZipFile error", showSnackbar: true);
@@ -161,14 +150,32 @@ class BackupTools {
           l.map((e) => WareHive().fromJson(e)));
 
 
-      for (int i = 0; i < restoredDb.length; i++) {
-        HiveBoxes.getWares().put(restoredDb[i].wareID, restoredDb[i]);
+      for (WareHive ware in restoredDb) {
+        HiveBoxes.getWares().put(ware.wareID, ware);
       }
+      Provider.of<WareProvider>(context,listen: false).loadGroupList();
       showSnackBar(context, "فایل پشتیبان با موفقیت بارگیری شد !",
           type: SnackType.success);
     } catch (e) {
       ErrorHandler.errorManger(context, e,
           title: "BackupTools - restoreJsonData error", showSnackbar: true);
+    }
+  }
+  static Future<void> _saveJson(String json,BuildContext context) async {
+    String formattedDate= intl.DateFormat('yyyyMMdd-kkmmss').format(DateTime.now());
+
+    String? result = await FilePicker.platform.getDirectoryPath();
+    if (result != null) {
+      String path = result;
+      File createdFile =
+      File("$path/$formattedDate.json");
+      createdFile.create(recursive: true);
+      createdFile.writeAsString(json);
+
+      if(context.mounted) {
+        showSnackBar(context, "فایل پشتیبان با موفقیت ذخیره شد !",type: SnackType.success);
+      }
+
     }
   }
 }

@@ -33,7 +33,7 @@ class BackendServices {
         }
       }
     } catch (e) {
-      ErrorHandler.errorManger(context, e,title: "BackendServices-readSubscription error",showSnackbar: true);
+      ErrorHandler.errorManger(context, e,title: "BackendServices-readSubscription error");
     }
     return null;
   }

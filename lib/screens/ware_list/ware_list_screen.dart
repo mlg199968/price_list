@@ -1,12 +1,16 @@
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:lottie/lottie.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
+import 'package:price_list/components/action_button.dart';
 import 'package:price_list/components/custom_alert.dart';
 import 'package:price_list/components/custom_float_action_button.dart';
 import 'package:price_list/components/custom_search_bar.dart';
+import 'package:price_list/components/custom_text.dart';
 import 'package:price_list/components/custom_tile.dart';
 import 'package:price_list/components/drop_list_model.dart';
 import 'package:price_list/components/hide_keyboard.dart';
@@ -15,6 +19,8 @@ import 'package:price_list/components/pdf/pdf_ware_list_api.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/enums.dart';
 import 'package:price_list/constants/utils.dart';
+import 'package:price_list/screens/notice_screen/notice_screen.dart';
+import 'package:price_list/screens/notice_screen/services/notice_tools.dart';
 import 'package:price_list/screens/side_bar/sidebar_panel.dart';
 import 'package:price_list/services/hive_boxes.dart';
 import 'package:price_list/model/ware_hive.dart';
@@ -51,17 +57,21 @@ class _WareListScreenState extends State<WareListScreen> {
   String sortItem = 'تاریخ ویرایش';
   String? keyWord;
   List<WareHive> waresList = [];
+  bool showAlertNotice = true;
 
-  void getStartupData() async {
     //get ware group list
-    provider.loadGroupList(HiveBoxes.getGroupWares());
-  }
+
+
 
   @override
   void initState() {
-    provider = Provider.of<WareProvider>(context, listen: false);
-     getStartupData();
     super.initState();
+  }
+  @override
+  void didChangeDependencies() {
+    print("didChangeDependencies");
+    Provider.of<WareProvider>(context, listen: false).loadGroupList();
+    super.didChangeDependencies();
   }
 
   @override
@@ -69,16 +79,16 @@ class _WareListScreenState extends State<WareListScreen> {
     return HideKeyboard(
       child: Scaffold(
         key: scaffoldKey,
-        floatingActionButton: CustomFloatActionButton(
-            onPressed: () async{
-              Navigator.pushNamed(context, AddWareScreen.id);
-            }),
+        floatingActionButton: CustomFloatActionButton(onPressed: () async {
+          Navigator.pushNamed(context, AddWareScreen.id);
+        }),
         drawer: SideBarPanel(),
         body: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return [
               SliverAppBar(
                 actions: [
+                  ///dropDown list for Group Select
                   Consumer<WareProvider>(
                     builder: (context, wareData, child) {
                       return DropListModel(
@@ -93,7 +103,7 @@ class _WareListScreenState extends State<WareListScreen> {
                     },
                   ),
 
-                  ///dropDown list for Group Select
+                  ///Ware Actions Panel
                   IconButton(
                       onPressed: () {
                         showDialog(
@@ -106,7 +116,12 @@ class _WareListScreenState extends State<WareListScreen> {
                       icon: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
-                            boxShadow: [BoxShadow(offset: Offset(-1, -1),blurRadius: 1,color: Colors.grey)],
+                            boxShadow: [
+                              BoxShadow(
+                                  offset: Offset(-1, -1),
+                                  blurRadius: 1,
+                                  color: Colors.grey)
+                            ],
                             gradient: kMainGradiant,
                           ),
                           padding: EdgeInsets.all(5),
@@ -116,7 +131,7 @@ class _WareListScreenState extends State<WareListScreen> {
                 ],
                 leading: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: GestureDetector(
+                  child: InkWell(
                       onTap: () {
                         scaffoldKey.currentState!.openDrawer();
                       },
@@ -150,6 +165,54 @@ class _WareListScreenState extends State<WareListScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
               child: Column(
                 children: <Widget>[
+                  ///Notification Alert,if new notification exist this part will be shown
+                  AnimatedSize(
+                    curve: Curves.easeInOutExpo,
+                    duration: Duration(milliseconds: 400),
+                    child: (!NoticeTools.checkNewNotifications() ||
+                            !showAlertNotice)
+                        ? SizedBox()
+                        : Container(
+                            alignment: Alignment.center,
+                            height: 50,
+                            decoration: BoxDecoration(color: Colors.red),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                ActionButton(
+                                  label: "مشاهده",
+                                  icon: Icons.remove_red_eye_outlined,
+                                  height: 30,
+                                  onPress: () {
+                                    Navigator.pushNamed(
+                                            context, NoticeScreen.id)
+                                        .then((value) {
+                                      setState(() {});
+                                    });
+                                  },
+                                ),
+                                CText(
+                                  "اطلاع رسانی جدید!",
+                                  color: Colors.white,
+                                  textDirection: TextDirection.rtl,
+                                )
+                                    .animate()
+                                    .fade(duration: Duration(seconds: 1)),
+                                Lottie.asset(
+                                    "assets/animations/notification.json"),
+                                IconButton(
+                                  color: Colors.white60,
+                                    onPressed: () {
+                                      showAlertNotice = false;
+                                      setState(() {});
+                                    },
+                                    icon: Icon(Icons.close_rounded))
+                              ],
+                            ),
+                          ),
+                  ),
+
+                  ///search bar
                   Container(
                     decoration: const BoxDecoration(gradient: kMainGradiant),
                     padding: const EdgeInsets.all(10),
@@ -173,25 +236,28 @@ class _WareListScreenState extends State<WareListScreen> {
                   ValueListenableBuilder<Box<WareHive>>(
                       valueListenable: HiveBoxes.getWares().listenable(),
                       builder: (context, box, _) {
-                        final productList = box.values.toList().cast<WareHive>();
+                        final productList =
+                            box.values.toList().cast<WareHive>();
                         waresList = productList;
-                        List<WareHive> filteredList =
-                            WareTools.filterList(productList, keyWord, sortItem);
+                        List<WareHive> filteredList = WareTools.filterList(
+                            productList, keyWord, sortItem);
                         if (filteredList.isEmpty) {
                           return const Expanded(
                             child: Center(
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(FontAwesomeIcons.boxOpen),
-                                    SizedBox(height: 8,),
-                                    Text(
-                              " کالایی یافت نشد!",
-                              textDirection: TextDirection.rtl,
-                            ),
-                                  ],
-                                )),
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(FontAwesomeIcons.boxOpen),
+                                SizedBox(
+                                  height: 8,
+                                ),
+                                Text(
+                                  " کالایی یافت نشد!",
+                                  textDirection: TextDirection.rtl,
+                                ),
+                              ],
+                            )),
                           );
                         }
                         return ListPart(
@@ -226,7 +292,6 @@ class _ListPartState extends State<ListPart> {
 
   @override
   Widget build(BuildContext context) {
-
     return WillPopScope(
       //if action bottom bar is shown,on will pop first close the action bar then on the second press close the screen
       onWillPop: selectedItems.isEmpty
@@ -236,18 +301,21 @@ class _ListPartState extends State<ListPart> {
               setState(() {});
               return false;
             },
-      child: Consumer<WareProvider>(
-        builder: (context,wareProvider,child) {
-          return Expanded(
-            child: Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                      itemCount: widget.wareList.length,
-                      itemBuilder: (context, index) {
+      child: Consumer<WareProvider>(builder: (context, wareProvider, child) {
+        return Expanded(
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: AnimateList(
+                      interval: 100.ms,
+                      effects: [FadeEffect(duration: 300.ms)],
+                      children: List.generate(widget.wareList.length, (index) {
                         WareHive ware = widget.wareList[index];
                         if (widget.category == "همه" ||
-                            widget.category == widget.wareList[index].groupName) {
+                            widget.category ==
+                                widget.wareList[index].groupName) {
                           return InkWell(
                             onTap: () {
                               if (selectedItems.isEmpty) {
@@ -282,104 +350,114 @@ class _ListPartState extends State<ListPart> {
                               color: Colors.deepPurple.shade800,
                               leadingIcon: CupertinoIcons.cube_box_fill,
                               subTitle: ware.groupName,
-                              type: "کالا",
+                              type: "${index+1}".toPersianDigit(),
                               title: ware.wareName,
                               topTrailing: wareProvider.showQuantity
                                   ? ("${ware.quantity}  ".toPersianDigit() +
                                       ware.unit)
                                   : "",
-                              topTrailingLabel: wareProvider.showQuantity ? "موجودی:" : "",
+                              topTrailingLabel:
+                                  wareProvider.showQuantity ? "موجودی:" : "",
                               trailing: addSeparator(ware.sale),
                               trailingLabel: "فروش:",
-                              middle: wareProvider.showCostPrice ? addSeparator(ware.cost) : null,
-                              middleLabel: wareProvider.showCostPrice ? "خرید:" : null,
+                              middle: wareProvider.showCostPrice
+                                  ? addSeparator(ware.cost)
+                                  : null,
+                              middleLabel:
+                                  wareProvider.showCostPrice ? "خرید:" : null,
                             ),
                           );
                         }
                         return const SizedBox();
                       }),
-                ),
-
-                ///selected items action bottom bar
-                Opacity(
-                  opacity: selectedItems.isNotEmpty ? 1 : 0,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                        border: Border(top: BorderSide(color: Colors.black87))),
-                    height: selectedItems.isNotEmpty ? 50 : 0,
-                    width: double.maxFinite,
-                    child: Row(
-                      children: [
-                        ///delete icon
-                        IconButton(
-                            onPressed: () {
-                              showDialog(context: context, builder: (_)=>CustomAlert(
-                                  title: "آیا از حذف موارد انتخاب شده مطمئن هستید؟",
-                                  onYes: () {
-                                    for (int item in selectedItems) {
-                                      widget.wareList[item].delete();
-                                    }
-                                    showSnackBar(context,
-                                        " ${selectedItems.length} کالا حذف شد!  ",
-                                        type: SnackType.success);
-                                    selectedItems.clear();
-                                    Navigator.pop(context);
-                                  },
-                                  onNo: () {
-                                    Navigator.pop(context);
-                                  }));
-                            },
-                            icon: const Icon(
-                              Icons.delete_forever,
-                              size: 35,
-                              color: Colors.red,
-                            )),
-                        const VerticalDivider(),
-
-                        ///print icon
-                        IconButton(
-                            onPressed: () async {
-                              List<WareHive> selectedList = [];
-                              for (int item in selectedItems) {
-                                selectedList.add(widget.wareList[item]);
-                              }
-                              final file = await PdfWareListApi.generateTicketWareList(
-                                  selectedList, context);
-                              PdfApi.openFile(file);
-                            },
-                            icon: const Icon(
-                              CupertinoIcons.printer_fill,
-                              size: 30,
-                              color: Colors.black87,
-                            )),
-                        const VerticalDivider(),
-
-                        ///edit selected icon
-                        IconButton(
-                            onPressed: () {
-                              List<WareHive> selectedList = [];
-                              for (int item in selectedItems) {
-                                selectedList.add(widget.wareList[item]);
-                              }
-                              showDialog(
-                                  context: context,
-                                  builder: (context) =>
-                                      SelectedWareActionPanel(wares: selectedList));
-                            },
-                            icon: const Icon(
-                              FontAwesomeIcons.filePen,
-                              size: 30,
-                              color: Colors.black87,
-                            )),
-                      ],
                     ),
                   ),
                 ),
-              ],
-            ),
-          );
-        }
-      ),
+              ),
+
+              ///selected items action bottom bar
+              Opacity(
+                opacity: selectedItems.isNotEmpty ? 1 : 0,
+                child: Container(
+                  decoration: const BoxDecoration(
+                      border: Border(top: BorderSide(color: Colors.black87))),
+                  height: selectedItems.isNotEmpty ? 50 : 0,
+                  width: double.maxFinite,
+                  child: Row(
+                    children: [
+                      ///delete icon
+                      IconButton(
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (_) => CustomAlert(
+                                    title:
+                                        "آیا از حذف موارد انتخاب شده مطمئن هستید؟",
+                                    onYes: () {
+                                      for (int item in selectedItems) {
+                                        widget.wareList[item].delete();
+                                      }
+                                      showSnackBar(context,
+                                          " ${selectedItems.length} کالا حذف شد!  ",
+                                          type: SnackType.success);
+                                      selectedItems.clear();
+                                      Navigator.pop(context);
+                                    },
+                                    onNo: () {
+                                      Navigator.pop(context);
+                                    }));
+                          },
+                          icon: const Icon(
+                            Icons.delete_forever,
+                            size: 35,
+                            color: Colors.red,
+                          )),
+                      const VerticalDivider(),
+
+                      ///print icon
+                      IconButton(
+                          onPressed: () async {
+                            List<WareHive> selectedList = [];
+                            for (int item in selectedItems) {
+                              selectedList.add(widget.wareList[item]);
+                            }
+                            final file =
+                                await PdfWareListApi.generateTicketWareList(
+                                    selectedList, context);
+                            PdfApi.openFile(file);
+                          },
+                          icon: const Icon(
+                            CupertinoIcons.printer_fill,
+                            size: 30,
+                            color: Colors.black87,
+                          )),
+                      const VerticalDivider(),
+
+                      ///edit selected icon
+                      IconButton(
+                          onPressed: () {
+                            List<WareHive> selectedList = [];
+                            for (int item in selectedItems) {
+                              selectedList.add(widget.wareList[item]);
+                            }
+                            showDialog(
+                                context: context,
+                                builder: (context) => SelectedWareActionPanel(
+                                    wares: selectedList));
+                          },
+                          icon: const Icon(
+                            FontAwesomeIcons.filePen,
+                            size: 30,
+                            color: Colors.black87,
+                          )),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }),
     );
   }
 }

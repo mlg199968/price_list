@@ -52,18 +52,22 @@ class _NoticeScreenState extends State<NoticeScreen> {
         textDirection: TextDirection.rtl,
         child: Container(
           alignment: Alignment.topCenter,
-          padding: EdgeInsets.only(top: 80),
+          padding: EdgeInsets.only(top: 120),
           decoration: const BoxDecoration(gradient: kMainGradiant),
           child: SingleChildScrollView(
             child: Column(
               children: [
-                if (refreshing)
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 8,vertical: 20),
-                    width: 35,
-                    height: 35,
-                    child: CircularProgressIndicator(color: Colors.white60,strokeWidth: 2,),
-                  ),
+                AnimatedSize(
+                  duration: Duration(milliseconds: 300),
+                curve: Curves.easeInOutExpo,
+                child:refreshing? Container(
+                  margin: EdgeInsets.symmetric(horizontal: 8,vertical: 20),
+                  width: 35,
+                  height: 35,
+                  child: CircularProgressIndicator(color: Colors.white60,strokeWidth: 2,),
+                ):SizedBox() ,),
+
+
                 ValueListenableBuilder(
                     valueListenable: HiveBoxes.getNotice().listenable(),
                     builder: (context, box, child) {
@@ -110,7 +114,7 @@ class NoticeTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Opacity(
-      opacity: notice.seen ? 0.4 : 1,
+      opacity: notice.seen ? 0.6 : 1,
       child: Card(
         color: Colors.white,
         elevation: notice.seen ? 0 : 1,

@@ -10,7 +10,9 @@ class WareProvider extends ChangeNotifier{
   int _userLevel=0;
   int get userLevel=>_userLevel;
   bool isVip=false;
- List groupList=["default",];
+ List _groupList=["default",];
+ List get groupList=>_groupList;
+
  String selectedGroup="default";
  String currency="ریال";
  String _fontFamily=kFonts[0];
@@ -19,6 +21,7 @@ class WareProvider extends ChangeNotifier{
  bool get showCostPrice => _showCostPrice;
  bool _showQuantity = false;
  bool get showQuantity => _showQuantity;
+ String? backupDirectory;
 
 
 
@@ -53,6 +56,7 @@ class WareProvider extends ChangeNotifier{
     _userLevel=shop.userLevel;
     _showQuantity=shop.showQuantity;
     _showCostPrice=shop.showCost;
+    backupDirectory=shop.backupDirectory;
 
 
   }
@@ -71,10 +75,16 @@ class WareProvider extends ChangeNotifier{
   groupList.insert(0,groupName);
   notifyListeners();
 }
-void loadGroupList(List groups){
-  groupList.addAll(groups);
-  groupList=groupList.toSet().toList();
-  //notifyListeners();
+void loadGroupList(){
+   List groups=HiveBoxes.getGroupWares();
+    for(String group in groups){
+      if(!_groupList.contains(group)){
+        _groupList.add(group);
+      }
+    }
+  // groupList.addAll(groups);
+  // groupList=groupList.toSet().toList();
+
 }
 void updateSelectedGroup(String newSelect){
   selectedGroup=newSelect;
@@ -108,6 +118,12 @@ void getVip() async{
     if(font!=null) {
       _fontFamily = font;
       notifyListeners();
+    }
+  }
+ getFontFromHive(){
+   String? font=HiveBoxes.getShopInfo().values.single.fontFamily;
+    if(font!=null) {
+      _fontFamily = font;
     }
   }
 

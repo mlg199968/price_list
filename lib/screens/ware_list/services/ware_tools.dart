@@ -35,7 +35,7 @@ class WareTools {
         break;
     case "تاریخ ویرایش":
         list.sort((b, a) {
-          return a.modifyDate!.compareTo(b.modifyDate!);
+          return (a.modifyDate ?? DateTime.now()).compareTo(b.modifyDate ?? DateTime.now());
         });
         break;
     }

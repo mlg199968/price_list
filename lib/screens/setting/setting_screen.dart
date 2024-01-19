@@ -7,6 +7,7 @@ import 'package:price_list/components/hide_keyboard.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/model/shop.dart';
 import 'package:price_list/permission_handler.dart';
+import 'package:price_list/screens/bug_screen/bug_list_screen.dart';
 import 'package:price_list/screens/setting/backup/backup_tools.dart';
 import 'package:price_list/screens/side_bar/sidebar_panel.dart';
 import 'package:price_list/providers/ware_provider.dart';
@@ -32,6 +33,7 @@ class _SettingScreenState extends State<SettingScreen> {
   bool showQuantity = false;
   String selectedCurrency=kCurrencyList[0];
   String selectedFont = kFonts[0];
+  String? backupDirectory;
 
   void storeInfoShop() {
     Shop dbShop=HiveBoxes.getShopInfo().values.first.copyWith(
@@ -39,6 +41,7 @@ class _SettingScreenState extends State<SettingScreen> {
       showQuantity: showQuantity,
       fontFamily: selectedFont,
       currency: selectedCurrency,
+      backupDirectory: backupDirectory,
     );
     provider.getData(dbShop);
     HiveBoxes.getShopInfo().putAt(0, dbShop);
@@ -50,6 +53,7 @@ class _SettingScreenState extends State<SettingScreen> {
     showQuantity=provider.showQuantity;
     selectedFont=provider.fontFamily;
     selectedCurrency=provider.currency;
+    backupDirectory=provider.backupDirectory;
   setState(() {});
   }
 
@@ -108,10 +112,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                       icon: Icons.backup,
                                       bgColor: Colors.red.withRed(250),
                                       onPress: () async {
-                                        await storagePermission(context, Allow.externalStorage);
-                                        // ignore: use_build_context_synchronously
-                                        await storagePermission(context, Allow.storage);
-                                        await BackupTools.createBackup(context);
+                                        await BackupTools.createBackup(context,directory: backupDirectory);
                                       },
                                     ),
                                   ),
@@ -120,23 +121,50 @@ class _SettingScreenState extends State<SettingScreen> {
                                     icon: Icons.settings_backup_restore,
                                     bgColor: Colors.teal,
                                     onPress: () async {
+                                      await storagePermission(
+                                          context, Allow.externalStorage);
                                       await storagePermission(context, Allow.storage);
 
-                                      if (context.mounted) {
-                                        await storagePermission(
-                                            context, Allow.externalStorage);
-                                      }
-                                      if (context.mounted) {
                                         // await BackupTools.restoreBackup(context);
                                         await BackupTools.readZipFile(context);
-                                      }
                                     },
                                   ),
                                 ],
                               ),
                             ),
-
-                            ///unit drop list
+                            Container(
+                              alignment: Alignment.centerRight,
+                                padding: EdgeInsets.all(10),
+                                child: CText("انتخاب مسیر ذخیره سازی فایل پشتیبان :",color: Colors.white,textDirection: TextDirection.rtl,)),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                margin: EdgeInsets.all(5),
+                                padding: EdgeInsets.all(5),
+                                alignment: Alignment.centerRight,
+                                height: 40,
+                                decoration: BoxDecoration(gradient: kBlackWhiteGradiant,borderRadius: BorderRadius.circular(20)),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Flexible(child: CText(backupDirectory ?? "مسیری انتخاب نشده است")),
+                                      SizedBox(width: 8,),
+                                      ActionButton(
+                                        label: "انتخاب",
+                                        icon: Icons.folder_open_rounded,
+                                        onPress: ()async{
+                                          await storagePermission(context, Allow.externalStorage);
+                                          await storagePermission(context, Allow.storage);
+                                          String? newDir=await BackupTools.chooseDirectory();
+                                          if(newDir!=null) {
+                                            backupDirectory = newDir;
+                                          }
+                                          setState(() {});
+                                        },),
+                                    ],
+                                  )),
+                            ),
+                            SizedBox(height: 30,),
                             ///currency unit
                             DropListItem(
                                 title: "واحد پول",
@@ -185,7 +213,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               color: Colors.white60,
                             ),
                             ButtonTile(onPress: (){
-                            //  Navigator.pushNamed(context, BugListScreen.id);
+                              Navigator.pushNamed(context, BugListScreen.id);
                             }, label: "error List", buttonLabel:"see"),
                           ],
                         ),

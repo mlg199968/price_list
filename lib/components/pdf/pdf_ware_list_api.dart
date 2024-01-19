@@ -41,8 +41,8 @@ class PdfWareListApi {
       build: (context) => [
         invoicePart,
       ],
-      footer: (context) => Directionality(
-          textDirection: TextDirection.rtl, child: buildFooter(shopData)),
+      // footer: (context) => Directionality(
+      //     textDirection: TextDirection.rtl, child: buildFooter(shopData)),
     ));
     return PdfApi.saveDocument(name: "simple Ware List.pdf", pdf: pdf);
   }

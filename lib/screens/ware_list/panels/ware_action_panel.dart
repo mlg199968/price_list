@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:price_list/components/action_button.dart';
 import 'package:price_list/components/counter_textfield.dart';
 import 'package:price_list/components/custom_alert_dialog.dart';
+import 'package:price_list/components/custom_text.dart';
 import 'package:price_list/components/custom_textfield.dart';
 import 'package:price_list/components/drop_list_model.dart';
 import 'package:price_list/components/pdf/pdf_api.dart';
@@ -30,8 +31,9 @@ class WareActionsPanel extends StatefulWidget {
 class _WareActionsPanelState extends State<WareActionsPanel> {
   final TextEditingController percentController = TextEditingController();
   final TextEditingController fixAmountController = TextEditingController();
+  final TextEditingController coefficientController = TextEditingController();
   late String subGroup;
-
+  bool isNegative=false;
   String printType=kPrintTypeList[0];
 
   @override
@@ -41,12 +43,18 @@ class _WareActionsPanelState extends State<WareActionsPanel> {
     fixAmountController.text = "0";
     super.initState();
   }
-
+  @override
+  void dispose() {
+    percentController.dispose();
+    fixAmountController.dispose();
+    coefficientController.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
       vip: !Provider.of<WareProvider>(context,listen: false).isVip,
-        height: 350,
+        height: 450,
         child: Consumer<WareProvider>(
             builder: (context,wareProvider,child) {
               return Column(
@@ -100,7 +108,14 @@ class _WareActionsPanelState extends State<WareActionsPanel> {
                     padding: EdgeInsets.symmetric(vertical: 15.0),
                     child: Text("افزایش یا کاهش گروهی قیمت ها "),
                   ),
+                  Row(
+                    children: [
+                      CText("کاهش قیمت",color:isNegative?Colors.red: Colors.black54,),
+                      Switch(value: isNegative,activeColor: Colors.red, onChanged: (val){isNegative=val;setState(() {
 
+                      });}),
+                    ],
+                  ),
                   ///price text fields
                   Row(
                     children: [
@@ -135,6 +150,15 @@ class _WareActionsPanelState extends State<WareActionsPanel> {
                           )),
                     ],
                   ),
+                  SizedBox(height: 10,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("ضریب :",),
+
+                      CounterTextfield(label:"ضریب",controller: coefficientController),
+                    ],
+                  ),
                   const Expanded(
                     child: SizedBox(
                       height: 15,
@@ -156,15 +180,30 @@ class _WareActionsPanelState extends State<WareActionsPanel> {
                               double percent = percentController.text == ""
                                   ? 0
                                   : stringToDouble(percentController.text);
+                              double coefficient = coefficientController.text == ""
+                                  ? 1
+                                  : stringToDouble(coefficientController.text);
                               if (ware.groupName == subGroup || subGroup == "همه") {
-                                ware.sale = ware.sale +
-                                    fixPrice +
-                                    (ware.sale * percent / 100);
-                                ware.cost = ware.cost +
-                                    fixPrice +
-                                    (ware.cost * percent / 100);
+                                if(!isNegative) {
+                              ware.sale = ware.sale +
+                                  fixPrice +
+                                  (ware.sale * percent / 100);
+                              ware.cost = ware.cost +
+                                  fixPrice +
+                                  (ware.cost * percent / 100);
+                            }else{
+                                  ware.sale = ware.sale -
+                                      fixPrice -
+                                      (ware.sale * percent / 100);
+                                  ware.cost = ware.cost -
+                                      fixPrice -
+                                      (ware.cost * percent / 100);
+
+                                }
+                                ware.sale *=coefficient;
+                                ware.cost *=coefficient;
                                 HiveBoxes.getWares().put(ware.wareID, ware);
-                              }
+                          }
                             }
                             Navigator.pop(context, false);
                           }),

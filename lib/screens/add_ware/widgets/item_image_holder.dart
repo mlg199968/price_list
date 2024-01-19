@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:price_list/constants/constants.dart';
+import 'package:price_list/constants/error_handler.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/permission_handler.dart';
 
@@ -69,23 +70,21 @@ class _ItemImageHolderState extends State<ItemImageHolder> {
                     setState(() {});
                   }
                 } catch (e) {
-                  if (kDebugMode) {
-                    print(e);
-                  }
+                  ErrorHandler.errorManger(context, e,title: "ItemImageHolder widget error");
                 }
               }
             },
             child: Container(
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                    color: Colors.white54,
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: Colors.black26),
-                  image:widget.imagePath == null?null: DecorationImage(image: FileImage(File(widget.imagePath!)),fit: BoxFit.cover,)
+                  image:(widget.imagePath == null || widget.imagePath == "")?null: DecorationImage(image: FileImage(File(widget.imagePath!)),fit: BoxFit.cover,)
                 ),
                 height:MediaQuery.of(context).size.width*(9/16) ,
                 width: MediaQuery.of(context).size.width,
-                child: widget.imagePath == null
+                child: (widget.imagePath == null || widget.imagePath == "")
                     ? const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -103,7 +102,8 @@ class _ItemImageHolderState extends State<ItemImageHolder> {
                       )
                     : null),
           ),
-          if (widget.imagePath != null)
+          ///image setting like delete button
+          if (widget.imagePath != null && widget.imagePath != "" )
             Row(
               children: [
                 //delete button

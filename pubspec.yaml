@@ -4,7 +4,7 @@ description: Price List project
 publish_to: 'none'
 
 
-version: 4.0.1+11
+version: 4.0.2+11
 
 environment:
   sdk: '>=2.18.0-271.4.beta <3.0.0'
@@ -53,6 +53,9 @@ dependencies:
   expandable: ^5.0.1
   flutter_slidable: ^2.0.0
   gap: ^3.0.1
+  flutter_animate: ^4.4.0
+  lottie: ^2.6.0
+
 
 
 
@@ -103,6 +106,7 @@ flutter:
   assets:
   - assets/images/
   - assets/fonts/
+  - assets/animations/
 
 
 

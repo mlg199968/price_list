@@ -11,7 +11,7 @@ import 'package:price_list/screens/ware_list/widgets/row_info.dart';
 
 InfoPanel({required BuildContext context, required WareHive wareInfo}) {
   return CustomDialog(
-    height: MediaQuery.of(context).size.height * .6,
+    height: MediaQuery.of(context).size.height * .5,
     image: wareInfo.imagePath,
     title: "مشخصات کالا",
     child: Column(
@@ -32,7 +32,7 @@ InfoPanel({required BuildContext context, required WareHive wareInfo}) {
               InfoPanelRow(
                   title: "تاریخ ثبت", infoList: wareInfo.date.toPersianDateStr()),
             InfoPanelRow(
-                  title: "تاریخ ویرایش", infoList: wareInfo.modifyDate!.toPersianDateStr()),
+                  title: "تاریخ ویرایش", infoList: (wareInfo.modifyDate ?? DateTime.now()).toPersianDateStr()),
             ],
           ),
         ),

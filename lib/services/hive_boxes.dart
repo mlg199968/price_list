@@ -30,12 +30,8 @@ static Box<Notice> getNotice(){
 }
 
 static List getGroupWares(){
- final groupList=[];
- Hive.box<WareHive>("ware_db").values.forEach((ware) {
-   if(!groupList.contains(ware.groupName)){
-     groupList.add(ware.groupName);
-   }
- });
+ final groupList=
+ Hive.box<WareHive>("ware_db").values.map((e) => e.groupName).toList();
   return groupList;
 }
 

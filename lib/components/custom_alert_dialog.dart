@@ -12,11 +12,13 @@ class CustomDialog extends StatelessWidget {
     required this.child,
     this.height,
     this.textDirection = TextDirection.rtl,
-    this.opacity = .6,
+    this.opacity = 1,
     this.image,
     this.borderRadius=20,this.vip=false,
+    this.contentPadding,
   });
   final String? title;
+  final EdgeInsets? contentPadding;
   final Widget child;
   final double? height;
   final double width = 450;
@@ -41,7 +43,7 @@ class CustomDialog extends StatelessWidget {
             children: [
               ///image holder part with faded button,
               Opacity(
-                opacity: .7,
+                opacity: .9,
                 child: Container(
                   width: width,
                   height: 250,
@@ -100,28 +102,28 @@ class CustomDialog extends StatelessWidget {
                       child: Container(
                           margin: (image == null || image=="")
                               ? null
-                              : const EdgeInsets.all(20).copyWith(top: 50),
+                              : const EdgeInsets.all(0).copyWith(top: 80),
                           //decoration for image if image is not null
                           decoration: (image == null || image=="")
                               ? null
                               : BoxDecoration(
-                                  gradient: const LinearGradient(
-                                      colors: [
-                                        Colors.white,
-                                        Colors.transparent
-                                      ],
-                                      stops: [
-                                        0,
-                                        .8
-                                      ],
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter),
+                                  // gradient: const LinearGradient(
+                                  //     colors: [
+                                  //       Colors.white,
+                                  //       Colors.transparent
+                                  //     ],
+                                  //     stops: [
+                                  //       0,
+                                  //       .8
+                                  //     ],
+                                  //     begin: Alignment.topCenter,
+                                  //     end: Alignment.bottomCenter),
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                           height:
                               height, // ?? MediaQuery.of(context).size.height,
                           width: width, // ?? MediaQuery.of(context).size.width,
-                          padding: const EdgeInsets.all(20).copyWith(top: 10),
+                          padding:contentPadding ?? EdgeInsets.all(20).copyWith(top: 10) ,
                           child: child),
                     ),
                   ),
@@ -131,8 +133,9 @@ class CustomDialog extends StatelessWidget {
               if (vip)
                 Container(
                   padding: EdgeInsets.all(10),
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * .6,
+                  margin: EdgeInsets.only(top: 70),
+                  width:  MediaQuery.of(context).size.width,
+                  height: height ?? MediaQuery.of(context).size.height * .8,
                   //height: MediaQuery.of(context).size.height,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
