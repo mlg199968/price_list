@@ -84,9 +84,9 @@ class PdfWareListApi {
   /// print simple ware list
   static Future<Widget> simpleList(
       List<WareHive> list, WareProvider shopData) async {
-    String currency = shopData.currency;
-    final headers =
-    ['#', 'نام محصول', 'قیمت فروش ($currency)'].reversed.toList();
+    // String currency = shopData.currency;
+    // final headers =
+    // ['#', 'نام محصول', 'قیمت فروش ($currency)'].reversed.toList();
     final data = list.map((item) {
       return Directionality(
           textDirection: TextDirection.rtl,
@@ -128,7 +128,7 @@ class PdfWareListApi {
   ///ticket type model for print price ware list
   static Future<Widget> ticketTypeList(
       List<WareHive> list, WareProvider shopData) async {
-    String currency = shopData.currency;
+    // String currency = shopData.currency;
     final data = list.map((item) {
       return Directionality(
           textDirection: TextDirection.rtl,

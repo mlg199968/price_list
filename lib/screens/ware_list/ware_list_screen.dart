@@ -65,15 +65,14 @@ class _WareListScreenState extends State<WareListScreen> {
 
   @override
   void initState() {
+    Provider.of<WareProvider>(context, listen: false).loadGroupList();
+    Provider.of<WareProvider>(context, listen: false).getFontFromHive();
     super.initState();
   }
   @override
   void didChangeDependencies() {
-    print("didChangeDependencies");
-    Provider.of<WareProvider>(context, listen: false).loadGroupList();
     super.didChangeDependencies();
   }
-
   @override
   Widget build(BuildContext context) {
     return HideKeyboard(

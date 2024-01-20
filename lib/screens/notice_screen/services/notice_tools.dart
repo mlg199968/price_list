@@ -1,5 +1,3 @@
-import 'package:hive/hive.dart';
-import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/error_handler.dart';
 import 'package:price_list/model/notice.dart';
 import 'package:price_list/services/backend_services.dart';
@@ -7,10 +5,10 @@ import 'package:price_list/services/hive_boxes.dart';
 
 class NoticeTools {
   ///read new notice has been added
-  static readNotifications(context) async {
+  static readNotifications(context,{int timeout=10}) async {
     try {
       List<Notice?>? onlineNotices =
-          await BackendServices().readNotice(context, kAppName);
+          await BackendServices().readNotice(context,timeout: timeout );
       List<Notice> hiveNotices = HiveBoxes.getNotice().values.toList();
       if (onlineNotices != null) {
         ///check if server Notice has not being cache in the hive ,then we added to the hive

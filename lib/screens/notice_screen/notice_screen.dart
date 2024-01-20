@@ -4,13 +4,9 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:price_list/components/action_button.dart';
 import 'package:price_list/constants/constants.dart';
-import 'package:price_list/constants/enums.dart';
-import 'package:price_list/constants/global_task.dart';
-import 'package:price_list/constants/utils.dart';
 import 'package:price_list/model/notice.dart';
 import 'package:price_list/screens/notice_screen/panels/notice_detail_panel.dart';
 import 'package:price_list/screens/notice_screen/services/notice_tools.dart';
-import 'package:price_list/services/backend_services.dart';
 import 'package:price_list/services/hive_boxes.dart';
 
 class NoticeScreen extends StatefulWidget {
@@ -57,6 +53,7 @@ class _NoticeScreenState extends State<NoticeScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
+                ///show loading when refreshing the screen
                 AnimatedSize(
                   duration: Duration(milliseconds: 300),
                 curve: Curves.easeInOutExpo,
@@ -66,12 +63,11 @@ class _NoticeScreenState extends State<NoticeScreen> {
                   height: 35,
                   child: CircularProgressIndicator(color: Colors.white60,strokeWidth: 2,),
                 ):SizedBox() ,),
-
-
                 ValueListenableBuilder(
                     valueListenable: HiveBoxes.getNotice().listenable(),
                     builder: (context, box, child) {
-                      return Column(
+                      if(box.isNotEmpty) {
+                        return Column(
                           children: box.values
                               .map(
                                 (notice) => NoticeTile(
@@ -92,7 +88,10 @@ class _NoticeScreenState extends State<NoticeScreen> {
                               .toList()
                               .reversed
                               .toList());
-                      ;
+                      }
+                      else{
+                        return Text("اطلاع رسانی یافت نشد!");
+                      }
                     }),
               ],
             ),

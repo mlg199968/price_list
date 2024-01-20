@@ -161,22 +161,22 @@ ErrorHandler.errorManger(context, e,title: "BackupTools restoreMlgFileBackup fun
           title: "BackupTools - restoreJsonData error", showSnackbar: true);
     }
   }
-  static Future<void> _saveJson(String json,BuildContext context) async {
-    String formattedDate= intl.DateFormat('yyyyMMdd-kkmmss').format(DateTime.now());
-
-    String? result = await FilePicker.platform.getDirectoryPath();
-    if (result != null) {
-      String path = result;
-      File createdFile =
-      File("$path/$formattedDate.json");
-      createdFile.create(recursive: true);
-      createdFile.writeAsString(json);
-
-      if(context.mounted) {
-        showSnackBar(context, "فایل پشتیبان با موفقیت ذخیره شد !",type: SnackType.success);
-      }
-
-    }
-  }
+  // static Future<void> _saveJson(String json,BuildContext context) async {
+  //   String formattedDate= intl.DateFormat('yyyyMMdd-kkmmss').format(DateTime.now());
+  //
+  //   String? result = await FilePicker.platform.getDirectoryPath();
+  //   if (result != null) {
+  //     String path = result;
+  //     File createdFile =
+  //     File("$path/$formattedDate.json");
+  //     createdFile.create(recursive: true);
+  //     createdFile.writeAsString(json);
+  //
+  //     if(context.mounted) {
+  //       showSnackBar(context, "فایل پشتیبان با موفقیت ذخیره شد !",type: SnackType.success);
+  //     }
+  //
+  //   }
+  // }
 }
 

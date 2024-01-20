@@ -21,6 +21,7 @@ class ErrorHandler {
       ..bugId = const Uuid().v1();
     HiveBoxes.getBugs().put(bug.bugId, bug);
     if(showSnackbar && title!=null) {
+      if(context.mounted)
       showSnackBar(context, title,type: SnackType.error);
     }
   }

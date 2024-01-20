@@ -205,7 +205,6 @@ class AvatarHolder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String? logo;
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Align(

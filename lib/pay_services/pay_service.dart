@@ -2,13 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import 'package:myket_iap/myket_iap.dart';
 import 'package:myket_iap/util/iab_result.dart';
-import 'package:myket_iap/util/purchase.dart';
 import 'package:price_list/constants/enums.dart';
 import 'package:price_list/constants/error_handler.dart';
-
 import 'package:price_list/constants/private.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/screens/ware_list/ware_list_screen.dart';
@@ -24,24 +21,24 @@ class PayService {
 
 
 
-  static _activeLicense(context,String license)async{
-    try {
-      http.Response res = await http.get(
-        Uri.parse("${Private.licenseApiAddress}/activate/$license"),
-        headers: <String, String>{'authorization': basicAuth},);
-      if (res.statusCode == 200) {
-
-      } else if (res.statusCode == 404) {
-        showSnackBar(
-            context, "اتمام تعداد دفعات استفاده از این لایسنس!", type: SnackType.warning);
-        print("اتمام تعداد دفعات استفاده از این لایسنس!");
-      }
-    } catch (e) {
-      showSnackBar(context, "مشکل ارتباط با سرور!", type: SnackType.error);
-      print("مشکل ارتباط با سرور در اکتیو کردن لایسنس!");
-      print(e);
-    }
-  }
+  // static _activeLicense(context,String license)async{
+  //   try {
+  //     http.Response res = await http.get(
+  //       Uri.parse("${Private.licenseApiAddress}/activate/$license"),
+  //       headers: <String, String>{'authorization': basicAuth},);
+  //     if (res.statusCode == 200) {
+  //
+  //     } else if (res.statusCode == 404) {
+  //       showSnackBar(
+  //           context, "اتمام تعداد دفعات استفاده از این لایسنس!", type: SnackType.warning);
+  //       print("اتمام تعداد دفعات استفاده از این لایسنس!");
+  //     }
+  //   } catch (e) {
+  //     showSnackBar(context, "مشکل ارتباط با سرور!", type: SnackType.error);
+  //     print("مشکل ارتباط با سرور در اکتیو کردن لایسنس!");
+  //     print(e);
+  //   }
+  // }
 
   static checkLicense(BuildContext context, String license) async {
     if (license == "") {
@@ -74,29 +71,31 @@ class PayService {
   }
 
 //TODO: bazaar connect function
-// static connectToBazaar(BuildContext context) async {
-//
-//   try {
-//
-//   bool connectionState=await FlutterPoolakey.connect(
-//     Private.rsaKey,
-//     onDisconnected: () {
-//       showSnackBar(context, "خطا در ارتباط با بازار");
-//       print("bazaar not connected");
-//     },
-//   );
-//   if(connectionState){
-//       PurchaseInfo purchaseInfo = await FlutterPoolakey.purchase('3');
-//       if(purchaseInfo.purchaseState==PurchaseState.PURCHASED){
-//         Provider.of<WareProvider>(context,listen: false).setVip(true);
-//         Navigator.pushNamedAndRemoveUntil(context, WareListScreen.id,(route)=>false);
-//       }
-//
-//   }}catch(e){
-//     showSnackBar(context, "روند پرداخت با مشکل مواجه شده است");
-//     print(e);
-//   }
-// }
+static connectToBazaar(BuildContext context) async {
+
+  try {
+
+  // bool connectionState=await FlutterPoolakey.connect(
+  //   Private.rsaKey,
+  //   onDisconnected: () {
+  //     showSnackBar(context, "خطا در ارتباط با بازار");
+  //     print("bazaar not connected");
+  //   },
+  // );
+  // if(connectionState){
+  //     PurchaseInfo purchaseInfo = await FlutterPoolakey.purchase('3');
+  //     if(purchaseInfo.purchaseState==PurchaseState.PURCHASED){
+  //       Provider.of<WareProvider>(context,listen: false).setVip(true);
+  //       Navigator.pushNamedAndRemoveUntil(context, WareListScreen.id,(route)=>false);
+  //     }
+  // }
+
+
+  }catch(e){
+    showSnackBar(context, "روند پرداخت با مشکل مواجه شده است");
+    print(e);
+  }
+}
 //TODO: myket connect function
 static connectToMyket(BuildContext context)async{
     try{

@@ -3,10 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:price_list/constants/global_task.dart';
-import 'package:price_list/providers/ware_provider.dart';
 import 'package:price_list/screens/ware_list/ware_list_screen.dart';
-import 'package:price_list/services/hive_boxes.dart';
-import 'package:provider/provider.dart';
 
 
 

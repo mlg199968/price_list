@@ -12,12 +12,12 @@ class BackendServices {
 
 
 ///read Notifications from host
-  Future<List<Notice?>?> readNotice(context, String appName) async {
+  Future<List<Notice?>?> readNotice(context,{int timeout=10 ,String appName=kAppName,}) async {
     try {
 
       http.Response res = await http.post(
           Uri.parse("$hostUrl/notification/read_notice.php"),
-          body: {"app-name": appName}).timeout(Duration(seconds: 10));
+          body: {"app-name": appName}).timeout(Duration(seconds: timeout));
       if (res.statusCode == 200) {
         var backData = jsonDecode(res.body);
         if (backData["success"] == true) {

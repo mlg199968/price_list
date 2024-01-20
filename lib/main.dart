@@ -6,7 +6,6 @@ import 'package:price_list/model/shop.dart';
 import 'package:price_list/model/ware_hive.dart';
 import 'package:price_list/router.dart';
 import 'package:price_list/providers/ware_provider.dart';
-import 'package:price_list/services/hive_boxes.dart';
 import 'package:provider/provider.dart';
 import 'screens/load_screen.dart';
 
@@ -39,11 +38,11 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  @override
-  void initState() {
-    Provider.of<WareProvider>(context,listen: false).getFontFromHive();
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   Provider.of<WareProvider>(context,listen: false).getFontFromHive();
+  //   super.initState();
+  // }
   @override
   Widget build(BuildContext context) {
 
