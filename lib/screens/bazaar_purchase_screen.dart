@@ -79,34 +79,34 @@ class BazaarPurchaseScreen extends StatelessWidget {
                         text:
                             "تغییر و چاپ گروهی کالا ها بصورت درصدی یا مبلغ ثابت"),
 
-                    TextWithIcon(text: "شخصی سازی نمایش فیلد ها"),
+                    TextWithIcon(text: "دسترسی به بخش تنظیمات"),
                     SizedBox(
                       height: 50,
                     ),
 
                     //TODO: bazaar purchase button
-                    BazaarButton(),
+                   // BazaarButton(),
                     //TODO: myket purchase button
-                    //    MyketButton(),
+                        MyketButton(),
                     //TODO:license payment
                     ///alternative way for payment
-                       Divider(height: 40,),
-                    Text("درصورت مواجه شدن با خطا درخرید از بازار می توانید از روش زیر اقدام به فعال سازی نسخه کامل اپ نمایید.",style: TextStyle(color: Colors.white70,fontSize: 12),),
-                    SizedBox(height: 30,),
-                    ///buy license button
-                    Center(
-                      child: CustomButton(
-                        height: 35,
-                        fontSize: 15,
-                        width: 200,
-                        radius: 20,
-                        color: Colors.deepPurpleAccent,
-                        text: "فعال سازی با لایسنس",
-                        onPressed: ()  {
-                         Navigator.pushNamed(context, PurchaseScreen.id);
-                        },
-                      ),
-                    ),
+                    //    Divider(height: 40,),
+                    // Text("درصورت مواجه شدن با خطا درخرید از بازار می توانید از روش زیر اقدام به فعال سازی نسخه کامل اپ نمایید.",style: TextStyle(color: Colors.white70,fontSize: 12),),
+                    // SizedBox(height: 30,),
+                    // ///buy license button
+                    // Center(
+                    //   child: CustomButton(
+                    //     height: 35,
+                    //     fontSize: 15,
+                    //     width: 200,
+                    //     radius: 20,
+                    //     color: Colors.deepPurpleAccent,
+                    //     text: "فعال سازی با لایسنس",
+                    //     onPressed: ()  {
+                    //      Navigator.pushNamed(context, PurchaseScreen.id);
+                    //     },
+                    //   ),
+                    // ),
                     
                     
                   ],
