@@ -23,7 +23,6 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
   @override
   void dispose() {
     super.dispose();
-    // TODO: implement dispose
     licenseTextController.dispose();
 
   }

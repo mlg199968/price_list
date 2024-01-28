@@ -44,10 +44,10 @@ dependencies:
 #    git:
 #      url: https://github.com/cafebazaar/flutter_poolakey.git
 #      ref: master
-#  flutter_poolakey: ^2.2.0
+#  flutter_poolakey: ^2.1.0
 
   http: ^0.13.6
-  myket_iap: ^1.1.4
+#  myket_iap: ^1.1.4
   image: ^4.1.3
   image_compression_flutter: ^1.0.3
   archive: ^3.4.7

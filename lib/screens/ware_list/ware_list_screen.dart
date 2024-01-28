@@ -62,19 +62,23 @@ class _WareListScreenState extends State<WareListScreen> {
     //get ware group list
 
 
-
+getFont(){
+  Provider.of<WareProvider>(context, listen: false).getFontFromHive();
+  setState(() {});
+}
   @override
   void initState() {
     Provider.of<WareProvider>(context, listen: false).loadGroupList();
-    Provider.of<WareProvider>(context, listen: false).getFontFromHive();
     super.initState();
   }
   @override
   void didChangeDependencies() {
+
     super.didChangeDependencies();
   }
   @override
   Widget build(BuildContext context) {
+    getFont();
     return HideKeyboard(
       child: Scaffold(
         key: scaffoldKey,
@@ -272,6 +276,7 @@ class _WareListScreenState extends State<WareListScreen> {
         ),
       ),
     );
+
   }
 }
 

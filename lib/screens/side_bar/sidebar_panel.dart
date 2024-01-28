@@ -8,6 +8,7 @@ import 'package:price_list/screens/bazaar_purchase_screen.dart';
 import 'package:price_list/screens/group_management_screen.dart';
 import 'package:price_list/screens/notice_screen/notice_screen.dart';
 import 'package:price_list/screens/notice_screen/services/notice_tools.dart';
+import 'package:price_list/screens/purchase_screen.dart';
 import 'package:price_list/screens/setting/setting_screen.dart';
 import 'package:price_list/providers/ware_provider.dart';
 import 'package:provider/provider.dart';
@@ -159,10 +160,10 @@ class PurchaseButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: (){
-        Navigator.pushNamed(context, BazaarPurchaseScreen.id);
-       // showDialog(context: context, builder: (context)=>PurchaseScreen());
+       // Navigator.pushNamed(context, BazaarPurchaseScreen.id);
+        Navigator.pushNamed(context, PurchaseScreen.id);
       },
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),

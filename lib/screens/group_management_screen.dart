@@ -23,7 +23,6 @@ class _GroupManagementScreenState extends State<GroupManagementScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     wareProvider = Provider.of<WareProvider>(context, listen: false);
     super.initState();
   }
