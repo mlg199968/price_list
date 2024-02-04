@@ -4,7 +4,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:price_list/components/over_cage.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/utils.dart';
-import 'package:price_list/screens/bazaar_purchase_screen.dart';
 import 'package:price_list/screens/group_management_screen.dart';
 import 'package:price_list/screens/notice_screen/notice_screen.dart';
 import 'package:price_list/screens/notice_screen/services/notice_tools.dart';

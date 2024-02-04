@@ -59,13 +59,14 @@ const List<String> kSortList = ['تاریخ تسویه', 'حروف الفبا', 
 const List<String> kCurrencyList = ["ریال", "تومان", "دلار", "لیر", "درهم"];
 const List<String> kFonts = [
   'Shabnam',
+  'Sahel',
   'Koodak',
   'Roya',
   'Terafik',
   'Elham',
   'Titr'
 ];
-const List kPrintTypeList = ['ساده', 'اتیکت'];
+const List kPrintTypeList = ['ساده', 'اتیکت','پایه'];
 
 const kSpaceBetween = 20.0;
 

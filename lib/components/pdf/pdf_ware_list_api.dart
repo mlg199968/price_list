@@ -16,8 +16,8 @@ import 'package:provider/provider.dart';
 class PdfWareListApi {
   static _customTheme() async {
     return ThemeData.withFont(
-        base: Font.ttf(await rootBundle.load("assets/fonts/koodak.ttf")),
-        bold: Font.ttf(await rootBundle.load("assets/fonts/titr.ttf")),
+        base: Font.ttf(await rootBundle.load("assets/fonts/sahel.ttf")),
+        bold: Font.ttf(await rootBundle.load("assets/fonts/sahel-Bold.ttf")),
         italic: Font.ttf(await rootBundle.load("assets/fonts/ariali.ttf")),
         boldItalic: Font.ttf(await rootBundle.load("assets/fonts/arialbi.ttf")),
         icons: Font.ttf(await rootBundle.load("assets/fonts/arial.ttf")),
@@ -57,6 +57,20 @@ class PdfWareListApi {
     WareProvider shopData = Provider.of<WareProvider>(context, listen: false);
     final pdf = Document(theme:await _customTheme());
     final invoicePart = await ticketTypeList(wareList, shopData);
+    pdf.addPage(MultiPage(
+      build: (context) => [
+        invoicePart,
+      ],
+    ));
+    return PdfApi.saveDocument(name: "ticket Ware List.pdf", pdf: pdf);
+  }
+
+  ///generate ticket type ware list
+  static Future<File> generateLegacyWareList(
+      List<WareHive> wareList, mat.BuildContext context) async {
+    WareProvider shopData = Provider.of<WareProvider>(context, listen: false);
+    final pdf = Document(theme:await _customTheme());
+    final invoicePart = await legacyList(wareList, shopData);
     pdf.addPage(MultiPage(
       build: (context) => [
         invoicePart,
@@ -110,11 +124,10 @@ class PdfWareListApi {
                   Flexible(
                     flex: 7,
                     child: Text(
-                      item.wareName.toPersianDigit(),
+                      item.wareName,
                       style:  TextStyle(
                         fontWeight: FontWeight.bold,
                       ),
-
                       maxLines: 4,
                     ),
                   ),
@@ -188,6 +201,51 @@ class PdfWareListApi {
     return Wrap(children: data);
   }
 
+  static Future<Widget> legacyList(List<WareHive> list,WareProvider shopData) async{
+    String currency=shopData.currency;
+    final headers = ['#','نام محصول','قیمت فروش ($currency)']
+        .reversed
+        .toList();
+    final data = list.map((item) {
+      return [
+        "${list.indexOf(item) + 1}".toPersianDigit(),
+        item.wareName.toPersianDigit(),
+        //'${item.quantity}'.toPersianDigit(),
+        // addSeparator(item.cost),
+        addSeparator(item.sale),
+      ].reversed.toList();
+    }).toList();
+
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child:
+      TableHelper.fromTextArray(
+        headers: headers,
+        data: data,
+        //border: null,
+        headerStyle: const TextStyle(
+          fontSize: 12,
+        ),
+        headerDecoration: const BoxDecoration(
+          color: PdfColors.grey300,
+        ),
+        cellHeight: 30,
+        cellStyle: TextStyle(fontWeight: FontWeight.bold,fontSize: 15),
+        columnWidths: {
+          2:const FixedColumnWidth(20)
+        },
+        headerAlignment:Alignment.center,
+        cellAlignments: {
+          0: Alignment.centerLeft,
+          1: Alignment.centerRight,
+          // 2: Alignment.centerRight,
+          // 3: Alignment.centerRight,
+          2: Alignment.centerRight,
+        },
+        oddCellStyle: TextStyle(fontWeight: FontWeight.bold,fontSize: 15),
+      ),
+    );
+  }
 
   static Widget buildFooter(WareProvider shop) => Column(
     crossAxisAlignment: CrossAxisAlignment.center,

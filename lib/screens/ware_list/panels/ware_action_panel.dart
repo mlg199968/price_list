@@ -226,6 +226,10 @@ class _WareActionsPanelState extends State<WareActionsPanel> {
                               file = await PdfWareListApi.generateTicketWareList(
                                   filteredList, context);
                             }
+                            else if(printType=="پایه") {
+                              file = await PdfWareListApi.generateLegacyWareList(
+                                  filteredList, context);
+                            }
                             else{
                               file = await PdfWareListApi.generateSimpleWareList(
                                   filteredList, context);

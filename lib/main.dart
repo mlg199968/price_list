@@ -38,17 +38,20 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  // @override
-  // void initState() {
-  //   Provider.of<WareProvider>(context,listen: false).getFontFromHive();
-  //   super.initState();
-  // }
+  getFont(){
+    Provider.of<WareProvider>(context, listen: false).getFontFromHive();
+  }
+  @override
+  void initState() {
+    getFont();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
 
     return MaterialApp(
       theme: ThemeData(
-          fontFamily: context.watch<WareProvider>().fontFamily,
+          fontFamily:context.watch<WareProvider>().fontFamily,
           appBarTheme: AppBarTheme(
             backgroundColor: Colors.indigo,
               foregroundColor: Colors.white),
