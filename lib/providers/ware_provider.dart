@@ -118,10 +118,9 @@ class WareProvider extends ChangeNotifier {
   }
 
   getFontFromHive() {
-    String? font = HiveBoxes.getShopInfo().values.single.fontFamily;
-    if (font != null) {
-      _fontFamily = font;
-    }
+    Shop? shop = HiveBoxes.getShopInfo().get(0);
+    if(shop!=null && shop.fontFamily != null )
+      _fontFamily = shop.fontFamily!;
   }
 
 // Future<List> getWares(BuildContext context)async{
