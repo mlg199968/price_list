@@ -414,8 +414,7 @@ class _ListPartState extends State<ListPart> {
                               selectedList.add(widget.wareList[item]);
                             }
                             final file =
-                                await PdfWareListApi.generateTicketWareList(
-                                    selectedList, context);
+                                await PdfWareListApi(context,selectedList).generateTicketWareList();
                             PdfApi.openFile(file);
                           },
                           icon: const Icon(

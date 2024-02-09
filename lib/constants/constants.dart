@@ -66,7 +66,7 @@ const List<String> kFonts = [
   'Elham',
   'Titr'
 ];
-const List kPrintTypeList = ['ساده', 'اتیکت','پایه'];
+const List kPrintTypeList = ['ساده', 'اتیکت','پایه','کاتالوگ'];
 
 const kSpaceBetween = 20.0;
 

@@ -223,16 +223,16 @@ class _WareActionsPanelState extends State<WareActionsPanel> {
                             }
                             late File file;
                             if(printType=="اتیکت") {
-                              file = await PdfWareListApi.generateTicketWareList(
-                                  filteredList, context);
+                              file = await PdfWareListApi(context,filteredList).generateTicketWareList();
                             }
                             else if(printType=="پایه") {
-                              file = await PdfWareListApi.generateLegacyWareList(
-                                  filteredList, context);
+                              file = await PdfWareListApi(context,filteredList).generateLegacyWareList();
+                            }
+                            else if(printType=="کاتالوگ") {
+                              file = await PdfWareListApi(context,filteredList).generateCatalog();
                             }
                             else{
-                              file = await PdfWareListApi.generateSimpleWareList(
-                                  filteredList, context);
+                              file = await PdfWareListApi(context,filteredList).generateSimpleWareList();
                             }
                             PdfApi.openFile(file);
                           }),
