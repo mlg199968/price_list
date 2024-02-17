@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:blurrycontainer/blurrycontainer.dart';
+import 'package:gap/gap.dart';
 import 'package:image/image.dart' as img;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -7,9 +8,11 @@ import 'package:image_compression_flutter/image_compression_flutter.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:path_provider/path_provider.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
+import 'package:price_list/components/custom_text.dart';
 import 'package:price_list/components/shape/shape02.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/enums.dart';
+import 'package:price_list/screens/bazaar_purchase_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 
@@ -17,7 +20,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 ///Show snake bar in active context
 void showSnackBar(BuildContext context, String title,
-    {SnackType type=SnackType.normal,double? height}) {
+    {SnackType type=SnackType.normal,double? height,bool dialogMode=false}) {
   Color? color;
   switch(type){
     case SnackType.normal:
@@ -34,8 +37,8 @@ void showSnackBar(BuildContext context, String title,
       break;
 
   }
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
+  if(!dialogMode) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         showCloseIcon: true,
         width: 350,
         elevation: 0,
@@ -44,20 +47,54 @@ void showSnackBar(BuildContext context, String title,
         backgroundColor: Colors.transparent,
         content: BlurryContainer(
           padding: const EdgeInsets.all(0),
-          height:height ?? 50,
+          height: height ?? 50,
           color: Colors.black.withOpacity(.8),
           borderRadius: BorderRadius.circular(20),
           child: BackgroundShape2(
-            color: color ,
+            color: color,
             height: height ?? 50,
             child: Container(
               alignment: Alignment.centerRight,
               padding: const EdgeInsets.all(8.0),
-              child: Text(title.toPersianDigit(),style: const TextStyle(fontFamily: kCustomFont,color: Colors.white),textDirection: TextDirection.rtl,),
+              child: Text(
+                title.toPersianDigit(),
+                style: const TextStyle(
+                    fontFamily: kCustomFont, color: Colors.white),
+                textDirection: TextDirection.rtl,
+              ),
             ),
           ),
-        )),
-  );
+        )));
+  }
+  else {
+    showDialog(
+        context: context,
+        builder: (context) => Dialog(
+          child: Container(
+            width: 300,
+                height: 200,
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                    gradient: kMainGradiant,
+                    borderRadius: BorderRadius.circular(10)),
+                child: Container(
+                  margin: EdgeInsets.all(10),
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.orangeAccent)),
+                    child: Column(
+                      children: [
+                        Align(
+                            alignment: Alignment.centerRight,
+                            child: CrownIcon(size: 40,)),
+                        Gap(10),
+                        CText(title,color: Colors.white,),
+                      ],
+                    )),
+              ),
+        ));
+  }
 }
 
 // ///Show snake bar in active context

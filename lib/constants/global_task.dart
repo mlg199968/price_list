@@ -11,12 +11,6 @@ class GlobalTask {
   ///start up data
   Future<void> getStartUpData(context) async {
     try {
-      //TODO:myket starter api
-      // if (Platform.isAndroid) {
-      //   var iabResult = await MyketIAP.init(
-      //       rsaKey: Private.rsaKeyMyket, enableDebugLogging: true);
-      // }
-
       ///get user level(vip)
       Provider.of<WareProvider>(context, listen: false).getVip();
 

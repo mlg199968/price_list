@@ -4,10 +4,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:price_list/components/over_cage.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/utils.dart';
+import 'package:price_list/screens/bazaar_purchase_screen.dart';
 import 'package:price_list/screens/group_management_screen.dart';
 import 'package:price_list/screens/notice_screen/notice_screen.dart';
 import 'package:price_list/screens/notice_screen/services/notice_tools.dart';
-import 'package:price_list/screens/purchase_screen.dart';
 import 'package:price_list/screens/setting/setting_screen.dart';
 import 'package:price_list/providers/ware_provider.dart';
 import 'package:provider/provider.dart';
@@ -161,8 +161,8 @@ class PurchaseButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
-       // Navigator.pushNamed(context, BazaarPurchaseScreen.id);
-        Navigator.pushNamed(context, PurchaseScreen.id);
+        Navigator.pushNamed(context, BazaarPurchaseScreen.id);
+        //Navigator.pushNamed(context, PurchaseScreen.id);
       },
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
@@ -210,15 +210,15 @@ class AvatarHolder extends StatelessWidget {
       child: Align(
         heightFactor: 1.7,
         alignment: Alignment.bottomCenter,
-        child: CircleAvatar(
+        child:vip
+        ?CrownIcon(size: 100,)
+        :CircleAvatar(
           backgroundColor: Colors.white70,
           radius: 50,
           child: CircleAvatar(
-            backgroundColor:Colors.indigo,
+            backgroundColor:Colors.deepPurple,
             radius: 48,
-            child:vip?
-               Icon(FontAwesomeIcons.crown,color: Colors.yellow,size: 55,)
-                : Icon(
+            child:Icon(
                     Icons.person,
                     size: 70,
                   ),
