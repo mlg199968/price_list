@@ -30,8 +30,8 @@ class _LoadScreenState extends State<LoadScreen> {
       Timer(const Duration(milliseconds: 900), () async{
        // await GlobalTask().getStartUpData(context);
 
-        Navigator.of(context).pushReplacementNamed(
-            WareListScreen.id);
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            WareListScreen.id,(context)=>false);
       });
     });
     return Container(

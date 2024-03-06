@@ -97,15 +97,6 @@ void showSnackBar(BuildContext context, String title,
   }
 }
 
-// ///Show snake bar in active context
-// void showSnackBar(BuildContext context, String text) {
-//   ScaffoldMessenger.of(context).showSnackBar(
-//     SnackBar(
-//       content: Text(text),
-//     ),
-//   );
-// }
-
 ///Show snake bar in active context
 Divider customDivider({required BuildContext context, Color? color}) {
   double indent = MediaQuery.of(context).size.width / 7;

@@ -1,8 +1,9 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:price_list/components/empty_holder.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/error_handler.dart';
 import 'package:price_list/constants/utils.dart';
@@ -51,7 +52,7 @@ class _ItemImageHolderState extends State<ItemImageHolder> {
         children: [
           InkWell(
             onTap: () async {
-              if (widget.imagePath == null) {
+              if (widget.imagePath == null || widget.imagePath == "") {
                 try {
                   await storagePermission(context, Allow.storage);
                   isLoading = true;
@@ -73,33 +74,33 @@ class _ItemImageHolderState extends State<ItemImageHolder> {
                 }
               }
             },
-            child: Container(
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.black26),
-                  image:(widget.imagePath == null || widget.imagePath == "")?null: DecorationImage(image: FileImage(File(widget.imagePath!)),fit: BoxFit.cover,)
-                ),
-                height:MediaQuery.of(context).size.width*(9/16) ,
+            child: Center(
+              child: Container(
                 width: MediaQuery.of(context).size.width,
-                child: (widget.imagePath == null || widget.imagePath == "")
-                    ? const Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.add_photo_alternate_outlined,
-                            size: 80,
-                          ),
-                          Text(
-                            "افزودن تصویر",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.black38),
-                          ),
-                        ],
-                      )
-                    : null),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.black26),
+                ),
+                child: ClipRRect(
+                  borderRadius:BorderRadius.circular(20) ,
+                  child: AspectRatio(
+                    aspectRatio: 16/9,
+                    child: (widget.imagePath == null || widget.imagePath == "")
+
+                        ? const EmptyHolder(text: "افزودن تصویر", icon: Icons.add_photo_alternate_outlined,iconSize:70,fontSize: 13,)
+                        : Image(
+                      image: FileImage(File(widget.imagePath!)),
+                      fit: BoxFit.cover,
+                      errorBuilder: (context,error,trace){
+                        ErrorHandler.errorManger(context, error,route: trace.toString(),title: "itemImageHolder widget imageDecoration error");
+                        return const EmptyHolder(text: "بارگزاری تصویر با مشکل مواجه شده است", icon: Icons.image_not_supported_outlined);
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
           ///image setting like delete button
           if (widget.imagePath != null && widget.imagePath != "" )
@@ -111,18 +112,20 @@ class _ItemImageHolderState extends State<ItemImageHolder> {
                     File(widget.imagePath!).delete(recursive: true);
                     widget.onSet(null);
                   },
-                  icon: const Icon(
-                    FontAwesomeIcons.trash,
+                  icon:const Icon(
+                    CupertinoIcons.trash_fill,
                     color: Colors.red,
+                    size: 25,
+                    shadows: [BoxShadow(blurRadius: 2,offset: Offset(2, 3),color: Colors.black45)],
                   ),
                 ),
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(
-                    FontAwesomeIcons.pencil,
-                    color: Colors.orange,
-                  ),
-                ),
+                // IconButton(
+                //   onPressed: () {},
+                //   icon: const Icon(
+                //     FontAwesomeIcons.pencil,
+                //     color: Colors.orange,
+                //   ),
+                // ),
               ],
             ),
         ],

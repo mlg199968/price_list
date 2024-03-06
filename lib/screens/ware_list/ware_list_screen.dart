@@ -104,21 +104,12 @@ class _WareListScreenState extends State<WareListScreen> {
                                   subGroup: selectedDropListGroup,
                                 ));
                       },
-                      icon: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            boxShadow: [
-                              BoxShadow(
-                                  offset: Offset(-1, -1),
-                                  blurRadius: 1,
-                                  color: Colors.grey)
-                            ],
-                            gradient: kMainGradiant,
-                          ),
-                          padding: EdgeInsets.all(5),
-                          child: const Icon(
-                            Icons.print,
-                          ))),
+                      icon:  Icon(
+                        CupertinoIcons.printer,
+                        size: 25,
+                        shadows: [BoxShadow(
+                            blurRadius: 5, offset: Offset(1, 2), color: Colors.black54),]
+                      )),
                 ],
                 leading: Padding(
                   padding: const EdgeInsets.all(8.0),

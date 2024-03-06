@@ -60,6 +60,7 @@ const List<String> kCurrencyList = ["ریال", "تومان", "دلار", "لی�
 const List<String> kFonts = [
   'Shabnam',
   'Sahel',
+  'Mitra',
   'Koodak',
   'Roya',
   'Terafik',

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:price_list/components/drop_list_model.dart';
+
 class CustomSearchBar extends StatelessWidget {
   const CustomSearchBar(
       {super.key,
@@ -9,10 +10,8 @@ class CustomSearchBar extends StatelessWidget {
       required this.selectedSort,
       required this.sortList,
       required this.onSort,
-        this.iconColor= Colors.white70,
-      this.focusNode
-
-      });
+      this.iconColor = Colors.white,
+      this.focusNode});
   final TextEditingController controller;
   final String hint;
   final Function onChange;
@@ -31,7 +30,15 @@ class CustomSearchBar extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           DropListModel(
-            icon: Icon(Icons.sort,size: 30,color:iconColor,),
+              icon: Icon(
+                Icons.sort,
+                size: 30,
+                color: iconColor,
+                shadows: [
+                  BoxShadow(
+                      blurRadius: 5, offset: Offset(1, 2), color: Colors.black54)
+                ],
+              ),
               listItem: sortList,
               selectedValue: selectedSort,
               onChanged: (val) {
@@ -42,7 +49,8 @@ class CustomSearchBar extends StatelessWidget {
               width: 400,
               height: 45,
               child: Card(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
                 elevation: 4,
                 child: Center(
                   child: TextField(
@@ -52,7 +60,6 @@ class CustomSearchBar extends StatelessWidget {
                       onChange(val);
                     },
                     decoration: InputDecoration(
-
                       //isDense: true,
                       contentPadding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
                       filled: true,
@@ -63,12 +70,16 @@ class CustomSearchBar extends StatelessWidget {
                         borderSide: const BorderSide(color: Colors.transparent),
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      focusedBorder:OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.transparent,strokeAlign: BorderSide.strokeAlignOutside),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                            color: Colors.transparent,
+                            strokeAlign: BorderSide.strokeAlignOutside),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       border: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.transparent,strokeAlign: BorderSide.strokeAlignOutside),
+                        borderSide: const BorderSide(
+                            color: Colors.transparent,
+                            strokeAlign: BorderSide.strokeAlignOutside),
                         borderRadius: BorderRadius.circular(20),
                       ),
                     ),

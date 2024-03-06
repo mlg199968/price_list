@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/model/shop.dart';
@@ -101,8 +102,10 @@ class WareProvider extends ChangeNotifier {
 
     if (subsInfo != null) {
       isVip = subsInfo;
-      //notifyListeners();
     }
+    // if(kDebugMode) {
+    //   isVip = false;
+    // }
   }
 
   loadNotification(context) async {

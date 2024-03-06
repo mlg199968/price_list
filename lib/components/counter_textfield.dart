@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:price_list/components/custom_text.dart';
 import 'package:price_list/constants/constants.dart';
-import 'package:price_list/constants/utils.dart';
-
 
 class CounterTextfield extends StatelessWidget {
   const CounterTextfield({
@@ -11,7 +9,12 @@ class CounterTextfield extends StatelessWidget {
     required this.controller,
     this.symbol,
     this.onChange,
-    this.decimal=true, this.label,
+    this.decimal = true,
+    this.label,
+    this.borderRadius = 20,
+    this.step = 1,
+    this.minNum = 0,
+    this.maxNum = 1000,
   });
 
   final TextEditingController controller;
@@ -19,6 +22,10 @@ class CounterTextfield extends StatelessWidget {
   final String? label;
   final String? symbol;
   final Function(String? val)? onChange;
+  final double borderRadius;
+  final double step;
+  final double minNum;
+  final double maxNum;
 
   @override
   Widget build(BuildContext context) {
@@ -31,12 +38,20 @@ class CounterTextfield extends StatelessWidget {
           Flexible(
             child: TextFormField(
               controller: controller,
-              keyboardType:
-                   TextInputType.numberWithOptions(decimal: decimal),
+              keyboardType: TextInputType.numberWithOptions(decimal: decimal),
+              onTapOutside: (val){
+                double valNum=double.tryParse(controller.text )?? minNum;
+                controller.text = valNum.toString();
+                if (valNum < minNum) {
+                  controller.text = minNum.toString();
+                } else if (valNum > maxNum) {
+                  controller.text = maxNum.toString();
+                }
+              },
               onChanged: (val) {
                 // if (val != "" && val != "."  && val != "," &&
                 //     val != "-" && stringToDouble(val) < 0) {
-                //   controller.text = 0.toString();
+                //   controller.text = minNum.toString();
                 // }
                 if (onChange != null) {
                   onChange!(val);
@@ -53,7 +68,49 @@ class CounterTextfield extends StatelessWidget {
                 isPressed = true;
               },
               decoration: InputDecoration(
-                label:label==null?null: CText(label!,fontSize: 12,maxLine: 2,),
+                ///counter buttons
+                suffixIcon: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    //add to value button
+                    MiniButton(
+                      icon: FontAwesomeIcons.angleUp,
+                      onPress: () {
+                        double num1 =
+                            double.tryParse(controller.text) ?? minNum;
+                        if (num1 < maxNum-step) {
+                          num1 += step;
+                          controller.text = (decimal ? num1 : num1.toInt())
+                              .toStringAsFixed(2);
+                        } else {
+                          controller.text = maxNum.toString();
+                        }
+                      },
+                    ),
+                    //subtract to value button
+                    MiniButton(
+                      icon: FontAwesomeIcons.angleDown,
+                      onPress: () {
+                        double num1 =
+                            double.tryParse(controller.text) ?? minNum;
+                        if (num1 > minNum+step) {
+                          controller.text = decimal
+                              ? (num1 - step).toStringAsFixed(2)
+                              : (num1.toInt() - step).toString();
+                        } else {
+                          controller.text = minNum.toString();
+                        }
+                      },
+                    ),
+                  ],
+                ),
+                label: label == null
+                    ? null
+                    : CText(
+                        label!,
+                        fontSize: 12,
+                        maxLine: 2,
+                      ),
                 suffix: Text(symbol ?? ""),
                 contentPadding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                 counterText: "",
@@ -62,50 +119,24 @@ class CounterTextfield extends StatelessWidget {
                 hoverColor: Colors.white70,
                 border: OutlineInputBorder(
                   borderSide: const BorderSide(width: .5),
-                  borderRadius: BorderRadius.circular(15),
+                  borderRadius: BorderRadius.circular(borderRadius),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: const BorderSide(width: .5, color: kMainColor2),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 enabledBorder: UnderlineInputBorder(
-                    borderRadius: BorderRadius.circular(5),
+                    borderRadius: BorderRadius.circular(borderRadius * .5),
                     borderSide:
                         const BorderSide(color: Colors.blueGrey, width: 1)),
                 errorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(borderRadius * .8),
                     borderSide: const BorderSide(color: Colors.red)),
               ),
             ),
           ),
           const SizedBox(
             width: 5,
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              //add to value button
-              MiniButton(
-                icon: FontAwesomeIcons.angleUp,
-                onPress: () {
-                  double num1 = stringToDouble(
-                      controller.text == "" ? "0" : controller.text) + 1;
-                  int num1int=num1.toInt();
-                  controller.text = (decimal?num1:num1int).toString();
-                },
-              ),
-              //subtract to value button
-              MiniButton(
-                icon: FontAwesomeIcons.angleDown,
-                onPress: () {
-                  double num1=stringToDouble(controller.text);
-                  if(num1>0) {
-                    controller.text =decimal?
-                      (num1 - 1).toString():(num1.toInt() - 1).toString();
-                  }
-                },
-              ),
-            ],
           ),
         ],
       ),
@@ -119,6 +150,7 @@ class MiniButton extends StatelessWidget {
     required this.onPress,
     required this.icon,
   });
+
   final VoidCallback onPress;
   final IconData icon;
 
@@ -127,12 +159,13 @@ class MiniButton extends StatelessWidget {
     return SizedBox(
       height: 20,
       width: 40,
-      child: ElevatedButton(
+      child: IconButton(
         onPressed: onPress,
+        color: kMainColor,
         style: ButtonStyle(
           padding: MaterialStateProperty.all(const EdgeInsets.all(0)),
         ),
-        child: Icon(icon),
+        icon: Icon(icon),
       ),
     );
   }

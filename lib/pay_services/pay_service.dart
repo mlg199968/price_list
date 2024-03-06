@@ -1,10 +1,12 @@
 import 'dart:convert';
 
+import 'package:cafebazaar_flutter/cafebazaar_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:myket_iap/myket_iap.dart';
-import 'package:myket_iap/util/iab_result.dart';
-import 'package:myket_iap/util/purchase.dart';
+// import 'package:flutter_poolakey/flutter_poolakey.dart';
+// import 'package:myket_iap/myket_iap.dart';
+// import 'package:myket_iap/util/iab_result.dart';
+// import 'package:myket_iap/util/purchase.dart';
 import 'package:price_list/constants/enums.dart';
 import 'package:price_list/constants/error_handler.dart';
 import 'package:price_list/constants/private.dart';
@@ -75,6 +77,18 @@ class PayService {
 static connectToBazaar(BuildContext context) async {
 
   try {
+    CafebazaarFlutter _bazaar = CafebazaarFlutter.instance;
+    InAppPurchase inApp = _bazaar.inAppPurchase(Private.rsaKey);
+
+
+
+      PurchaseInfo? purchaseInfo = await inApp.purchase('3');
+      if(purchaseInfo != null){
+        print(purchaseInfo.toMap());
+        Provider.of<WareProvider>(context,listen: false).setVip(true);
+        Navigator.pushNamedAndRemoveUntil(context, WareListScreen.id,(route)=>false);
+        showSnackBar(context, "برنامه با موفقیت فعال شد",type: SnackType.success,dialogMode: true);
+      }
 
   // bool connectionState=await FlutterPoolakey.connect(
   //   Private.rsaKey,
@@ -100,19 +114,19 @@ static connectToBazaar(BuildContext context) async {
 //TODO: myket connect function
 static connectToMyket(BuildContext context)async{
     try{
-      Map result = await MyketIAP.launchPurchaseFlow(sku: "1", payload:"payload");
-      IabResult purchaseResult = result[MyketIAP.RESULT];
-      Purchase purchase = result[MyketIAP.PURCHASE];
-      print("وضعیت خرید");
-      print(purchase.toJson());
-      print("وضعیت خرید از مایکت");
-      print(purchaseResult.mMessage);
-      print(purchaseResult.mResponse);
-      if(purchaseResult.mMessage.toLowerCase().contains("success")){
-        Provider.of<WareProvider>(context,listen: false).setVip(true);
-        Navigator.pushNamedAndRemoveUntil(context, WareListScreen.id,(route)=>false);
-        showSnackBar(context, "برنامه با موفقیت فعال شد!",type: SnackType.success,dialogMode: true);
-      }
+      // Map result = await MyketIAP.launchPurchaseFlow(sku: "1", payload:"payload");
+      // IabResult purchaseResult = result[MyketIAP.RESULT];
+      // Purchase purchase = result[MyketIAP.PURCHASE];
+      // print("وضعیت خرید");
+      // print(purchase.toJson());
+      // print("وضعیت خرید از مایکت");
+      // print(purchaseResult.mMessage);
+      // print(purchaseResult.mResponse);
+      // if(purchaseResult.mMessage.toLowerCase().contains("success")){
+      //   Provider.of<WareProvider>(context,listen: false).setVip(true);
+      //   Navigator.pushNamedAndRemoveUntil(context, WareListScreen.id,(route)=>false);
+      //   showSnackBar(context, "برنامه با موفقیت فعال شد!",type: SnackType.success,dialogMode: true);
+      // }
 
 
     }catch(e){

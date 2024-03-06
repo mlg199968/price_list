@@ -12,14 +12,16 @@ class CustomDialog extends StatelessWidget {
     required this.child,
     this.height,
     this.textDirection = TextDirection.rtl,
-    this.opacity = 1,
+    this.opacity = .9,
     this.image,
     this.borderRadius=20,this.vip=false,
     this.contentPadding,
+    this.topTrail,
   });
   final String? title;
   final EdgeInsets? contentPadding;
   final Widget child;
+  final Widget? topTrail;
   final double? height;
   final double width = 450;
   final TextDirection textDirection;
@@ -34,6 +36,7 @@ class CustomDialog extends StatelessWidget {
       iconPadding: EdgeInsets.zero,
       contentPadding: EdgeInsets.zero,
       backgroundColor: Colors.white.withOpacity(opacity),
+      surfaceTintColor: Colors.white,
       scrollable: true,
       content: HideKeyboard(
         child: BlurryContainer(
@@ -72,30 +75,38 @@ class CustomDialog extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   ///close button
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(
-                        Icons.close,
-                        color: Colors.red,
-                        size: 30,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      topTrail ?? const SizedBox(),
+                      SizedBox(
+                        width: 50,
+                        height: 50,
+                        child: IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: const Icon(
+                            Icons.close_rounded,
+                            color: Colors.red,
+                            size: 30,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                   Container(
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.all(10),
-                    decoration: BoxDecoration(gradient: kMainGradiant),
+                      alignment:Alignment.center,
+                      decoration:  BoxDecoration(
+                        gradient: (image == null || image=="")?kMainGradiant:null,
+                      ),
                       child: title == null
                           ? null
                           : Text(
-                              title!,
-                              style: const TextStyle(
-                                  color: Colors.white, fontSize: 18),
-                            )),
+                        title!,
+                        style: const TextStyle(
+                            color: Colors.white, fontSize: 18),
+                      )),
                   Directionality(
                     textDirection: textDirection,
                     child: Flexible(
