@@ -54,6 +54,11 @@ const List<String> kUnitList = [
   'شاخه',
   'بسته',
   'دسته',
+  'گیگ',
+  'مگ',
+  'شل',
+  'میلی متر',
+  'پک',
 ];
 const List<String> kSortList = ['تاریخ تسویه', 'حروف الفبا', 'تاریخ ثبت'];
 const List<String> kCurrencyList = ["ریال", "تومان", "دلار", "لیر", "درهم"];
@@ -75,7 +80,8 @@ final kBoxDecoration = BoxDecoration(
     color: Colors.white,
     borderRadius: BorderRadius.circular(5),
     border: Border.all(color: Colors.blue));
-
+const BoxShadow kShadow= BoxShadow(
+    blurRadius: 5, offset: Offset(1, 2), color: Colors.black54);
 ///Text styles
 const kHeaderStyle = TextStyle(
   fontWeight: FontWeight.bold,

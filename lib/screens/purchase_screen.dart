@@ -30,6 +30,8 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
   Widget build(BuildContext context) {
     return HideKeyboard(
       child: Scaffold(
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(backgroundColor: Colors.transparent,),
         backgroundColor: Colors.deepPurple,
         body: Container(
           padding: EdgeInsets.all(20),

@@ -4,7 +4,7 @@ description: Price List project
 publish_to: 'none'
 
 
-version: 4.0.8+12
+version: 4.1.0+13
 
 environment:
   sdk: '>=2.18.0-271.4.beta <3.0.0'
@@ -51,6 +51,8 @@ dependencies:
   flutter_animate: ^4.4.0
   lottie: ^2.6.0
   cafebazaar_flutter: ^1.0.2
+  google_fonts: ^4.0.4
+  package_info_plus: ^4.2.0
 
 
 

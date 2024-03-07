@@ -89,6 +89,7 @@ class CustomDialog extends StatelessWidget {
                           icon: const Icon(
                             Icons.close_rounded,
                             color: Colors.red,
+                            shadows: [BoxShadow(blurRadius: 5,offset:Offset(.5, .8),color: Colors.black54)],
                             size: 30,
                           ),
                         ),
@@ -105,7 +106,7 @@ class CustomDialog extends StatelessWidget {
                           : Text(
                         title!,
                         style: const TextStyle(
-                            color: Colors.white, fontSize: 18),
+                            color: Colors.white, fontSize: 18,shadows: [kShadow]),
                       )),
                   Directionality(
                     textDirection: textDirection,

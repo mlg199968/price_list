@@ -42,6 +42,8 @@ class _BazaarPurchaseScreenState extends State<BazaarPurchaseScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(backgroundColor: Colors.transparent,),
       backgroundColor: Colors.deepPurple,
       body: Container(
         padding: EdgeInsets.all(20),

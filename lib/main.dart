@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'screens/load_screen.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   //Adaptors
   Hive.registerAdapter(WareHiveAdapter());

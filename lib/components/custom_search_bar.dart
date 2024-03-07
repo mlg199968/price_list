@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:price_list/components/drop_list_model.dart';
+import 'package:price_list/constants/constants.dart';
 
 class CustomSearchBar extends StatelessWidget {
   const CustomSearchBar(
@@ -34,10 +35,7 @@ class CustomSearchBar extends StatelessWidget {
                 Icons.sort,
                 size: 30,
                 color: iconColor,
-                shadows: [
-                  BoxShadow(
-                      blurRadius: 5, offset: Offset(1, 2), color: Colors.black54)
-                ],
+                shadows: [kShadow],
               ),
               listItem: sortList,
               selectedValue: selectedSort,

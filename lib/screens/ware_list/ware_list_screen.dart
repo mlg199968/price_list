@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:lottie/lottie.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
@@ -107,8 +108,7 @@ class _WareListScreenState extends State<WareListScreen> {
                       icon:  Icon(
                         CupertinoIcons.printer,
                         size: 25,
-                        shadows: [BoxShadow(
-                            blurRadius: 5, offset: Offset(1, 2), color: Colors.black54),]
+                        shadows: [kShadow]
                       )),
                 ],
                 leading: Padding(
@@ -127,7 +127,7 @@ class _WareListScreenState extends State<WareListScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text("Price List"),
+                       Flexible(child: Text("Price List",style: GoogleFonts.bebasNeue(fontSize: 25),)),
                     ],
                   ),
                 ),
