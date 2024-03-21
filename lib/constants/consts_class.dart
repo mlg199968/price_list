@@ -72,13 +72,16 @@ class UserType{
 class Address{
 
   //data base directory directory
-  static Future<String> hiveDirectory()async{
-    final Directory directory = await getApplicationDocumentsDirectory();
-    final newDirectory = Directory("${directory.path}/price_list/db");
-    if (!await newDirectory.exists()) {
-      newDirectory.create(recursive: true);
+  static Future<String?> hiveDirectory()async{
+    if(Platform.isWindows) {
+      final Directory directory = await getApplicationDocumentsDirectory();
+      final newDirectory = Directory("${directory.path}/price_list/db");
+      if (!await newDirectory.exists()) {
+        newDirectory.create(recursive: true);
+      }
+      return newDirectory.path;
     }
-    return newDirectory.path;
+    return null;
   }
   //items image directory
   static Future<String> waresImage()async{

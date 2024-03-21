@@ -34,6 +34,7 @@ class _SettingScreenState extends State<SettingScreen> {
   String selectedCurrency=kCurrencyList[0];
   String selectedFont = kFonts[0];
   String? backupDirectory;
+  bool isBackupLoading = false;
 
   void storeInfoShop() {
     Shop dbShop=HiveBoxes.getShopInfo().values.first.copyWith(
@@ -117,16 +118,24 @@ class _SettingScreenState extends State<SettingScreen> {
                                     ),
                                   ),
                                   ActionButton(
+                                    loading: isBackupLoading,
                                     label: "بارگیری فایل پشتیبان",
                                     icon: Icons.settings_backup_restore,
                                     bgColor: Colors.teal,
                                     onPress: () async {
                                       await storagePermission(
-                                          context, Allow.externalStorage);
-                                      await storagePermission(context, Allow.storage);
-
-                                        // await BackupTools.restoreBackup(context);
+                                          context, Allow.storage);
+                                      if (context.mounted) {
+                                        await storagePermission(
+                                            context, Allow.externalStorage);
+                                      }
+                                      isBackupLoading = true;
+                                      setState(() {});
+                                      if (context.mounted) {
                                         await BackupTools.readZipFile(context);
+                                      }
+                                      isBackupLoading = false;
+                                      setState(() {});
                                     },
                                   ),
                                 ],

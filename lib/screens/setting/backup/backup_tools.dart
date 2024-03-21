@@ -76,7 +76,7 @@ ErrorHandler.errorManger(context, e,title: "BackupTools restoreMlgFileBackup fun
         //read backup and convert
         String path = result.files.single.path!;
         //condition for which type backup is being read
-        if(path.contains(".zip")) {
+        if(path.contains(".zip") || path.contains(".plmlg")) {
           final bytes = File(path).readAsBytesSync();
           // Decode the Zip file
           final archive = ZipDecoder().decodeBytes(bytes);
@@ -106,6 +106,7 @@ ErrorHandler.errorManger(context, e,title: "BackupTools restoreMlgFileBackup fun
         }else{
           showSnackBar(context, "فایل ناشناخته است",type: SnackType.error);
         }
+        updateImagePath();
       }
     } catch (e) {
       ErrorHandler.errorManger(context, e,
@@ -120,7 +121,7 @@ ErrorHandler.errorManger(context, e,title: "BackupTools restoreMlgFileBackup fun
         // Zip a directory to out.zip using the zipDirectory convenience method
         var encoder = ZipFileEncoder();
         // Manually create a zip of a directory and individual files.
-        encoder.create('$directory/price_list$formattedDate.zip');
+        encoder.create('$directory/price_list$formattedDate.plmlg');
         encoder.addDirectory(Directory(imagesDir));
         File jsonFile = await _createJsonFile(json, directory);
         encoder.addFile(jsonFile);
@@ -160,6 +161,23 @@ ErrorHandler.errorManger(context, e,title: "BackupTools restoreMlgFileBackup fun
       ErrorHandler.errorManger(context, e,
           title: "BackupTools - restoreJsonData error", showSnackbar: true);
     }
+  }
+  ///
+  static Future<void> updateImagePath()async{
+    String directoryPath=await Address.waresImage();
+    List<WareHive> itemsList=HiveBoxes.getWares().values.toList();
+    for (int i = 0; i < itemsList.length; i++) {
+      String id=itemsList[i].wareID!;
+      String imagePath="$directoryPath/$id.jpg";
+      if(await File(imagePath).exists()) {
+        itemsList[i].imagePath=imagePath;
+      }else{
+        itemsList[i].imagePath=null;
+      }
+      HiveBoxes.getWares()
+          .put(id,itemsList[i]);
+    }
+
   }
   // static Future<void> _saveJson(String json,BuildContext context) async {
   //   String formattedDate= intl.DateFormat('yyyyMMdd-kkmmss').format(DateTime.now());

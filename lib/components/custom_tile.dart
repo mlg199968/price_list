@@ -19,11 +19,12 @@ class CustomTile extends StatelessWidget {
     this.middleLabel,
     this.trailingLabel,
     this.onLongPress,
-    this.selected = false,
+    this.selected = false, this.surfaceColor,
   });
 
   final double height;
   final Color color;
+  final Color? surfaceColor;
   final String? subTitle;
   final String title;
   final String topTrailing;
@@ -45,6 +46,7 @@ class CustomTile extends StatelessWidget {
         textDirection: TextDirection.rtl,
         child: Builder(builder: (context) {
           return Card(
+            surfaceTintColor:surfaceColor ?? Colors.white,
             margin: selected ? const EdgeInsets.only(right: 20) : null,
             child: BackgroundClipper(
               color: selected ?Colors.blue:color,

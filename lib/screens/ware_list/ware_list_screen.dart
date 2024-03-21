@@ -144,111 +144,115 @@ class _WareListScreenState extends State<WareListScreen> {
               content: Text('برای خروج دوباره ضربه بزنید'),
             ),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-              child: Column(
-                children: <Widget>[
-                  ///Notification Alert,if new notification exist this part will be shown
-                  AnimatedSize(
-                    curve: Curves.easeInOutExpo,
-                    duration: Duration(milliseconds: 400),
-                    child: (!NoticeTools.checkNewNotifications() ||
-                            !showAlertNotice)
-                        ? SizedBox()
-                        : Container(
-                            alignment: Alignment.center,
-                            height: 50,
-                            decoration: BoxDecoration(color: Colors.red),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                ActionButton(
-                                  label: "مشاهده",
-                                  icon: Icons.remove_red_eye_outlined,
-                                  height: 30,
-                                  onPress: () {
-                                    Navigator.pushNamed(
-                                            context, NoticeScreen.id)
-                                        .then((value) {
-                                      setState(() {});
-                                    });
-                                  },
-                                ),
-                                CText(
-                                  "اطلاع رسانی جدید!",
-                                  color: Colors.white,
-                                  textDirection: TextDirection.rtl,
-                                )
-                                    .animate()
-                                    .fade(duration: Duration(seconds: 1)),
-                                Lottie.asset(
-                                    "assets/animations/notification.json"),
-                                IconButton(
-                                  color: Colors.white60,
-                                    onPressed: () {
-                                      showAlertNotice = false;
-                                      setState(() {});
+              decoration: BoxDecoration(gradient: kMainGradiant),
+              child: Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                child: Column(
+                  children: <Widget>[
+                    ///Notification Alert,if new notification exist this part will be shown
+                    AnimatedSize(
+                      curve: Curves.easeInOutExpo,
+                      duration: Duration(milliseconds: 400),
+                      child: (!NoticeTools.checkNewNotifications() ||
+                              !showAlertNotice)
+                          ? SizedBox()
+                          : Container(
+                              alignment: Alignment.center,
+                              height: 50,
+                              decoration: BoxDecoration(color: Colors.red),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  ActionButton(
+                                    label: "مشاهده",
+                                    icon: Icons.remove_red_eye_outlined,
+                                    height: 30,
+                                    onPress: () {
+                                      Navigator.pushNamed(
+                                              context, NoticeScreen.id)
+                                          .then((value) {
+                                        setState(() {});
+                                      });
                                     },
-                                    icon: Icon(Icons.close_rounded))
-                              ],
+                                  ),
+                                  CText(
+                                    "اطلاع رسانی جدید!",
+                                    color: Colors.white,
+                                    textDirection: TextDirection.rtl,
+                                  )
+                                      .animate()
+                                      .fade(duration: Duration(seconds: 1)),
+                                  Lottie.asset(
+                                      "assets/animations/notification.json"),
+                                  IconButton(
+                                    color: Colors.white60,
+                                      onPressed: () {
+                                        showAlertNotice = false;
+                                        setState(() {});
+                                      },
+                                      icon: Icon(Icons.close_rounded))
+                                ],
+                              ),
                             ),
-                          ),
-                  ),
-
-                  ///search bar
-                  Container(
-                    decoration: const BoxDecoration(gradient: kMainGradiant),
-                    padding: const EdgeInsets.all(10),
-                    child: CustomSearchBar(
-                      controller: searchController,
-                      hint: "جست و جو کالا",
-                      onChange: (val) {
-                        keyWord = val;
-                        setState(() {});
-                      },
-                      selectedSort: sortItem,
-                      sortList: sortList,
-                      onSort: (val) {
-                        sortItem = val;
-                        setState(() {});
-                      },
                     ),
-                  ),
+                    ///search bar
+                    Container(
+                      alignment: Alignment.center,
+                      decoration: const BoxDecoration(gradient: kMainGradiant),
+                      padding: const EdgeInsets.all(10),
+                      child: CustomSearchBar(
+                        controller: searchController,
+                        hint: "جست و جو کالا",
+                        onChange: (val) {
+                          keyWord = val;
+                          setState(() {});
+                        },
+                        selectedSort: sortItem,
+                        sortList: sortList,
+                        onSort: (val) {
+                          sortItem = val;
+                          setState(() {});
+                        },
+                      ),
+                    ),
 
-                  ///get ware list
-                  ValueListenableBuilder<Box<WareHive>>(
-                      valueListenable: HiveBoxes.getWares().listenable(),
-                      builder: (context, box, _) {
-                        final productList =
-                            box.values.toList().cast<WareHive>();
-                        waresList = productList;
-                        List<WareHive> filteredList = WareTools.filterList(
-                            productList, keyWord, sortItem);
-                        if (filteredList.isEmpty) {
-                          return const Expanded(
-                            child: Center(
-                                child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(FontAwesomeIcons.boxOpen),
-                                SizedBox(
-                                  height: 8,
-                                ),
-                                Text(
-                                  " کالایی یافت نشد!",
-                                  textDirection: TextDirection.rtl,
-                                ),
-                              ],
-                            )),
+                    ///get ware list
+                    ValueListenableBuilder<Box<WareHive>>(
+                        valueListenable: HiveBoxes.getWares().listenable(),
+                        builder: (context, box, _) {
+                          final productList =
+                              box.values.toList().cast<WareHive>();
+                          waresList = productList;
+                          List<WareHive> filteredList = WareTools.filterList(
+                              productList, keyWord, sortItem,selectedDropListGroup);
+                          if (filteredList.isEmpty) {
+                            return const Expanded(
+                              child: Center(
+                                  child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(FontAwesomeIcons.boxOpen),
+                                  SizedBox(
+                                    height: 8,
+                                  ),
+                                  Text(
+                                    " کالایی یافت نشد!",
+                                    textDirection: TextDirection.rtl,
+                                  ),
+                                ],
+                              )),
+                            );
+                          }
+                          return ListPart(
+                            key: widget.key,
+                            category: selectedDropListGroup,
+                            wareList: filteredList,
                           );
-                        }
-                        return ListPart(
-                          key: widget.key,
-                          category: selectedDropListGroup,
-                          wareList: filteredList,
-                        );
-                      }),
-                ],
+                        }),
+                  ],
+                ),
               ),
             ),
           ),
@@ -275,6 +279,7 @@ class _ListPartState extends State<ListPart> {
 
   @override
   Widget build(BuildContext context) {
+    bool isMobile=screenType(context)==ScreenType.mobile;
     return WillPopScope(
       //if action bottom bar is shown,on will pop first close the action bar then on the second press close the screen
       onWillPop: selectedItems.isEmpty
@@ -286,157 +291,174 @@ class _ListPartState extends State<ListPart> {
             },
       child: Consumer<WareProvider>(builder: (context, wareProvider, child) {
         return Expanded(
-          child: Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: AnimateList(
-                      interval: 100.ms,
-                      effects: [FadeEffect(duration: 300.ms)],
-                      children: List.generate(widget.wareList.length, (index) {
-                        WareHive ware = widget.wareList[index];
-                        if (widget.category == "همه" ||
-                            widget.category ==
-                                widget.wareList[index].groupName) {
-                          return InkWell(
-                            onTap: () {
-                              if (selectedItems.isEmpty) {
-                                if (widget.key != null) {
-                                  Navigator.pop(context, ware);
-                                } else {
-                                  selectedWare = ware;
-                                  setState(() {});
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) => InfoPanel(
-                                          context: context, wareInfo: ware));
-                                }
-                              } else {
-                                if (selectedItems.contains(index)) {
-                                  selectedItems.remove(index);
-                                } else {
-                                  selectedItems.add(index);
-                                }
-                                setState(() {});
-                              }
-                            },
-                            onLongPress: () {
-                              if (!selectedItems.contains(index)) {
-                                selectedItems.add(index);
-                                setState(() {});
-                              }
-                            },
-                            child: CustomTile(
-                              selected: selectedItems.contains(index),
-                              height: 50,
-                              color: Colors.deepPurple.shade800,
-                              leadingIcon: CupertinoIcons.cube_box_fill,
-                              subTitle: ware.groupName,
-                              type: "${index+1}".toPersianDigit(),
-                              title: ware.wareName,
-                              topTrailing: wareProvider.showQuantity
-                                  ? ("${ware.quantity}  ".toPersianDigit() +
-                                      ware.unit)
-                                  : "",
-                              topTrailingLabel:
-                                  wareProvider.showQuantity ? "موجودی:" : "",
-                              trailing: addSeparator(ware.sale),
-                              trailingLabel: "فروش:",
-                              middle: wareProvider.showCostPrice
-                                  ? addSeparator(ware.cost)
-                                  : null,
-                              middleLabel:
-                                  wareProvider.showCostPrice ? "خرید:" : null,
+          child: LayoutBuilder(
+            builder: (context,constraint) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if(!isMobile)
+                    Flexible(
+                      child: SizedBox(
+                        width: 400,
+                        child:selectedWare==null? null: InfoPanelDesktop(
+                            context: context,
+                            wareInfo: selectedWare!,
+                            onReload:(){
+                              selectedWare=null;
+                              setState(() {});}),
+                      ),
+                    ),
+                  Flexible(
+                    child: SizedBox(
+                      width: 550,
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: ListView.builder(
+                                controller: ScrollController(),
+                                itemCount: widget.wareList.length,
+                                itemBuilder: (context, index) {
+                                  WareHive ware = widget.wareList[index];
+                                    return InkWell(
+                                      onLongPress: () {
+                                        if (!selectedItems.contains(index)) {
+                                          selectedItems.add(index);
+                                          setState(() {});
+                                        }
+                                      },
+                                      onTap: () {
+                                        if (selectedItems.isEmpty) {
+                                          if (widget.key != null) {
+                                            Navigator.pop(context, ware);
+                                          } else {
+                                            selectedWare=ware;
+                                            setState(() {});
+                                            !isMobile?null:showDialog(
+                                                context: context,
+                                                builder: (context) => InfoPanel(
+                                                    context: context,
+                                                    wareInfo: ware));
+                                          }
+                                        } else {
+                                          if (selectedItems.contains(index)) {
+                                            selectedItems.remove(index);
+                                          } else {
+                                            selectedItems.add(index);
+                                          }
+                                          setState(() {});
+                                        }
+                                      },
+                                      child:  CustomTile(
+                                        selected: selectedItems.contains(index),
+                                        height: 50,
+                                        color: selectedWare?.wareID==widget.wareList[index].wareID?kSecondaryColor:kMainColor,
+                                        surfaceColor: selectedWare?.wareID==widget.wareList[index].wareID?kSecondaryColor:null,
+                                        leadingIcon: CupertinoIcons.cube_box_fill,
+                                        subTitle: ware.groupName,
+                                        type: "${index+1}".toPersianDigit(),
+                                        title: ware.wareName,
+                                        topTrailing: wareProvider.showQuantity
+                                            ? ("${ware.quantity}  ".toPersianDigit() +
+                                            ware.unit)
+                                            : "",
+                                        topTrailingLabel:
+                                        wareProvider.showQuantity ? "موجودی:" : "",
+                                        trailing: addSeparator(ware.sale),
+                                        trailingLabel: "فروش:",
+                                        middle: wareProvider.showCostPrice
+                                            ? addSeparator(ware.cost)
+                                            : null,
+                                        middleLabel:
+                                        wareProvider.showCostPrice ? "خرید:" : null,
+                                      ),
+                                    );
+                                }),
+                          ),
+                          ///selected items action bottom bar
+                          Opacity(
+                            opacity: selectedItems.isNotEmpty ? 1 : 0,
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                  border: Border(top: BorderSide(color: Colors.black87))),
+                              height: selectedItems.isNotEmpty ? 50 : 0,
+                              width: double.maxFinite,
+                              child: Row(
+                                children: [
+                                  ///delete icon
+                                  IconButton(
+                                      onPressed: () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (_) => CustomAlert(
+                                                title:
+                                                    "آیا از حذف موارد انتخاب شده مطمئن هستید؟",
+                                                onYes: () {
+                                                  for (int item in selectedItems) {
+                                                    widget.wareList[item].delete();
+                                                  }
+                                                  showSnackBar(context,
+                                                      " ${selectedItems.length} کالا حذف شد!  ",
+                                                      type: SnackType.success);
+                                                  selectedItems.clear();
+                                                  Navigator.pop(context);
+                                                },
+                                                onNo: () {
+                                                  Navigator.pop(context);
+                                                }));
+                                      },
+                                      icon: const Icon(
+                                        Icons.delete_forever,
+                                        size: 35,
+                                        color: Colors.red,
+                                      )),
+                                  const VerticalDivider(),
+
+                                  ///print icon
+                                  IconButton(
+                                      onPressed: () async {
+                                        List<WareHive> selectedList = [];
+                                        for (int item in selectedItems) {
+                                          selectedList.add(widget.wareList[item]);
+                                        }
+                                        final file =
+                                            await PdfWareListApi(context,selectedList).generateTicketWareList();
+                                        PdfApi.openFile(file);
+                                      },
+                                      icon: const Icon(
+                                        CupertinoIcons.printer_fill,
+                                        size: 30,
+                                        color: Colors.black87,
+                                      )),
+                                  const VerticalDivider(),
+
+                                  ///edit selected icon
+                                  IconButton(
+                                      onPressed: () {
+                                        List<WareHive> selectedList = [];
+                                        for (int item in selectedItems) {
+                                          selectedList.add(widget.wareList[item]);
+                                        }
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) => SelectedWareActionPanel(
+                                                wares: selectedList));
+                                      },
+                                      icon: const Icon(
+                                        FontAwesomeIcons.filePen,
+                                        size: 30,
+                                        color: Colors.black87,
+                                      )),
+                                ],
+                              ),
                             ),
-                          );
-                        }
-                        return const SizedBox();
-                      }),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ),
-
-              ///selected items action bottom bar
-              Opacity(
-                opacity: selectedItems.isNotEmpty ? 1 : 0,
-                child: Container(
-                  decoration: const BoxDecoration(
-                      border: Border(top: BorderSide(color: Colors.black87))),
-                  height: selectedItems.isNotEmpty ? 50 : 0,
-                  width: double.maxFinite,
-                  child: Row(
-                    children: [
-                      ///delete icon
-                      IconButton(
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (_) => CustomAlert(
-                                    title:
-                                        "آیا از حذف موارد انتخاب شده مطمئن هستید؟",
-                                    onYes: () {
-                                      for (int item in selectedItems) {
-                                        widget.wareList[item].delete();
-                                      }
-                                      showSnackBar(context,
-                                          " ${selectedItems.length} کالا حذف شد!  ",
-                                          type: SnackType.success);
-                                      selectedItems.clear();
-                                      Navigator.pop(context);
-                                    },
-                                    onNo: () {
-                                      Navigator.pop(context);
-                                    }));
-                          },
-                          icon: const Icon(
-                            Icons.delete_forever,
-                            size: 35,
-                            color: Colors.red,
-                          )),
-                      const VerticalDivider(),
-
-                      ///print icon
-                      IconButton(
-                          onPressed: () async {
-                            List<WareHive> selectedList = [];
-                            for (int item in selectedItems) {
-                              selectedList.add(widget.wareList[item]);
-                            }
-                            final file =
-                                await PdfWareListApi(context,selectedList).generateTicketWareList();
-                            PdfApi.openFile(file);
-                          },
-                          icon: const Icon(
-                            CupertinoIcons.printer_fill,
-                            size: 30,
-                            color: Colors.black87,
-                          )),
-                      const VerticalDivider(),
-
-                      ///edit selected icon
-                      IconButton(
-                          onPressed: () {
-                            List<WareHive> selectedList = [];
-                            for (int item in selectedItems) {
-                              selectedList.add(widget.wareList[item]);
-                            }
-                            showDialog(
-                                context: context,
-                                builder: (context) => SelectedWareActionPanel(
-                                    wares: selectedList));
-                          },
-                          icon: const Icon(
-                            FontAwesomeIcons.filePen,
-                            size: 30,
-                            color: Colors.black87,
-                          )),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+                ],
+              );
+            }
           ),
         );
       }),

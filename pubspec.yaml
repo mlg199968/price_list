@@ -53,6 +53,7 @@ dependencies:
   cafebazaar_flutter: ^1.0.2
   google_fonts: ^4.0.4
   package_info_plus: ^4.2.0
+#  bitsdojo_window: ^0.1.5
 
 
 
@@ -78,16 +79,16 @@ flutter_icons:
   image_path: "assets/images/app_icon.png"
   min_sdk_android: 21 # android min sdk min:16, default 21
   web:
-    generate: true
+    generate: false
     image_path: "assets/images/app_icon.png"
     background_color: "#hexcode"
     theme_color: "#hexcode"
   windows:
     generate: true
-    image_path: "assets/images/app_icon.png.png"
+    image_path: "assets/images/app_icon.png"
     icon_size: 48 # min:48, max:256, default: 48
   macos:
-    generate: true
+    generate: false
     image_path: "assets/images/app_icon.png"
 
 

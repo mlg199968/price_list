@@ -6,6 +6,7 @@ import 'package:price_list/screens/bug_screen/bug_list_screen.dart';
 import 'package:price_list/screens/group_management_screen.dart';
 import 'package:price_list/screens/notice_screen/notice_screen.dart';
 import 'package:price_list/screens/purchase_screen.dart';
+import 'package:price_list/screens/shop_info_screen/shop_info_screen.dart';
 import 'package:price_list/screens/ware_list/panels/ware_action_panel.dart';
 import 'package:price_list/screens/ware_list/ware_list_screen.dart';
 import 'package:price_list/screens/setting/setting_screen.dart';
@@ -49,11 +50,20 @@ Route generateRoute(RouteSettings routeSettings) {
     case BugListScreen.id:
          return MaterialPageRoute(builder: (_) => BugListScreen());
 
+    case ShopInfoScreen.id:
+         return MaterialPageRoute(builder: (_) => ShopInfoScreen());
+
     default:
       return MaterialPageRoute(
           builder: (_) => const Scaffold(
                 body: Center(
-                  child: Text('the Screen is not exist.'),
+                  child: Column(
+                    children: [
+                      Text('the Screen is not exist.'),
+                      SizedBox(height: 10,),
+                      BackButton()
+                    ],
+                  ),
                 ),
               ));
   }

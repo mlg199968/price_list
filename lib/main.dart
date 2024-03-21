@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:price_list/constants/consts_class.dart';
 import 'package:price_list/model/bug.dart';
 import 'package:price_list/model/notice.dart';
 import 'package:price_list/model/shop.dart';
@@ -18,10 +19,10 @@ void main() async {
   Hive.registerAdapter(NoticeAdapter());
   Hive.registerAdapter(BugAdapter());
   //create box for store data
-  await Hive.openBox<WareHive>("ware_db");
-  await Hive.openBox<Shop>("shop_db");
-  await Hive.openBox<Bug>("bug_db");
-  await Hive.openBox<Notice>("notice_db");
+  await Hive.openBox<WareHive>("ware_db",path:await Address.hiveDirectory());
+  await Hive.openBox<Shop>("shop_db",path:await Address.hiveDirectory());
+  await Hive.openBox<Bug>("bug_db",path:await Address.hiveDirectory());
+  await Hive.openBox<Notice>("notice_db",path:await Address.hiveDirectory());
 
   runApp(MultiProvider(
     providers: [

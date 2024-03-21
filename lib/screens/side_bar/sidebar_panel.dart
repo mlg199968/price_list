@@ -1,6 +1,7 @@
 import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:price_list/components/custom_text.dart';
 import 'package:price_list/components/over_cage.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/utils.dart';
@@ -10,6 +11,7 @@ import 'package:price_list/screens/notice_screen/notice_screen.dart';
 import 'package:price_list/screens/notice_screen/services/notice_tools.dart';
 import 'package:price_list/screens/setting/setting_screen.dart';
 import 'package:price_list/providers/ware_provider.dart';
+import 'package:price_list/screens/shop_info_screen/shop_info_screen.dart';
 import 'package:provider/provider.dart';
 
 class SideBarPanel extends StatelessWidget {
@@ -77,21 +79,27 @@ class SideBarPanel extends StatelessWidget {
               ]),
               Column(
                 children: [
-                  menu_button(
+                  BarButton(
+                    text: "مشخصات فروشگاه",
+                    icon: Icons.storefront_outlined,
+                    onPress: () {
+                        Navigator.pushNamed(context, ShopInfoScreen.id);}
+                  ),
+                  BarButton(
                     text: "مدیریت گروه ها",
                     icon: Icons.account_tree_outlined,
                     onPress: () {
                       Navigator.pushNamed(context, GroupManagementScreen.id);
                     },
                   ),
-                  menu_button(
+                  BarButton(
                     text: "تنظیمات",
                     icon: Icons.settings_outlined,
                     onPress: () {
                       Navigator.pushNamed(context, SettingScreen.id);
                     },
                   ),
-                  menu_button(
+                  BarButton(
                     onPress: () {
                       urlLauncher(
                           context: context, urlTarget: "http://mlggrand.ir");
@@ -229,30 +237,29 @@ class AvatarHolder extends StatelessWidget {
   }
 }
 
-class menu_button extends StatelessWidget {
-  const menu_button(
-      {super.key, required this.text, required this.onPress, this.icon});
-
+class BarButton extends StatelessWidget {
+  const BarButton(
+      {super.key, required this.text, required this.onPress, this.icon, this.enable=true});
   final String text;
+  final bool enable;
   final IconData? icon;
   final VoidCallback onPress;
-
   @override
   Widget build(BuildContext context) {
     //decelerations
-    Color textColor = Colors.black.withOpacity(.8);
-    Color borderColor = Colors.deepPurple;
+    Color textColor = Colors.black.withOpacity(.7);
+    Color borderColor = kMainColor;
     return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 5,vertical: 2),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(.4),
+          color: Colors.white.withOpacity(.7),
           border: Border(
             bottom: BorderSide(
               width: 2,
               color: borderColor,
             ),
             left: BorderSide(
-              width: 5,
+              width: 10,
               color: textColor,
             ),
           ),
@@ -261,24 +268,24 @@ class menu_button extends StatelessWidget {
           data: const TextButtonThemeData(
             style: ButtonStyle(
               alignment: Alignment.centerRight,
-              padding: MaterialStatePropertyAll(EdgeInsets.all(0)),
+              padding: MaterialStatePropertyAll(EdgeInsets.all(5)),
             ),
           ),
           child: TextButton(
-              onPressed: onPress,
+              onPressed:enable? onPress : (){},
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Text(
+                  CText(
                     text,
-                    style: TextStyle(fontSize: 18, color: textColor),
+                    fontSize: 15, color: textColor,
                   ),
                   const SizedBox(
                     width: 5,
                   ),
                   SizedBox(
                       child:
-                          icon == null ? null : Icon(icon, color: textColor)),
+                      icon == null ? null : Icon(icon, color: textColor.withOpacity(.5))),
                 ],
               )),
         ));

@@ -30,7 +30,11 @@ class _GroupManagementScreenState extends State<GroupManagementScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(backgroundColor: Colors.transparent,),
+      body: Container(
+        alignment: Alignment.center,
+        decoration: BoxDecoration(gradient: kMainGradiant),
         child: Container(
           width: 350,
           margin: EdgeInsets.only(top: 50,bottom: 20),
@@ -39,15 +43,13 @@ class _GroupManagementScreenState extends State<GroupManagementScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Container(
-                  decoration: BoxDecoration(gradient: kMainGradiant),
-                  height: 70,
-                  child: Center(child: Text("مدیریت گروه ها",style: TextStyle(fontSize: 20,color: Colors.white),)),
-                ),
+                Center(child: Text("مدیریت گروه ها",style: TextStyle(fontSize: 20,color: Colors.white),)),
                 Divider(),
                 Flexible(
                   child: Container(
-                    color: Colors.white,
+                    padding: EdgeInsetsDirectional.symmetric(vertical: 20),
+                    decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20)),
                     child: ListView.builder(
                         itemCount: wareProvider.groupList.length,
                         itemBuilder: (context, index) {
@@ -65,6 +67,7 @@ class _GroupManagementScreenState extends State<GroupManagementScreen> {
                               },
                               child: Card(
                                 elevation: 5,
+                                surfaceTintColor: Colors.white,
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                 child: Center(
                                   child: Text(groups[index],style: TextStyle(color: Colors.black54),),

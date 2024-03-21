@@ -16,7 +16,18 @@ import 'package:price_list/screens/bazaar_purchase_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 
-
+/// find out Screen size and return it
+ScreenType screenType(BuildContext context){
+  late ScreenType screenType;
+  if(MediaQuery.of(context).size.width<500){
+    screenType=ScreenType.mobile;
+  }else if(MediaQuery.of(context).size.width>500 && MediaQuery.of(context).size.width<1000){
+    screenType=ScreenType.tablet;
+  }else{
+    screenType=ScreenType.desktop;
+  }
+  return screenType;
+}
 
 ///Show snake bar in active context
 void showSnackBar(BuildContext context, String title,

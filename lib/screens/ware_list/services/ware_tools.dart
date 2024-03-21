@@ -3,13 +3,16 @@ import 'package:price_list/model/ware_hive.dart';
 class WareTools {
   /// search and sort the ware List
   static List<WareHive> filterList(
-      List<WareHive> list, String? keyWord, String sort) {
+      List<WareHive> list, String? keyWord, String sort,String category) {
+    list=list.where((ware) => category ==
+        ware.groupName ||
+        category == "همه").toList() ;
     if (keyWord != null) {
       list = list.where((element) {
         String wareName = element.wareName.toLowerCase().replaceAll(" ", "");
-        //String serial=element.serialNumber.toLowerCase().replaceAll(" ", "");
+        String serial = element.wareSerial.toString().toLowerCase().replaceAll(" ", "");
         String key = keyWord.toLowerCase().replaceAll(" ", "");
-        if (wareName.contains(key)) {
+        if (wareName.contains(key) ||serial.contains(key)) {
           return true;
         } else {
           return false;

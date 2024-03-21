@@ -10,35 +10,34 @@ class InfoPanelRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Container(
-        decoration: const BoxDecoration(
-            border: Border(
-                bottom: BorderSide(
-                  color: Colors.black12,
-                ))),
-        width: MediaQuery.of(context).size.width * .5,
-        padding: const EdgeInsets.only(bottom: 10),
-        margin: const EdgeInsets.only(bottom: 10),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            CText(title.toPersianDigit(),color: Colors.black54,),
-            const SizedBox(
-              width: 10,
+    return Container(
+      decoration: const BoxDecoration(
+          border: Border(
+              bottom: BorderSide(
+                color: Colors.black12,
+              ))),
+      width: MediaQuery.of(context).size.width * .5,
+      padding: const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          CText(title.toPersianDigit(),fontSize: 12,color: Colors.black45,textDirection: TextDirection.rtl,),
+          const SizedBox(
+            width: 10,
+          ),
+          Expanded(
+            flex: 1,
+            child: SelectableText(
+              infoList.toPersianDigit(),
+              textAlign: TextAlign.left,
+              minLines: 1,
+              maxLines: 7,
+              // overflow: TextOverflow.ellipsis,
             ),
-            Expanded(
-              flex: 1,
-              child: CText(
-                infoList.toPersianDigit(),
-                textDirection: TextDirection.rtl,
-                textAlign: TextAlign.end,
-                maxLine: 3,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

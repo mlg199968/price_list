@@ -120,9 +120,10 @@ class _AddWareScreenState extends State<AddWareScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final wareProvider = Provider.of<WareProvider>(context);
+final bool isMobileSize=screenType(context)==ScreenType.mobile;
     return HideKeyboard(
       child: Scaffold(
+        floatingActionButtonLocation:isMobileSize ?null: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: CustomFloatActionButton(
             label: widget.oldWare != null ? "ذخیره تغییرات" : "افزودن به لیست",
             icon: Icons.save,
@@ -148,161 +149,182 @@ class _AddWareScreenState extends State<AddWareScreen> {
           backgroundColor: Colors.transparent,
           title: Text(widget.oldWare == null ? "افزودن کالا" : "ویرایش کالا"),
         ),
-        body: Container(
-          alignment: Alignment.center,
-          decoration: BoxDecoration(gradient: kBlackWhiteGradiant),
-          child: Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-              child: Stack(
-                children: [
-                  ///top rounded part
-                  Container(
-                    height: 200,
-                    decoration: BoxDecoration(
-                        gradient: kMainGradiant,
-                        borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(50),
-                            bottomRight: Radius.circular(50))),
-                  ),
-                  ///
-                  Padding(
-                    padding: const EdgeInsets.all(20).copyWith(top: 100),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: AnimateList(
-                        interval: 50.ms,
-                        effects: [FadeEffect(duration: 300.ms)],
+        body: Consumer<WareProvider>(
+          builder: (context,wareProvider,child) {
+            return Container(
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                gradient: kMainGradiant,
+              ),
+              child: Container(
+                width: 550,
+                margin:isMobileSize?null: EdgeInsetsDirectional.symmetric(horizontal: 10,vertical: 30),
+                alignment: Alignment.topCenter,
+                decoration: BoxDecoration(
+                    gradient: kBlackWhiteGradiant,
+                borderRadius: BorderRadius.circular(20),
+                ),
+                child: Form(
+                  key: _formKey,
+                  child: SingleChildScrollView(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Stack(
                         children: [
-                          ///photo part
+                          ///top rounded part
                           Container(
-                            height: 150,
-                            margin: const EdgeInsets.all(5),
-                            child: ItemImageHolder(
-                              imagePath: imagePath,
-                              onSet: (path) {
-                                imagePath = path;
-                                setState(() {});
-                              },
+                            height: 200,
+                            decoration: BoxDecoration(
+                                gradient: kMainGradiant,
+                                borderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(50),
+                                    bottomRight: Radius.circular(50))),
+                          ),
+                          ///
+                          Padding(
+                            padding: const EdgeInsets.all(20).copyWith(top: 100),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: AnimateList(
+                                interval: 50.ms,
+                                effects: [FadeEffect(duration: 300.ms)],
+                                children: [
+                                  ///photo part
+                                  AspectRatio(
+                                    aspectRatio: 16/9,
+                                    child: Container(
+                                      height: 150,
+                                      margin: const EdgeInsets.all(5),
+                                      child: ItemImageHolder(
+                                        imagePath: imagePath,
+                                        onSet: (path) {
+                                          imagePath = path;
+                                          setState(() {});
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+
+                                  ///select group dropdown list and add group
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      ActionButton(
+                                          height: 40,
+                                          label: "افزودن گروه",
+                                          icon: Icons.category,
+                                          onPress: () {
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) =>
+                                                    CreateGroupPanel());
+                                          }),
+                                      DropListModel(
+                                        selectedValue: wareProvider.selectedGroup,
+                                        listItem: wareProvider.groupList,
+                                        onChanged: (value) {
+                                          wareProvider.updateSelectedGroup(value);
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: kSpaceBetween,
+                                  ),
+                                  CustomTextField(
+                                    label: "نام کالا",
+                                    maxLength: 50,
+                                    //focus: wareNameFocus,
+                                    controller: wareNameController,
+                                    validate: true,
+                                    extraValidate: (val) {
+                                      final wareList = HiveBoxes.getWares()
+                                          .values
+                                          .map((e) => e.wareName)
+                                          .toList();
+                                      if (wareList.contains(val) &&
+                                          widget.oldWare == null) {
+                                        return "کالایی با این نام قبلا ثبت شده است";
+                                      }
+                                    },
+                                  ),
+                                  const SizedBox(
+                                    height: kSpaceBetween,
+                                  ),
+                                  CustomTextField(
+                                    label: "شماره سریال کالا",
+                                    maxLength: 25,
+                                    controller: wareSerialController,
+                                  ),
+                                  const SizedBox(
+                                    height: kSpaceBetween,
+                                  ),
+
+                                  ///unit dropdown list selection
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      DropListModel(
+                                        selectedValue: unitItem,
+                                        listItem: kUnitList,
+                                        onChanged: (val) {
+                                          unitItem = val;
+                                          setState(() {});
+                                        },
+                                      ),
+                                      const SizedBox(
+                                        width: kSpaceBetween,
+                                      ),
+                                      CustomTextField(
+                                        label: "مقدار",
+                                        maxLength: 15,
+                                        controller: quantityController,
+                                        textFormat: TextFormatter.number,
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: kSpaceBetween,
+                                  ),
+                                  CustomTextField(
+                                    label: "قیمت خرید",
+                                    maxLength: 17,
+                                    controller: costPriceController,
+                                    textFormat: TextFormatter.price,
+                                  ),
+                                  const SizedBox(
+                                    height: kSpaceBetween,
+                                  ),
+                                  CustomTextField(
+                                    label: "قیمت فروش",
+                                    maxLength: 17,
+                                    controller: salePriceController,
+                                    textFormat: TextFormatter.price,
+                                  ),
+                                  const SizedBox(
+                                    height: kSpaceBetween,
+                                  ),
+                                  CustomTextField(
+                                    label: "توضیحات",
+                                    maxLength: 200,
+                                    controller: descriptionController,
+                                    maxLine: 5,
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-
-                          ///select group dropdown list and add group
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              ActionButton(
-                                  height: 40,
-                                  label: "افزودن گروه",
-                                  icon: Icons.category,
-                                  onPress: () {
-                                    showDialog(
-                                        context: context,
-                                        builder: (context) =>
-                                            CreateGroupPanel());
-                                  }),
-                              DropListModel(
-                                selectedValue: wareProvider.selectedGroup,
-                                listItem: wareProvider.groupList,
-                                onChanged: (value) {
-                                  wareProvider.updateSelectedGroup(value);
-                                },
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: kSpaceBetween,
-                          ),
-                          CustomTextField(
-                            label: "نام کالا",
-                            maxLength: 50,
-                            //focus: wareNameFocus,
-                            controller: wareNameController,
-                            validate: true,
-                            extraValidate: (val) {
-                              final wareList = HiveBoxes.getWares()
-                                  .values
-                                  .map((e) => e.wareName)
-                                  .toList();
-                              if (wareList.contains(val) &&
-                                  widget.oldWare == null) {
-                                return "کالایی با این نام قبلا ثبت شده است";
-                              }
-                            },
-                          ),
-                          const SizedBox(
-                            height: kSpaceBetween,
-                          ),
-                          CustomTextField(
-                            label: "شماره سریال کالا",
-                            maxLength: 25,
-                            controller: wareSerialController,
-                          ),
-                          const SizedBox(
-                            height: kSpaceBetween,
-                          ),
-
-                          ///unit dropdown list selection
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              DropListModel(
-                                selectedValue: unitItem,
-                                listItem: kUnitList,
-                                onChanged: (val) {
-                                  unitItem = val;
-                                  setState(() {});
-                                },
-                              ),
-                              const SizedBox(
-                                width: kSpaceBetween,
-                              ),
-                              CustomTextField(
-                                label: "مقدار",
-                                maxLength: 15,
-                                controller: quantityController,
-                                textFormat: TextFormatter.number,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: kSpaceBetween,
-                          ),
-                          CustomTextField(
-                            label: "قیمت خرید",
-                            maxLength: 17,
-                            controller: costPriceController,
-                            textFormat: TextFormatter.price,
-                          ),
-                          const SizedBox(
-                            height: kSpaceBetween,
-                          ),
-                          CustomTextField(
-                            label: "قیمت فروش",
-                            maxLength: 17,
-                            controller: salePriceController,
-                            textFormat: TextFormatter.price,
-                          ),
-                          const SizedBox(
-                            height: kSpaceBetween,
-                          ),
-                          CustomTextField(
-                            label: "توضیحات",
-                            maxLength: 200,
-                            controller: descriptionController,
-                            maxLine: 5,
                           ),
                         ],
                       ),
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
+            );
+          }
         ),
       ),
     );
