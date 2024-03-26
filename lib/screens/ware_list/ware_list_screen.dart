@@ -1,8 +1,10 @@
+import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:lottie/lottie.dart';
@@ -10,10 +12,12 @@ import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:price_list/components/action_button.dart';
 import 'package:price_list/components/custom_alert.dart';
 import 'package:price_list/components/custom_float_action_button.dart';
+import 'package:price_list/components/custom_icon_button.dart';
 import 'package:price_list/components/custom_search_bar.dart';
 import 'package:price_list/components/custom_text.dart';
 import 'package:price_list/components/custom_tile.dart';
 import 'package:price_list/components/drop_list_model.dart';
+import 'package:price_list/components/empty_holder.dart';
 import 'package:price_list/components/hide_keyboard.dart';
 import 'package:price_list/components/pdf/pdf_api.dart';
 import 'package:price_list/components/pdf/pdf_ware_list_api.dart';
@@ -125,8 +129,17 @@ class _WareListScreenState extends State<WareListScreen> {
                 title: Container(
                   padding: const EdgeInsets.only(right: 5),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    textBaseline: TextBaseline.alphabetic,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
+                      if(Provider.of<WareProvider>(context, listen: false).isVip)
+                      const Icon(
+                        FontAwesomeIcons.crown,
+                        color: Colors.orangeAccent,
+                      ),
+                      const Gap(5),
                        Flexible(child: Text("Price List",style: GoogleFonts.bebasNeue(fontSize: 25),)),
                     ],
                   ),
@@ -227,22 +240,12 @@ class _WareListScreenState extends State<WareListScreen> {
                           List<WareHive> filteredList = WareTools.filterList(
                               productList, keyWord, sortItem,selectedDropListGroup);
                           if (filteredList.isEmpty) {
-                            return const Expanded(
-                              child: Center(
-                                  child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(FontAwesomeIcons.boxOpen),
-                                  SizedBox(
-                                    height: 8,
-                                  ),
-                                  Text(
-                                    " کالایی یافت نشد!",
-                                    textDirection: TextDirection.rtl,
-                                  ),
-                                ],
-                              )),
+                            return Expanded(
+                              child: const EmptyHolder(
+                                text:" کالایی یافت نشد!" ,
+                                color: Colors.white60,
+                                icon: FontAwesomeIcons.boxOpen,
+                              ),
                             );
                           }
                           return ListPart(
@@ -293,167 +296,194 @@ class _ListPartState extends State<ListPart> {
         return Expanded(
           child: LayoutBuilder(
             builder: (context,constraint) {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              return Column(
                 children: [
-                  if(!isMobile)
-                    Flexible(
-                      child: SizedBox(
-                        width: 400,
-                        child:selectedWare==null? null: InfoPanelDesktop(
-                            context: context,
-                            wareInfo: selectedWare!,
-                            onReload:(){
-                              selectedWare=null;
-                              setState(() {});}),
-                      ),
-                    ),
-                  Flexible(
-                    child: SizedBox(
-                      width: 550,
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: ListView.builder(
-                                controller: ScrollController(),
-                                itemCount: widget.wareList.length,
-                                itemBuilder: (context, index) {
-                                  WareHive ware = widget.wareList[index];
-                                    return InkWell(
-                                      onLongPress: () {
-                                        if (!selectedItems.contains(index)) {
-                                          selectedItems.add(index);
-                                          setState(() {});
-                                        }
-                                      },
-                                      onTap: () {
-                                        if (selectedItems.isEmpty) {
-                                          if (widget.key != null) {
-                                            Navigator.pop(context, ware);
-                                          } else {
-                                            selectedWare=ware;
-                                            setState(() {});
-                                            !isMobile?null:showDialog(
-                                                context: context,
-                                                builder: (context) => InfoPanel(
-                                                    context: context,
-                                                    wareInfo: ware));
-                                          }
-                                        } else {
-                                          if (selectedItems.contains(index)) {
-                                            selectedItems.remove(index);
-                                          } else {
-                                            selectedItems.add(index);
-                                          }
-                                          setState(() {});
-                                        }
-                                      },
-                                      child:  CustomTile(
-                                        selected: selectedItems.contains(index),
-                                        height: 50,
-                                        color: selectedWare?.wareID==widget.wareList[index].wareID?kSecondaryColor:kMainColor,
-                                        surfaceColor: selectedWare?.wareID==widget.wareList[index].wareID?kSecondaryColor:null,
-                                        leadingIcon: CupertinoIcons.cube_box_fill,
-                                        subTitle: ware.groupName,
-                                        type: "${index+1}".toPersianDigit(),
-                                        title: ware.wareName,
-                                        topTrailing: wareProvider.showQuantity
-                                            ? ("${ware.quantity}  ".toPersianDigit() +
-                                            ware.unit)
-                                            : "",
-                                        topTrailingLabel:
-                                        wareProvider.showQuantity ? "موجودی:" : "",
-                                        trailing: addSeparator(ware.sale),
-                                        trailingLabel: "فروش:",
-                                        middle: wareProvider.showCostPrice
-                                            ? addSeparator(ware.cost)
-                                            : null,
-                                        middleLabel:
-                                        wareProvider.showCostPrice ? "خرید:" : null,
-                                      ),
-                                    );
-                                }),
-                          ),
-                          ///selected items action bottom bar
-                          Opacity(
-                            opacity: selectedItems.isNotEmpty ? 1 : 0,
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                  border: Border(top: BorderSide(color: Colors.black87))),
-                              height: selectedItems.isNotEmpty ? 50 : 0,
-                              width: double.maxFinite,
-                              child: Row(
-                                children: [
-                                  ///delete icon
-                                  IconButton(
-                                      onPressed: () {
-                                        showDialog(
-                                            context: context,
-                                            builder: (_) => CustomAlert(
-                                                title:
-                                                    "آیا از حذف موارد انتخاب شده مطمئن هستید؟",
-                                                onYes: () {
-                                                  for (int item in selectedItems) {
-                                                    widget.wareList[item].delete();
-                                                  }
-                                                  showSnackBar(context,
-                                                      " ${selectedItems.length} کالا حذف شد!  ",
-                                                      type: SnackType.success);
-                                                  selectedItems.clear();
-                                                  Navigator.pop(context);
-                                                },
-                                                onNo: () {
-                                                  Navigator.pop(context);
-                                                }));
-                                      },
-                                      icon: const Icon(
-                                        Icons.delete_forever,
-                                        size: 35,
-                                        color: Colors.red,
-                                      )),
-                                  const VerticalDivider(),
-
-                                  ///print icon
-                                  IconButton(
-                                      onPressed: () async {
-                                        List<WareHive> selectedList = [];
-                                        for (int item in selectedItems) {
-                                          selectedList.add(widget.wareList[item]);
-                                        }
-                                        final file =
-                                            await PdfWareListApi(context,selectedList).generateTicketWareList();
-                                        PdfApi.openFile(file);
-                                      },
-                                      icon: const Icon(
-                                        CupertinoIcons.printer_fill,
-                                        size: 30,
-                                        color: Colors.black87,
-                                      )),
-                                  const VerticalDivider(),
-
-                                  ///edit selected icon
-                                  IconButton(
-                                      onPressed: () {
-                                        List<WareHive> selectedList = [];
-                                        for (int item in selectedItems) {
-                                          selectedList.add(widget.wareList[item]);
-                                        }
-                                        showDialog(
-                                            context: context,
-                                            builder: (context) => SelectedWareActionPanel(
-                                                wares: selectedList));
-                                      },
-                                      icon: const Icon(
-                                        FontAwesomeIcons.filePen,
-                                        size: 30,
-                                        color: Colors.black87,
-                                      )),
-                                ],
-                              ),
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if(!isMobile)
+                          Flexible(
+                            child: SizedBox(
+                              width: 400,
+                              child:selectedWare==null? null: InfoPanelDesktop(
+                                  context: context,
+                                  wareInfo: selectedWare!,
+                                  onReload:(){
+                                    selectedWare=null;
+                                    setState(() {});}),
                             ),
                           ),
-                        ],
-                      ),
+                        Flexible(
+                          child: SizedBox(
+                            width: 550,
+                            child: Stack(
+                              children: [
+                                ListView.builder(
+                                    itemCount: widget.wareList.length,
+                                    itemBuilder: (context, index) {
+                                      WareHive ware = widget.wareList[index];
+                                        return InkWell(
+                                          onLongPress: () {
+                                            if (!selectedItems.contains(index)) {
+                                              selectedItems.add(index);
+                                              setState(() {});
+                                            }
+                                          },
+                                          onTap: () {
+                                            if (selectedItems.isEmpty) {
+                                              if (widget.key != null) {
+                                                Navigator.pop(context, ware);
+                                              } else {
+                                                selectedWare=ware;
+                                                setState(() {});
+                                                !isMobile?null:showDialog(
+                                                    context: context,
+                                                    builder: (context) => InfoPanel(
+                                                        context: context,
+                                                        wareInfo: ware));
+                                              }
+                                            } else {
+                                              if (selectedItems.contains(index)) {
+                                                selectedItems.remove(index);
+                                              } else {
+                                                selectedItems.add(index);
+                                              }
+                                              setState(() {});
+                                            }
+                                          },
+                                          child:  CustomTile(
+                                            selected: selectedItems.contains(index),
+                                            height: 50,
+                                            color: selectedWare?.wareID==widget.wareList[index].wareID?kSecondaryColor:kMainColor,
+                                            surfaceColor: selectedWare?.wareID==widget.wareList[index].wareID?kSecondaryColor:null,
+                                            leadingIcon: CupertinoIcons.cube_box_fill,
+                                            subTitle: ware.groupName,
+                                            type: "${index+1}".toPersianDigit(),
+                                            title: ware.wareName,
+                                            topTrailing: wareProvider.showQuantity
+                                                ? ("${ware.quantity}  ".toPersianDigit() +
+                                                ware.unit)
+                                                : "",
+                                            topTrailingLabel:
+                                            wareProvider.showQuantity ? "موجودی:" : "",
+                                            trailing: addSeparator(ware.sale),
+                                            trailingLabel: "فروش:",
+                                            middle: wareProvider.showCostPrice
+                                                ? addSeparator(ware.cost)
+                                                : null,
+                                            middleLabel:
+                                            wareProvider.showCostPrice ? "خرید:" : null,
+                                          ),
+                                        );
+                                    }),
+                                ///selected items action bottom bar
+                                Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: Container(
+                                    margin: EdgeInsets.all(8),
+                                    decoration:  BoxDecoration(
+                                        border: Border.all(color: Colors.black87),
+                                      borderRadius: BorderRadius.circular(20)
+                                    ),
+                                    height: selectedItems.isNotEmpty ? 50 : 0,
+                                    width: double.maxFinite,
+                                    child: BlurryContainer(
+                                      padding: EdgeInsets.zero,
+                                      child: Row(
+                                        children: [
+                                          ///close icon
+                                          CustomIconButton(
+                                            margin: EdgeInsets.symmetric(horizontal: 3),
+                                            showShadow: true,
+                                            onPress: () {
+                                              selectedItems.clear();
+                                              setState(() {});
+                                            },
+                                            icon:
+                                            CupertinoIcons.multiply_circle,
+                                            iconSize: 25,
+                                            iconColor: Colors.black,
+                                          ),
+                                          Text(selectedItems.length.toString().toPersianDigit()),
+                                          const VerticalDivider(),
+                                          ///delete icon
+                                          CustomIconButton(
+                                            margin: EdgeInsets.symmetric(horizontal: 3),
+                                            showShadow: true,
+                                              onPress: () {
+                                                showDialog(
+                                                    context: context,
+                                                    builder: (_) => CustomAlert(
+                                                        title:
+                                                            "آیا از حذف موارد انتخاب شده مطمئن هستید؟",
+                                                        onYes: () {
+                                                          for (int item in selectedItems) {
+                                                            widget.wareList[item].delete();
+                                                          }
+                                                          showSnackBar(context,
+                                                              " ${selectedItems.length} کالا حذف شد!  ",
+                                                              type: SnackType.success);
+                                                          selectedItems.clear();
+                                                          Navigator.pop(context);
+                                                        },
+                                                        onNo: () {
+                                                          Navigator.pop(context);
+                                                        }));
+                                              },
+                                              icon:
+                                                Icons.delete_forever,
+                                                iconSize: 35,
+                                                iconColor: Colors.red,
+                                              ),
+                                          ///print icon
+                                          CustomIconButton(
+                                            margin: EdgeInsets.symmetric(horizontal: 3),
+                                            showShadow: true,
+                                              onPress: () async {
+                                                List<WareHive> selectedList = [];
+                                                for (int item in selectedItems) {
+                                                  selectedList.add(widget.wareList[item]);
+                                                }
+                                                final file =
+                                                    await PdfWareListApi(context,selectedList).generateTicketWareList();
+                                                PdfApi.openFile(file);
+                                              },
+                                              icon:
+                                                CupertinoIcons.printer_fill,
+                                                iconSize: 30,
+                                                iconColor: Colors.black87,
+                                              ),
+
+
+                                          ///edit selected icon
+                                          CustomIconButton(
+                                            margin: EdgeInsets.symmetric(horizontal: 3),
+                                            icon: FontAwesomeIcons.filePen,
+                                            iconSize: 25,
+                                            iconColor: Colors.black87,
+                                              onPress: () {
+                                                List<WareHive> selectedList = [];
+                                                for (int item in selectedItems) {
+                                                  selectedList.add(widget.wareList[item]);
+                                                }
+                                                showDialog(
+                                                    context: context,
+                                                    builder: (context) => SelectedWareActionPanel(
+                                                        wares: selectedList));
+                                              },
+
+                                              ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],

@@ -18,7 +18,7 @@ class ActionButton extends StatelessWidget {
     this.borderRadius = 20,
     this.loading = false,
     this.child,
-    this.disable = false,
+    this.disable = false, this.labelStyle,
   });
 
   final Widget? child;
@@ -36,6 +36,7 @@ class ActionButton extends StatelessWidget {
   final EdgeInsets? padding;
   final bool loading;
   final bool disable;
+  final TextStyle? labelStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +82,7 @@ class ActionButton extends StatelessWidget {
                       label ?? "",
                       overflow: TextOverflow.fade,
                       maxLines: 1,
-                      style:
+                      style:labelStyle ??
                       const TextStyle(color: Colors.white),
                     ),
                   ),

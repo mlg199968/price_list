@@ -63,7 +63,7 @@ void getData(){
   Shop? shopInfo=HiveBoxes.getShopInfo().get(0);
   if(shopInfo!=null){
    shopNameController.text= shopInfo.shopName;
-   shopNameController.text= shopInfo.shopCode;
+   shopCodeController.text= shopInfo.shopCode;
     addressController.text=shopInfo.address;
     phoneNumberController.text=shopInfo.phoneNumber;
     phoneNumberController2.text=shopInfo.phoneNumber2;

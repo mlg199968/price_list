@@ -1,3 +1,4 @@
+import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:flutter/material.dart';
 import 'package:price_list/components/action_button.dart';
 import 'package:price_list/components/custom_text.dart';
@@ -93,6 +94,7 @@ class _SettingScreenState extends State<SettingScreen> {
               alignment: Alignment.topCenter,
               decoration: BoxDecoration(gradient: kMainGradiant),
               child: Stack(
+                alignment: Alignment.center,
                 children: [
                   Directionality(
                     textDirection: TextDirection.rtl,
@@ -107,6 +109,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
+                                 ///create backup
                                   Flexible(
                                     child: ActionButton(
                                       label: "پشتیبان گیری",
@@ -117,29 +120,45 @@ class _SettingScreenState extends State<SettingScreen> {
                                       },
                                     ),
                                   ),
-                                  ActionButton(
-                                    loading: isBackupLoading,
-                                    label: "بارگیری فایل پشتیبان",
-                                    icon: Icons.settings_backup_restore,
-                                    bgColor: Colors.teal,
-                                    onPress: () async {
-                                      await storagePermission(
-                                          context, Allow.storage);
-                                      if (context.mounted) {
+                                  ///restore backup
+                                  Flexible(
+                                    child: ActionButton(
+                                      loading: isBackupLoading,
+                                      label: "بارگیری فایل پشتیبان",
+                                      icon: Icons.settings_backup_restore,
+                                      bgColor: Colors.teal,
+                                      onPress: () async {
                                         await storagePermission(
-                                            context, Allow.externalStorage);
-                                      }
-                                      isBackupLoading = true;
-                                      setState(() {});
-                                      if (context.mounted) {
-                                        await BackupTools.readZipFile(context);
-                                      }
-                                      isBackupLoading = false;
-                                      setState(() {});
-                                    },
+                                            context, Allow.storage);
+                                        if (context.mounted) {
+                                          await storagePermission(
+                                              context, Allow.externalStorage);
+                                        }
+                                        isBackupLoading = true;
+                                        setState(() {});
+                                        if (context.mounted) {
+                                          await BackupTools.readZipFile(context);
+                                        }
+                                        isBackupLoading = false;
+                                        setState(() {});
+                                      },
+                                    ),
                                   ),
+                                  ///share backup
                                 ],
                               ),
+                            ),
+                            ///share backup
+                            ActionButton(
+                              label: "به اشتراک گذاری فایل پشتیبان",
+                              height: 20,
+                              borderRadius: 8,
+                              icon: Icons.share_rounded,
+                              bgColor: Colors.indigo,
+                              labelStyle: TextStyle(fontSize: 10,color: Colors.white),
+                              onPress: () async {
+                                await BackupTools.createBackup(context,directory: backupDirectory,isSharing: true);
+                              },
                             ),
                             Container(
                               alignment: Alignment.centerRight,
@@ -231,30 +250,34 @@ class _SettingScreenState extends State<SettingScreen> {
                   ),
 ///*********************** show purchase part if not purchased **************************************
                   if(!wareProvider.isVip)
-                      Container(
+                      BlurryContainer(
                     padding: EdgeInsets.all(10),
+                        color: Colors.black87.withOpacity(.7),
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height ,
                     //height: MediaQuery.of(context).size.height,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Center(
-                          child: Text(
-                            "برای استفاده از این پنل نسخه پرو برنامه را فعال کنید.",
-                            textDirection: TextDirection.rtl,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white, fontSize: 18),
+                    child: SizedBox(
+                      width: 200,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Center(
+                            child: Text(
+                              "برای استفاده از این پنل نسخه پرو برنامه را فعال کنید.",
+                              textDirection: TextDirection.rtl,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.white, fontSize: 18),
 
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        PurchaseButton(),
-                      ],
+                          SizedBox(
+                            height: 30,
+                          ),
+                          PurchaseButton(),
+                        ],
+                      ),
                     ),
-                    color: Colors.black87.withOpacity(.7),
+
                   ),
                 ],
               ),
@@ -288,7 +311,7 @@ class SwitchItem extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(title),
+            Flexible(child: Text(title)),
             Switch(value: value, onChanged: onChange),
           ],
         ),
@@ -324,14 +347,16 @@ class DropListItem extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(title),
-            DropListModel(
-                elevation: 0,
-                width: dropWidth,
-                height: 30,
-                listItem: listItem,
-                selectedValue: selectedValue,
-                onChanged: onChange),
+            Flexible(child: Text(title)),
+            Flexible(
+              child: DropListModel(
+                  elevation: 0,
+                  width: dropWidth,
+                  height: 30,
+                  listItem: listItem,
+                  selectedValue: selectedValue,
+                  onChanged: onChange),
+            ),
           ],
         ),
       ),
@@ -365,7 +390,7 @@ class InputItem extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label),
+            Flexible(child: Text(label)),
             CustomTextField(
                 label: inputLabel,
                 controller: controller,
@@ -405,7 +430,7 @@ class ButtonTile extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label),
+            Flexible(child: Text(label)),
             SizedBox(
               child: extra,
             ),

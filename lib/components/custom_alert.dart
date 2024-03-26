@@ -3,6 +3,7 @@
 import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:flutter/material.dart';
 import 'package:price_list/components/action_button.dart';
+import 'package:price_list/constants/constants.dart';
 // customAlert(
 //     {required BuildContext context,
 //     VoidCallback? onYes,
@@ -103,6 +104,7 @@ class CustomAlert extends StatelessWidget {
       backgroundColor: Colors.white.withOpacity(.5),
       scrollable: true,
       content: BlurryContainer(
+        padding: EdgeInsets.zero,
         borderRadius: BorderRadius.circular(20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -119,15 +121,16 @@ class CustomAlert extends StatelessWidget {
                   Icons.close,
                   color: Colors.red,
                   size: 30,
+                  shadows: [BoxShadow(color: Colors.black54,blurRadius: 2,offset: Offset(1, 1))],
                 ),
               ),
             ),
             ///title part
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Text(
                 title,
-                style: const TextStyle(color: Colors.black87,fontSize: 18,),
+                style: const TextStyle(color: Colors.black87,fontSize: 14,),
                 textDirection: TextDirection.rtl,
               ),
             ),
@@ -143,25 +146,30 @@ class CustomAlert extends StatelessWidget {
                     height:70,// ?? MediaQuery.of(context).size.height,
                     width: 300, // ?? MediaQuery.of(context).size.width,
                     padding: const EdgeInsets.all(10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        ActionButton(
-                          width: 70,
-                          bgColor: Colors.indigo,
-                          icon: Icons.done,
-                          onPress: onYes,
-                          label: 'بله',
-                        ),
-                        const SizedBox(width: 20,),
-                        ActionButton(
-                          bgColor: Colors.redAccent,
-                          icon: Icons.close,
-                          width: 70,
-                          onPress: onNo, // this line dismisses the dialog
-                          label: 'خیر',
-                        )
-                      ],)),
+                    child: Align(
+                      alignment: Alignment.bottomLeft,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          ActionButton(
+                            width: 70,
+                            height: 25,
+                            bgColor: Colors.indigo,
+                            icon: Icons.done,
+                            onPress: onYes,
+                            label: 'بله',
+                          ),
+                          const SizedBox(width: 5,),
+                          ActionButton(
+                            bgColor: Colors.redAccent,
+                            icon: Icons.close,
+                            width: 70,
+                            height: 25,
+                            onPress: onNo ?? (){Navigator.pop(context,false);}, // this line dismisses the dialog
+                            label: 'خیر',
+                          )
+                        ],),
+                    )),
               ),
             ),
           ],

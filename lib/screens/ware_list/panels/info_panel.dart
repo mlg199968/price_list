@@ -18,7 +18,7 @@ import 'package:price_list/screens/ware_list/widgets/row_info.dart';
 
 InfoPanel({required BuildContext context, required WareHive wareInfo}) {
   return CustomDialog(
-    height: MediaQuery.of(context).size.height * .5,
+    height: MediaQuery.of(context).size.height * .8,
     image: wareInfo.imagePath,
     title: "مشخصات کالا",
     child: Column(
@@ -59,8 +59,23 @@ InfoPanel({required BuildContext context, required WareHive wareInfo}) {
                   label: "حذف",
                   bgColor: Colors.red,
                   onPress: () {
-                    wareInfo.delete();
-                    Navigator.pop(context);
+                    showDialog(
+                      context: context,
+                      builder: (context) => CustomAlert(
+                        title: "آیا از حذف کالا مورد نظر مطمئن هستید؟",
+                        onYes: (){
+                          wareInfo.delete();
+                          Navigator.pop(context,false);
+                          Navigator.pop(context,false);
+
+                          showSnackBar(context, "کالا مورد نظر حذف شد!",
+                              type: SnackType.success);
+                        },
+                        onNo: (){
+                          Navigator.pop(context,false);
+                        },
+                      ),
+                    );
                   },
                   icon: Icons.delete),
             ),
@@ -130,6 +145,7 @@ InfoPanelDesktop(
 
           Expanded(
             child: ListView(
+              controller: ScrollController(),
               children: <Widget>[
                 InfoPanelRow(title: "نام کالا", infoList: wareInfo.wareName),
                 InfoPanelRow(title: "سرگروه", infoList: wareInfo.groupName),
@@ -167,7 +183,9 @@ InfoPanelDesktop(
                           title: "آیا از حذف کالا مورد نظر مطمئن هستید؟",
                         onYes: (){
                           wareInfo.delete();
+                          Navigator.pop(context,false);
                           onReload();
+
                           showSnackBar(context, "کالا مورد نظر حذف شد!",
                               type: SnackType.success);
                         },

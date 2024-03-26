@@ -52,6 +52,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
 
     return MaterialApp(
+      scrollBehavior: MyCustomScrollBehavior(),
       theme: ThemeData(
           fontFamily:context.watch<WareProvider>().fontFamily,
           appBarTheme: AppBarTheme(

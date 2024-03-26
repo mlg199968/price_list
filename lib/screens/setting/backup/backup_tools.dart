@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:archive/archive_io.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:image_compression_flutter/image_compression_flutter.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:path_provider/path_provider.dart';
 import 'package:price_list/constants/consts_class.dart';
@@ -13,6 +14,7 @@ import 'package:price_list/providers/ware_provider.dart';
 import 'package:price_list/services/hive_boxes.dart';
 import 'package:price_list/model/ware_hive.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 
 
@@ -28,16 +30,14 @@ class BackupTools {
       return null;
     }
   }
-  static Future<void> createBackup(BuildContext context,{String? directory}) async{
+  static Future<void> createBackup(BuildContext context,{String? directory,bool isSharing=false}) async{
     List<WareHive> wares = HiveBoxes.getWares().values.toList();
    List wareListJson=wares.map((e) => e.toJson()).toList();
     try {
-
-      // await _saveJson(database.toJson(),context);
       if(directory!=null && directory!="") {
         await createZipFile(
             await Address.waresImage(), jsonEncode(wareListJson), context,
-            directory: directory);
+            directory: directory,isSharing: isSharing);
       }else{
         showSnackBar(context, "مسیر ذخیره سازی انتخاب نشده است!");
       }
@@ -114,22 +114,26 @@ ErrorHandler.errorManger(context, e,title: "BackupTools restoreMlgFileBackup fun
     }
   }
 ///create zip backup
-  static createZipFile(String imagesDir, String json, context,{required String directory}) async {
+  static createZipFile(String imagesDir, String json, context,{required String directory,bool isSharing=false}) async {
     try {
       String formattedDate =
       intl.DateFormat('yyyyMMdd-kkmmss').format(DateTime.now());
         // Zip a directory to out.zip using the zipDirectory convenience method
         var encoder = ZipFileEncoder();
         // Manually create a zip of a directory and individual files.
-        encoder.create('$directory/price_list$formattedDate.plmlg');
+      final String path='$directory/price_list$formattedDate.plmlg';
+        encoder.create(path);
         encoder.addDirectory(Directory(imagesDir));
         File jsonFile = await _createJsonFile(json, directory);
         encoder.addFile(jsonFile);
         encoder.close();
         await jsonFile.delete(recursive: true);
+        if(isSharing==false) {
         showSnackBar(context, "فایل پشتیبان با موفقیت ذخیره شد !",
             type: SnackType.success);
-
+      }else{
+          await Share.shareXFiles([XFile(path)]);
+        }
     } catch (e) {
       ErrorHandler.errorManger(context, e,
           title: "BackupTools - createZipFile error", showSnackbar: true);

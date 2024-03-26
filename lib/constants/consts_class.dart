@@ -1,6 +1,8 @@
 
 import 'dart:io';
+import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 ///payment methods
 class PayMethod{
@@ -114,3 +116,16 @@ class Address{
 
 
 }
+
+
+///
+class MyCustomScrollBehavior extends MaterialScrollBehavior {
+  // Override behavior methods and getters like dragDevices
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+    PointerDeviceKind.touch,
+    PointerDeviceKind.mouse,
+    // etc.
+  };
+}
+
