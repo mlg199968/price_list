@@ -1,5 +1,7 @@
 import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:gap/gap.dart';
 import 'package:price_list/components/action_button.dart';
 import 'package:price_list/components/custom_text.dart';
 import 'package:price_list/components/custom_textfield.dart';
@@ -144,7 +146,6 @@ class _SettingScreenState extends State<SettingScreen> {
                                       },
                                     ),
                                   ),
-                                  ///share backup
                                 ],
                               ),
                             ),
@@ -160,6 +161,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                 await BackupTools.createBackup(context,directory: backupDirectory,isSharing: true);
                               },
                             ),
+                            ///choose directory
                             Container(
                               alignment: Alignment.centerRight,
                                 padding: EdgeInsets.all(10),
@@ -192,7 +194,42 @@ class _SettingScreenState extends State<SettingScreen> {
                                     ],
                                   )),
                             ),
-                            SizedBox(height: 30,),
+                            const Gap(10),
+                            Container(
+                              height: 70,
+                              padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(colors: [Colors.green,Colors.teal]),
+                                borderRadius: BorderRadius.circular(10)
+                              ),
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    height: 40,
+                                      child: Image(image: AssetImage("assets/images/excel.png"),)),
+                                  Gap(10),
+                                  CText("فایل اکسل",color: Colors.white,),
+                                  Expanded(child: SizedBox()),
+                                  ActionButton(
+                                    label: "import",
+                                    iconSize: 14,
+                                    icon: FontAwesomeIcons.fileImport,
+                                    onPress: (){
+
+                                    },
+                                  ),
+                                ActionButton(
+                                    label: "export",
+                                    iconSize: 14,
+                                    icon: FontAwesomeIcons.fileExport,
+                                    onPress: (){
+
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Gap(30),
                             ///currency unit
                             DropListItem(
                                 title: "واحد پول",

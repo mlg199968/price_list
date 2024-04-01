@@ -18,7 +18,7 @@ class ActionButton extends StatelessWidget {
     this.borderRadius = 20,
     this.loading = false,
     this.child,
-    this.disable = false, this.labelStyle,
+    this.disable = false, this.labelStyle, this.iconSize,
   });
 
   final Widget? child;
@@ -30,6 +30,7 @@ class ActionButton extends StatelessWidget {
   final Color? iconColor;
   final double height;
   final double? width;
+  final double? iconSize;
   final double borderRadius;
   final TextDirection direction;
   final EdgeInsets? margin;
@@ -95,7 +96,7 @@ class ActionButton extends StatelessWidget {
                     Icon(
                       icon,
                       color: iconColor ?? Colors.white,
-                      size: 18,
+                      size: iconSize ?? 17,
                     ),
                 ],
               ),
