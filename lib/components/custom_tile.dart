@@ -44,32 +44,30 @@ class CustomTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Directionality(
         textDirection: TextDirection.rtl,
-        child: Builder(builder: (context) {
-          return Card(
-            surfaceTintColor:surfaceColor ?? Colors.white,
-            margin: selected ? const EdgeInsets.only(right: 20) : null,
-            child: BackgroundClipper(
-              color: selected ?Colors.blue:color,
-              height: height,
-              child: MyListTile(
-                selected: selected,
-                onTap: onTap ?? () {},
-                onLongPress: onLongPress,
-                enable: enable,
-                title: title,
-                leadingIcon: leadingIcon,
-                type: type,
-                subTitle: subTitle,
-                topTrailingLabel: topTrailingLabel,
-                topTrailing: topTrailing,
-                trailing: trailing,
-                trailingLabel: trailingLabel,
-                middle: middle,
-                middleLabel: middleLabel,
-              ),
+        child: Card(
+          surfaceTintColor:surfaceColor ?? Colors.white,
+          margin: selected ? const EdgeInsets.only(right: 20) : null,
+          child: BackgroundClipper(
+            color: selected ?Colors.blue:color,
+            height: height,
+            child: MyListTile(
+              selected: selected,
+              onTap: onTap ?? () {},
+              onLongPress: onLongPress,
+              enable: enable,
+              title: title,
+              leadingIcon: leadingIcon,
+              type: type,
+              subTitle: subTitle,
+              topTrailingLabel: topTrailingLabel,
+              topTrailing: topTrailing,
+              trailing: trailing,
+              trailingLabel: trailingLabel,
+              middle: middle,
+              middleLabel: middleLabel,
             ),
-          );
-        }));
+          ),
+        ));
   }
 }
 
@@ -109,95 +107,100 @@ class MyListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      selected: selected,
-      iconColor: Colors.black26,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 5),
-      dense: true,
-      title: Text(
-        title,
-        style: TextStyle(fontSize: 15),
-        overflow: TextOverflow.ellipsis,
-        textAlign: TextAlign.right,
-        maxLines: 2,
-      ),
-      leading: leadingIcon != null
-          ? SizedBox(
-              child: Column(
-                children: [
-                  Expanded(
-                      child: Icon(
-                    leadingIcon,
-                    size: 20,
-                  )),
-                  Text(
-                    type ?? "",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: selected ? Colors.blue : Colors.black38,
-                    ),
+    return LayoutBuilder(
+      builder: (context,constraint) {
+        bool hideTrailing=constraint.maxWidth<300;
+        return ListTile(
+          selected: selected,
+          iconColor: Colors.black26,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 5),
+          dense: true,
+          title: Text(
+            title,
+            style: TextStyle(fontSize: 15),
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.right,
+            maxLines: 2,
+          ),
+          leading: leadingIcon != null
+              ? SizedBox(
+                  child: Column(
+                    children: [
+                      Expanded(
+                          child: Icon(
+                        leadingIcon,
+                        size: 20,
+                      )),
+                      Text(
+                        type ?? "",
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: selected ? Colors.blue : Colors.black38,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      )
+                    ],
                   ),
-                  const SizedBox(
-                    height: 5,
-                  )
-                ],
+                )
+              : null,
+          subtitle: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(subTitle ?? ""),
+              RichText(
+                text: TextSpan(
+                  text: middleLabel ?? "",
+                  style:  TextStyle(color: selected ? Colors.blue :Colors.black54, fontSize: 11),
+                  children: [
+                    TextSpan(
+                        text: middle,
+                        style:  TextStyle(
+                            color: selected ? Colors.blue :Colors.black87,
+                            fontSize: 13,
+                            fontFamily: Theme.of(context).textTheme.bodyMedium!.fontFamily)),
+                  ],
+                ),
               ),
-            )
-          : null,
-      subtitle: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(subTitle ?? ""),
-          RichText(
-            text: TextSpan(
-              text: middleLabel ?? "",
-              style:  TextStyle(color: selected ? Colors.blue :Colors.black54, fontSize: 11),
-              children: [
-                TextSpan(
-                    text: middle,
-                    style:  TextStyle(
-                        color: selected ? Colors.blue :Colors.black87,
-                        fontSize: 13,
-                        fontFamily: Theme.of(context).textTheme.bodyMedium!.fontFamily)),
-              ],
-            ),
+            ],
           ),
-        ],
-      ),
-      trailing: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          RichText(
-            text: TextSpan(
-              text: topTrailingLabel ?? "",
-              style:  TextStyle(color: selected ? Colors.blue :Colors.black54, fontSize: 11),
-              children: [
-                TextSpan(
-                    text: topTrailing,
-                    style:  TextStyle(
-                        color:selected ? Colors.blue : Colors.black54,
-                        fontSize: 12,
-                        fontFamily: Theme.of(context).textTheme.bodyMedium!.fontFamily)),
-              ],
-            ),
+          trailing: hideTrailing?null:Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              RichText(
+                text: TextSpan(
+                  text: topTrailingLabel ?? "",
+                  style:  TextStyle(color: selected ? Colors.blue :Colors.black54, fontSize: 11),
+                  children: [
+                    TextSpan(
+                        text: topTrailing,
+                        style:  TextStyle(
+                            color:selected ? Colors.blue : Colors.black54,
+                            fontSize: 12,
+                            fontFamily: Theme.of(context).textTheme.bodyMedium!.fontFamily)),
+                  ],
+                ),
+              ),
+              RichText(
+                text: TextSpan(
+                  text: trailingLabel ?? "",
+                  style:  TextStyle(color: selected ? Colors.blue :Colors.black54, fontSize: 11),
+                  children: [
+                    TextSpan(
+                        text: trailing,
+                        style:  TextStyle(
+                            color: selected ? Colors.blue :Colors.black,
+                            fontSize: 14,
+                            fontFamily: Theme.of(context).textTheme.bodyMedium!.fontFamily)),
+                  ],
+                ),
+              ),
+            ],
           ),
-          RichText(
-            text: TextSpan(
-              text: trailingLabel ?? "",
-              style:  TextStyle(color: selected ? Colors.blue :Colors.black54, fontSize: 11),
-              children: [
-                TextSpan(
-                    text: trailing,
-                    style:  TextStyle(
-                        color: selected ? Colors.blue :Colors.black,
-                        fontSize: 14,
-                        fontFamily: Theme.of(context).textTheme.bodyMedium!.fontFamily)),
-              ],
-            ),
-          ),
-        ],
-      ),
+        );
+      }
     );
   }
 }

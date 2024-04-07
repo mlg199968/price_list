@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:price_list/permission_handler.dart';
+import 'package:price_list/constants/permission_handler.dart';
 
 
 class ImagePickerHolder extends StatelessWidget {

@@ -7,7 +7,7 @@ import 'package:price_list/components/empty_holder.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/error_handler.dart';
 import 'package:price_list/constants/utils.dart';
-import 'package:price_list/permission_handler.dart';
+import 'package:price_list/constants/permission_handler.dart';
 
 // ignore: must_be_immutable
 class ItemImageHolder extends StatefulWidget {

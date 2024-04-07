@@ -1,19 +1,23 @@
+import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:price_list/components/action_button.dart';
 import 'package:price_list/components/custom_float_action_button.dart';
+import 'package:price_list/components/custom_icon_button.dart';
 import 'package:price_list/components/custom_textfield.dart';
 import 'package:price_list/components/drop_list_model.dart';
 import 'package:price_list/components/hide_keyboard.dart';
 import 'package:price_list/constants/constants.dart';
-import 'package:price_list/constants/consts_class.dart';
+import 'package:price_list/screens/ware_list/services/barcode_scanner.dart';
+import '../../constants/consts_class.dart';
 import 'package:price_list/constants/enums.dart';
 import 'package:price_list/constants/error_handler.dart';
 import 'package:price_list/constants/utils.dart';
-import 'package:price_list/screens/add_ware/widgets/item_image_holder.dart';
+import 'package:price_list/screens/ware_list/widgets/item_image_holder.dart';
 import 'package:price_list/services/hive_boxes.dart';
 import 'package:price_list/model/ware_hive.dart';
-import 'package:price_list/screens/add_ware/panels/create_group_panel.dart';
+import 'package:price_list/screens/ware_list/panels/create_group_panel.dart';
 import 'package:price_list/providers/ware_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -254,10 +258,26 @@ final bool isMobileSize=screenType(context)==ScreenType.mobile;
                                   const SizedBox(
                                     height: kSpaceBetween,
                                   ),
-                                  CustomTextField(
-                                    label: "شماره سریال کالا",
-                                    maxLength: 25,
-                                    controller: wareSerialController,
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomTextField(
+                                          label: "شماره سریال کالا",
+                                          maxLength: 25,
+                                          controller: wareSerialController,
+                                          suffixIcon:Platform.isAndroid ||Platform.isIOS? CustomIconButton(
+                                            icon: Icons.qr_code_scanner_rounded,
+                                            iconSize: 25,
+                                            onPress: (){
+                                              Navigator.push(context, MaterialPageRoute(builder: (context)=>BarcodeScannerScreen())).then((value) {
+                                                wareSerialController.text=value;
+                                                setState(() {});
+                                              });
+                                          },
+                                          ):null,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                   const SizedBox(
                                     height: kSpaceBetween,

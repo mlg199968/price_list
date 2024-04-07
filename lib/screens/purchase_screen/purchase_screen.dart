@@ -8,7 +8,7 @@ import 'package:price_list/components/custom_textfield.dart';
 import 'package:price_list/components/hide_keyboard.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/utils.dart';
-import 'package:price_list/pay_services/pay_service.dart';
+import 'package:price_list/services/pay_service.dart';
 
 class PurchaseScreen extends StatefulWidget {
   static const String id = "/purchaseScreen";

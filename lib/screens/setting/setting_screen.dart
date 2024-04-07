@@ -3,20 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:price_list/components/action_button.dart';
+import 'package:price_list/components/dynamic_button.dart';
 import 'package:price_list/components/custom_text.dart';
 import 'package:price_list/components/custom_textfield.dart';
 import 'package:price_list/components/drop_list_model.dart';
 import 'package:price_list/components/hide_keyboard.dart';
 import 'package:price_list/constants/constants.dart';
+import 'package:price_list/constants/enums.dart';
+import 'package:price_list/constants/utils.dart';
 import 'package:price_list/model/shop.dart';
-import 'package:price_list/permission_handler.dart';
+import 'package:price_list/constants/permission_handler.dart';
 import 'package:price_list/screens/bug_screen/bug_list_screen.dart';
 import 'package:price_list/screens/setting/backup/backup_tools.dart';
+import 'package:price_list/screens/setting/backup/excel_tools.dart';
 import 'package:price_list/screens/side_bar/sidebar_panel.dart';
 import 'package:price_list/providers/ware_provider.dart';
 import 'package:price_list/services/hive_boxes.dart';
 
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingScreen extends StatefulWidget {
@@ -113,7 +118,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                 children: [
                                  ///create backup
                                   Flexible(
-                                    child: ActionButton(
+                                    child: DynamicButton(
                                       label: "پشتیبان گیری",
                                       icon: Icons.backup,
                                       bgColor: Colors.red.withRed(250),
@@ -124,8 +129,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                   ),
                                   ///restore backup
                                   Flexible(
-                                    child: ActionButton(
-                                      loading: isBackupLoading,
+                                    child: DynamicButton(
                                       label: "بارگیری فایل پشتیبان",
                                       icon: Icons.settings_backup_restore,
                                       bgColor: Colors.teal,
@@ -136,13 +140,9 @@ class _SettingScreenState extends State<SettingScreen> {
                                           await storagePermission(
                                               context, Allow.externalStorage);
                                         }
-                                        isBackupLoading = true;
-                                        setState(() {});
                                         if (context.mounted) {
                                           await BackupTools.readZipFile(context);
                                         }
-                                        isBackupLoading = false;
-                                        setState(() {});
                                       },
                                     ),
                                   ),
@@ -150,7 +150,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               ),
                             ),
                             ///share backup
-                            ActionButton(
+                            DynamicButton(
                               label: "به اشتراک گذاری فایل پشتیبان",
                               height: 20,
                               borderRadius: 8,
@@ -195,9 +195,11 @@ class _SettingScreenState extends State<SettingScreen> {
                                   )),
                             ),
                             const Gap(10),
+                            ///excel import an export part
                             Container(
                               height: 70,
                               padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+                              margin: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(colors: [Colors.green,Colors.teal]),
                                 borderRadius: BorderRadius.circular(10)
@@ -210,21 +212,44 @@ class _SettingScreenState extends State<SettingScreen> {
                                   Gap(10),
                                   CText("فایل اکسل",color: Colors.white,),
                                   Expanded(child: SizedBox()),
-                                  ActionButton(
-                                    label: "import",
-                                    iconSize: 14,
-                                    icon: FontAwesomeIcons.fileImport,
-                                    onPress: (){
-
-                                    },
-                                  ),
-                                ActionButton(
+                                  DynamicButton(
                                     label: "export",
                                     iconSize: 14,
                                     icon: FontAwesomeIcons.fileExport,
-                                    onPress: (){
-
+                                    borderRadius: 5,
+                                    bgColor: Colors.black,
+                                    iconColor: Colors.redAccent,
+                                    onPress: ()async{
+                                     await ExcelTools.createExcel(context,backupDirectory);
                                     },
+                                  ),
+                                DynamicButton(
+                                    label: "import",
+                                    bgColor: Colors.black,
+                                    borderRadius: 5,
+                                    iconColor: Colors.greenAccent,
+                                    iconSize: 14,
+                                    icon: FontAwesomeIcons.fileImport,
+                                    onPress: ()async{
+                                      await ExcelTools.readExcel(context);
+                                    },
+                                  ),
+                                  DynamicButton(
+                                    label: "share",
+                                    height: 20,
+                                    borderRadius: 5,
+                                    icon: Icons.share_rounded,
+                                    bgColor: Colors.black,
+                                    iconColor: Colors.blueAccent,
+                                    labelStyle: TextStyle(fontSize: 10,color: Colors.white),
+                                    onPress: () async {
+                                      String? path =await ExcelTools.createExcel(context,backupDirectory);
+                                      if(path!=null && backupDirectory!=null) {
+                                      await Share.shareXFiles([XFile(path)]);
+                                    }else{
+                                        showSnackBar(context, "مسیر ذخیره سازی انتخاب نشده است!",type: SnackType.warning);
+                                      }
+                                  },
                                   ),
                                 ],
                               ),
@@ -300,7 +325,7 @@ class _SettingScreenState extends State<SettingScreen> {
                         children: [
                           Center(
                             child: Text(
-                              "برای استفاده از این پنل نسخه پرو برنامه را فعال کنید.",
+                              "برای استفاده از این پنل نسخه کامل برنامه را فعال کنید.",
                               textDirection: TextDirection.rtl,
                               textAlign: TextAlign.center,
                               style: TextStyle(color: Colors.white, fontSize: 18),

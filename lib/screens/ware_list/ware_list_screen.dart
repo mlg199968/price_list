@@ -27,9 +27,10 @@ import 'package:price_list/constants/utils.dart';
 import 'package:price_list/screens/notice_screen/notice_screen.dart';
 import 'package:price_list/screens/notice_screen/services/notice_tools.dart';
 import 'package:price_list/screens/side_bar/sidebar_panel.dart';
+import 'package:price_list/screens/ware_list/panels/print_panel.dart';
 import 'package:price_list/services/hive_boxes.dart';
 import 'package:price_list/model/ware_hive.dart';
-import 'package:price_list/screens/add_ware/add_ware_screen.dart';
+import 'package:price_list/screens/ware_list/add_ware_screen.dart';
 import 'package:price_list/screens/ware_list/panels/info_panel.dart';
 import 'package:price_list/screens/ware_list/panels/selected_action_panel.dart';
 import 'package:price_list/screens/ware_list/panels/ware_action_panel.dart';
@@ -99,7 +100,22 @@ class _WareListScreenState extends State<WareListScreen> {
                     },
                   ),
 
-                  ///Ware Actions Panel
+                  ///print Panel
+                  IconButton(
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) => PrintPanel(
+                                  wares: waresList,
+                                  subGroup: selectedDropListGroup,
+                                ));
+                      },
+                      icon:  Icon(
+                        CupertinoIcons.printer,
+                        size: 25,
+                        shadows: [kShadow]
+                      )),
+                  ///action panel
                   IconButton(
                       onPressed: () {
                         showDialog(
@@ -110,7 +126,7 @@ class _WareListScreenState extends State<WareListScreen> {
                                 ));
                       },
                       icon:  Icon(
-                        CupertinoIcons.printer,
+                        Icons.more_vert_rounded,
                         size: 25,
                         shadows: [kShadow]
                       )),
@@ -445,13 +461,11 @@ class _ListPartState extends State<ListPart> {
                                                 for (int item in selectedItems) {
                                                   selectedList.add(widget.wareList[item]);
                                                 }
-                                                final file =
-                                                    await PdfWareListApi(context,selectedList).generateTicketWareList();
-                                                PdfApi.openFile(file);
+                                                    showDialog(context: context, builder: (context)=>PrintPanel(wares: selectedList, subGroup: "selected"));
                                               },
                                               icon:
                                                 CupertinoIcons.printer_fill,
-                                                iconSize: 30,
+                                                iconSize: 29,
                                                 iconColor: Colors.black87,
                                               ),
 
@@ -469,7 +483,8 @@ class _ListPartState extends State<ListPart> {
                                                 }
                                                 showDialog(
                                                     context: context,
-                                                    builder: (context) => SelectedWareActionPanel(
+                                                    builder: (context) => WareActionsPanel(
+                                                      subGroup: "selected",
                                                         wares: selectedList));
                                               },
 

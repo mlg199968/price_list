@@ -12,7 +12,7 @@ import 'package:price_list/components/custom_text.dart';
 import 'package:price_list/components/shape/shape02.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/enums.dart';
-import 'package:price_list/screens/bazaar_purchase_screen.dart';
+import 'package:price_list/screens/purchase_screen/bazaar_purchase_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 

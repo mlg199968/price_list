@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:archive/archive_io.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:image_compression_flutter/image_compression_flutter.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:path_provider/path_provider.dart';
 import 'package:price_list/constants/consts_class.dart';
@@ -30,6 +29,7 @@ class BackupTools {
       return null;
     }
   }
+  ///
   static Future<void> createBackup(BuildContext context,{String? directory,bool isSharing=false}) async{
     List<WareHive> wares = HiveBoxes.getWares().values.toList();
    List wareListJson=wares.map((e) => e.toJson()).toList();
@@ -39,7 +39,7 @@ class BackupTools {
             await Address.waresImage(), jsonEncode(wareListJson), context,
             directory: directory,isSharing: isSharing);
       }else{
-        showSnackBar(context, "مسیر ذخیره سازی انتخاب نشده است!");
+        showSnackBar(context, "مسیر ذخیره سازی انتخاب نشده است!",type: SnackType.warning);
       }
     } catch (e) {
       ErrorHandler.errorManger(context, e,

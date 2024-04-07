@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:blurrycontainer/blurrycontainer.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:price_list/components/hide_keyboard.dart';
 import 'package:price_list/constants/constants.dart';
@@ -16,9 +17,9 @@ class CustomDialog extends StatelessWidget {
     this.opacity = .9,
     this.image,
     this.borderRadius = 20,
-    this.vip = false,
+    this.vip =false,
     this.contentPadding,
-    this.topTrail,
+    this.topTrail, this.actions,
   });
   final String? title;
   final EdgeInsets? contentPadding;
@@ -31,8 +32,10 @@ class CustomDialog extends StatelessWidget {
   final double borderRadius;
   final String? image;
   final bool vip;
+  final List<Widget>? actions;
   @override
   Widget build(BuildContext context) {
+
     return AlertDialog(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius)),
@@ -41,10 +44,20 @@ class CustomDialog extends StatelessWidget {
       backgroundColor: Colors.white.withOpacity(opacity),
       surfaceTintColor: Colors.white,
       scrollable: true,
+      buttonPadding: EdgeInsets.zero,
+      insetPadding: EdgeInsets.all(15),
+      actionsPadding: EdgeInsets.zero,
+      actions:(actions==null || vip)?null:[
+        BlurryContainer(
+          borderRadius:BorderRadius.vertical(bottom:Radius.circular(borderRadius),),
+            child: Row(
+              children: actions!,),
+        )
+      ],
       content: HideKeyboard(
         child: BlurryContainer(
           padding: const EdgeInsets.all(0),
-          borderRadius: BorderRadius.circular(borderRadius),
+          borderRadius: BorderRadius.vertical(top:Radius.circular(borderRadius),bottom:Radius.circular(actions==null?borderRadius:0),),
           child: SizedBox(
             width: width,
             height: height,
@@ -182,6 +195,7 @@ class CustomDialog extends StatelessWidget {
           ),
         ),
       ),
+
     );
   }
 }

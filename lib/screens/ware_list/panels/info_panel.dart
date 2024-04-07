@@ -7,13 +7,13 @@ import 'package:gap/gap.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:price_list/components/action_button.dart';
 import 'package:price_list/components/custom_alert.dart';
-import 'package:price_list/components/custom_alert_dialog.dart';
+import 'package:price_list/components/custom_dialog.dart';
 import 'package:price_list/components/empty_holder.dart';
 import 'package:price_list/constants/enums.dart';
 import 'package:price_list/constants/error_handler.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/model/ware_hive.dart';
-import 'package:price_list/screens/add_ware/add_ware_screen.dart';
+import 'package:price_list/screens/ware_list/add_ware_screen.dart';
 import 'package:price_list/screens/ware_list/widgets/row_info.dart';
 
 InfoPanel({required BuildContext context, required WareHive wareInfo}) {
@@ -107,69 +107,79 @@ InfoPanelDesktop(
     required VoidCallback onReload}) {
   return Directionality(
     textDirection: TextDirection.rtl,
-    child: Container(
-      height: 700,
-      width: 300,
-      margin: const EdgeInsets.symmetric(vertical: 30, horizontal: 5),
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-      decoration: BoxDecoration(
-          color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: Colors.black54,blurRadius: 5,offset: Offset(1, 2))]
-      ),
-      child: Column(
-        children: [
-          if (wareInfo.imagePath != null && wareInfo.imagePath != "")
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: Container(
-                height: 200,
-                padding: EdgeInsets.only(bottom: 20),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Image(
-                    image: FileImage(File(wareInfo.imagePath!)),
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, trace) {
-                      ErrorHandler.errorManger(context, error,
-                          route: trace.toString(),
-                          title: "InfoPanelDesktop widget load image error");
-                      return const EmptyHolder(
-                          text: "بارگزاری تصویر با مشکل مواجه شده است",
-                          icon: Icons.image_not_supported_outlined);
-                    },
-                  ),
-                ),
-              ),
+    child: Stack(
+      children: [
+        SingleChildScrollView(
+          controller: ScrollController(),
+          child: Container(
+            height: 700,
+            width: 300,
+            margin: const EdgeInsets.symmetric(vertical: 30, horizontal: 5),
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+            decoration: BoxDecoration(
+                color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [BoxShadow(color: Colors.black54,blurRadius: 5,offset: Offset(1, 2))]
             ),
+            child: Column(
+              children: [
+                if (wareInfo.imagePath != null && wareInfo.imagePath != "")
+                  AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child: Container(
+                      height: 200,
+                      padding: EdgeInsets.only(bottom: 20),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Image(
+                          image: FileImage(File(wareInfo.imagePath!)),
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, trace) {
+                            ErrorHandler.errorManger(context, error,
+                                route: trace.toString(),
+                                title: "InfoPanelDesktop widget load image error");
+                            return const EmptyHolder(
+                                text: "بارگزاری تصویر با مشکل مواجه شده است",
+                                icon: Icons.image_not_supported_outlined);
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ///info rows
+                Column(
+                  children: <Widget>[
+                    InfoPanelRow(title: "نام کالا", infoList: wareInfo.wareName),
+                    InfoPanelRow(title: "سرگروه", infoList: wareInfo.groupName),
+                    InfoPanelRow(
+                        title: "قیمت خرید", infoList: addSeparator(wareInfo.cost)),
+                    InfoPanelRow(
+                        title: "قیمت فروش", infoList: addSeparator(wareInfo.sale)),
+                    InfoPanelRow(
+                        title: "مقدار",
+                        infoList: "${wareInfo.quantity} ${wareInfo.unit} "),
+                    InfoPanelRow(
+                        title: "توضیحات", infoList: wareInfo.description),
+                    InfoPanelRow(
+                        title: "تاریخ تغییر",
+                        infoList: wareInfo.date.toPersianDateStr()),
+                  ],
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
 
-          Expanded(
-            child: ListView(
-              controller: ScrollController(),
-              children: <Widget>[
-                InfoPanelRow(title: "نام کالا", infoList: wareInfo.wareName),
-                InfoPanelRow(title: "سرگروه", infoList: wareInfo.groupName),
-                InfoPanelRow(
-                    title: "قیمت خرید", infoList: addSeparator(wareInfo.cost)),
-                InfoPanelRow(
-                    title: "قیمت فروش", infoList: addSeparator(wareInfo.sale)),
-                InfoPanelRow(
-                    title: "مقدار",
-                    infoList: "${wareInfo.quantity} ${wareInfo.unit} "),
-                InfoPanelRow(
-                    title: "توضیحات", infoList: wareInfo.description),
-                InfoPanelRow(
-                    title: "تاریخ تغییر",
-                    infoList: wareInfo.date.toPersianDateStr()),
+
               ],
             ),
           ),
-          const SizedBox(
-            height: 20,
-          ),
-
-          /// buttons
-          Row(
+        ),
+        /// buttons
+        Container(
+          margin: EdgeInsets.all(7),
+          alignment: Alignment.bottomCenter,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               ///delete button
@@ -180,7 +190,7 @@ InfoPanelDesktop(
                     showDialog(
                       context: context,
                       builder: (context) => CustomAlert(
-                          title: "آیا از حذف کالا مورد نظر مطمئن هستید؟",
+                        title: "آیا از حذف کالا مورد نظر مطمئن هستید؟",
                         onYes: (){
                           wareInfo.delete();
                           Navigator.pop(context,false);
@@ -190,7 +200,7 @@ InfoPanelDesktop(
                               type: SnackType.success);
                         },
                         onNo: (){
-                            Navigator.pop(context,false);
+                          Navigator.pop(context,false);
                         },
                       ),
                     );
@@ -210,8 +220,8 @@ InfoPanelDesktop(
               ),
             ],
           ),
-        ],
-      ),
+        ),
+      ],
     ),
   );
 }

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:blurrycontainer/blurrycontainer.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:price_list/components/action_button.dart';
@@ -8,11 +9,11 @@ import 'package:price_list/components/custom_text.dart';
 import 'package:price_list/components/over_cage.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/utils.dart';
-import 'package:price_list/screens/bazaar_purchase_screen.dart';
+import 'package:price_list/screens/purchase_screen/bazaar_purchase_screen.dart';
 import 'package:price_list/screens/group_management_screen.dart';
 import 'package:price_list/screens/notice_screen/notice_screen.dart';
 import 'package:price_list/screens/notice_screen/services/notice_tools.dart';
-import 'package:price_list/screens/purchase_screen.dart';
+import 'package:price_list/screens/purchase_screen/purchase_screen.dart';
 import 'package:price_list/screens/setting/setting_screen.dart';
 import 'package:price_list/providers/ware_provider.dart';
 import 'package:price_list/screens/shop_info_screen/shop_info_screen.dart';
@@ -91,20 +92,28 @@ class SideBarPanel extends StatelessWidget {
                       children: [
                         BarButton(
                           text: "مشخصات فروشگاه",
-                          icon: Icons.storefront_outlined,
+                          icon: Icons.storefront_rounded,
                           onPress: () {
                               Navigator.pushNamed(context, ShopInfoScreen.id);}
                         ),
                         BarButton(
                           text: "مدیریت گروه ها",
-                          icon: Icons.account_tree_outlined,
+                          icon: Icons.account_tree_rounded,
                           onPress: () {
                             Navigator.pushNamed(context, GroupManagementScreen.id);
                           },
                         ),
                         BarButton(
+                          text: "اطلاع رسانی ها",
+                          active:NoticeTools.checkNewNotifications(),
+                          icon: Icons.notifications_active_rounded,
+                          onPress: () {
+                            Navigator.pushNamed(context, NoticeScreen.id);
+                          },
+                        ),
+                        BarButton(
                           text: "تنظیمات",
-                          icon: Icons.settings_outlined,
+                          icon: Icons.settings_rounded,
                           onPress: () {
                             Navigator.pushNamed(context, SettingScreen.id);
                           },
@@ -290,36 +299,36 @@ class AvatarHolder extends StatelessWidget {
 ///
 class BarButton extends StatelessWidget {
   const BarButton(
-      {super.key, required this.text, required this.onPress, this.icon, this.enable=true});
+      {super.key, required this.text, required this.onPress, this.icon, this.enable=true,this.active=false});
   final String text;
   final bool enable;
   final IconData? icon;
   final VoidCallback onPress;
+  final bool active;
   @override
   Widget build(BuildContext context) {
     //decelerations
-    Color textColor = Colors.black.withOpacity(.7);
-    Color borderColor = kMainColor;
+    Color textColor = Colors.white;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8,vertical: 3),
       decoration: BoxDecoration(
-          borderRadius:BorderRadius.circular(10),
-          boxShadow: const [BoxShadow(color: Colors.black45,blurRadius: 3,offset: Offset(2, 3))]
+          borderRadius:BorderRadius.circular(5),
+          // boxShadow: const [BoxShadow(color: Colors.black45,blurRadius: 3,offset: Offset(2, 3))]
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(5),
         child: Container(
           // margin: EdgeInsets.symmetric(horizontal: 8,vertical: 1),
             padding: const EdgeInsets.symmetric(horizontal: 5,vertical: 0),
             decoration: BoxDecoration(
-              color: Colors.white,
-              gradient: kBlackWhiteGradiant,
-              border: Border(
-                bottom: BorderSide(
-                  width: 2,
-                  color: borderColor,
-                ),
-              ),
+              color: Colors.black,
+              gradient: kMainGradiant,
+              // border: Border(
+              //   bottom: BorderSide(
+              //     width: 2,
+              //     color: borderColor,
+              //   ),
+              // ),
             ),
             child: TextButtonTheme(
               data: const TextButtonThemeData(
@@ -333,6 +342,15 @@ class BarButton extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
+                      if(active)
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Icon(Icons.circle,
+                              size: 15
+                              ,color: Colors.red,
+                              ),
+                        ),
+                      Expanded(child: SizedBox()),
                       CText(
                         text,
                         fontSize: 15, color: textColor,
@@ -340,9 +358,8 @@ class BarButton extends StatelessWidget {
                       const SizedBox(
                         width: 5,
                       ),
-                      SizedBox(
-                          child:
-                          icon == null ? null : Icon(icon, color: kMainColor)),
+                      if(icon!=null)
+                      Icon(icon, color: Colors.amber,size: 20,),
                     ],
                   )),
             )),

@@ -8,7 +8,7 @@ import 'package:price_list/model/ware_hive.dart';
 import 'package:price_list/router.dart';
 import 'package:price_list/providers/ware_provider.dart';
 import 'package:provider/provider.dart';
-import 'screens/load_screen.dart';
+import 'screens/splash_screen/load_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

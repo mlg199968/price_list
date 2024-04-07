@@ -16,9 +16,12 @@ class PdfWareListApi {
   const PdfWareListApi(
     this.context,
     this.wareList,
+  {this.showHeader=true, this.showFooter=true}
   );
   final mat.BuildContext context;
   final List<WareHive> wareList;
+  final bool showHeader;
+  final bool showFooter;
   static _customTheme() async {
     return ThemeData.withFont(
         base: Font.ttf(await rootBundle.load("assets/fonts/mitra.ttf")),
@@ -34,7 +37,8 @@ class PdfWareListApi {
 
   //static Shop shopData = HiveBoxes.getShopInfo().get(0)!;
   //static String currency=shopData.currency;
-  Future<File> generateSimpleWareList({double scale = 1}) async {
+  ///simple ware list
+  Future<File> generateSimpleWareList({double scale = 1,}) async {
     WareProvider shopData = Provider.of<WareProvider>(context, listen: false);
 
     ///generate simple price list
@@ -45,8 +49,8 @@ class PdfWareListApi {
       build: (context) => [
         invoicePart,
       ],
-      header: (context) => invoiceHeader,
-      footer: (context) => buildFooter(shopData, scale: scale),
+      header:showHeader? (context) => invoiceHeader:null,
+      footer:showFooter? (context) => buildFooter(shopData, scale: scale):null,
     ));
     return PdfApi.saveDocument(name: "simple Ware List.pdf", pdf: pdf);
   }
@@ -66,18 +70,18 @@ class PdfWareListApi {
   }
 
   ///generate catalog list
-  Future<File> generateCatalog({double scale = 1}) async {
+  Future<File> generateCatalog({double scale = 1,required Map<String,bool> show}) async {
     WareProvider shopData = Provider.of<WareProvider>(context, listen: false);
     final pdf = Document(theme: await _customTheme());
-    final invoicePart = await catalogType(wareList, shopData, scale: scale);
+    final invoicePart = await catalogType(wareList, shopData, scale: scale,show:show);
     final invoiceHeader = await buildTitle(shopData, scale: scale);
     pdf.addPage(MultiPage(
       margin: EdgeInsets.all(10),
       build: (context) => [
         invoicePart,
       ],
-      header: (context) => invoiceHeader,
-      footer: (context) => buildFooter(shopData, scale: scale),
+      header:showHeader? (context) => invoiceHeader:null,
+      footer:showFooter? (context) => buildFooter(shopData, scale: scale):null,
     ));
     return PdfApi.saveDocument(name: "ticket Ware List.pdf", pdf: pdf);
   }
@@ -90,11 +94,30 @@ class PdfWareListApi {
     final invoiceHeader = await buildTitle(shopData, scale: scale);
     pdf.addPage(
       MultiPage(
-          header: (context) => invoiceHeader,
           build: (context) => [
                 invoicePart,
               ],
-          footer: (context) => buildFooter(shopData, scale: scale),
+        header:showHeader? (context) => invoiceHeader:null,
+        footer:showFooter? (context) => buildFooter(shopData, scale: scale):null,
+      ),
+    );
+    return PdfApi.saveDocument(name: "ticket Ware List.pdf", pdf: pdf);
+  }
+
+  ///generate custom ware list
+  Future<File> generateCustomWareList({double scale = 1,required Map<String,bool> show}) async {
+    WareProvider shopData = Provider.of<WareProvider>(context, listen: false);
+    final pdf = Document(theme: await _customTheme());
+    final invoicePart = await customList(wareList, shopData,show: show, scale: scale);
+    final invoiceHeader = await buildTitle(shopData, scale: scale);
+    pdf.addPage(
+      MultiPage(
+        margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+          build: (context) => [
+                invoicePart,
+              ],
+        header:showHeader? (context) => invoiceHeader:null,
+        footer:showFooter? (context) => buildFooter(shopData, scale: scale):null,
       ),
     );
     return PdfApi.saveDocument(name: "ticket Ware List.pdf", pdf: pdf);
@@ -207,6 +230,71 @@ class PdfWareListApi {
     }).toList();
     return Wrap(children: data);
   }
+  /// print custom ware list
+  static Future<Widget> customList(List<WareHive> list, WareProvider shopData,
+      {double scale = 1,required Map<String,bool> show}) async {
+    String currency = shopData.currency;
+    final headers =
+    ['#',
+      'نام محصول',
+      if(show["serial"]!)
+      'سریال',
+      if(show["count"]!)
+      'تعداد',
+      if(show["cost"]!)
+      'قیمت خرید ($currency)',
+      if(show["sale"]!)
+      'قیمت فروش ($currency)',
+      if(show["des"]!)
+      'توضیحات',
+
+    ].reversed.toList();
+    final data = list.map((item) {
+      return [
+        "${list.indexOf(item) + 1}".toPersianDigit(),
+        item.wareName.toPersianDigit(),
+        if(show["serial"]!)
+          item.description,
+        if(show["count"]!)
+        '${item.quantity}'.toPersianDigit(),
+        if(show["cost"]!)
+         addSeparator(item.cost),
+        if(show["sale"]!)
+        addSeparator(item.sale),
+        if(show["des"]!)
+          item.description,
+      ].reversed.toList();
+    }).toList();
+
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: TableHelper.fromTextArray(
+        headers: headers,
+        data: data,
+        //border: null,
+        headerStyle: TextStyle(
+          fontSize: 12 * scale,
+        ),
+        headerDecoration: const BoxDecoration(
+          color: PdfColors.grey300,
+        ),
+        cellHeight: 30,
+        cellStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 15 * scale),
+        // columnWidths: {2: const FixedColumnWidth(20)},
+        headerAlignment: Alignment.center,
+        cellAlignments: {
+          0: Alignment.centerLeft,
+          1: Alignment.centerRight,
+          2: Alignment.centerRight,
+          3: Alignment.centerRight,
+          4: Alignment.centerRight,
+          5: Alignment.centerRight,
+        },
+        oddCellStyle:
+        TextStyle(fontWeight: FontWeight.bold, fontSize: 15 * scale),
+      ),
+    );
+  }
 
   ///ticket type model for print price ware list
   static Future<Widget> ticketTypeList(
@@ -273,7 +361,7 @@ class PdfWareListApi {
 
   ///catalog type print with image
   static Future<Widget> catalogType(List<WareHive> list, WareProvider shopData,
-      {double scale = 1}) async {
+      {double scale = 1,required Map<String,bool> show}) async {
     final emptyImage = (await rootBundle.load("assets/images/empty-image.jpg"))
         .buffer
         .asUint8List();
@@ -302,11 +390,21 @@ class PdfWareListApi {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        //ware name text
+                        ///ware name text
                         Flexible(
                           child: Text(
                             item.wareName.toPersianDigit(),
                             style: TextStyle(fontSize: 15 * scale),
+                            maxLines: 4,
+                          ),
+                        ),
+                        SizedBox(height: 3 * PdfPageFormat.mm),
+                        ///description
+                        if(show["des"]!)
+                        Flexible(
+                          child: Text(
+                            item.description.toPersianDigit(),
+                            style: TextStyle(fontSize: 10 * scale,color: PdfColors.blueGrey),
                             maxLines: 4,
                           ),
                         ),

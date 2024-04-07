@@ -4,8 +4,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // import 'package:myket_iap/myket_iap.dart';
 import 'package:price_list/components/custom_button.dart';
 import 'package:price_list/constants/constants.dart';
-import 'package:price_list/pay_services/pay_service.dart';
-import 'package:price_list/screens/purchase_screen.dart';
+import 'package:price_list/services/pay_service.dart';
+import 'package:price_list/screens/purchase_screen/purchase_screen.dart';
 
 class BazaarPurchaseScreen extends StatefulWidget {
   static const String id = "/bazaarPurchaseScreen";

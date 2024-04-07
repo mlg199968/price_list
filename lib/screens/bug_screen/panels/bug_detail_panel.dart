@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:persian_number_utility/persian_number_utility.dart';
-import 'package:price_list/components/custom_alert_dialog.dart';
+import 'package:price_list/components/custom_dialog.dart';
 import 'package:price_list/model/bug.dart';
 
 class BugDetailPanel extends StatelessWidget {

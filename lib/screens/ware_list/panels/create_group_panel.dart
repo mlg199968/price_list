@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:price_list/components/custom_alert_dialog.dart';
+import 'package:price_list/components/custom_dialog.dart';
 import 'package:price_list/components/custom_button.dart';
 import 'package:price_list/components/custom_textfield.dart';
 import 'package:price_list/providers/ware_provider.dart';

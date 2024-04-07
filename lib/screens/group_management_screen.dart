@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:price_list/components/custom_alert_dialog.dart';
+import 'package:price_list/components/custom_dialog.dart';
 import 'package:price_list/components/custom_button.dart';
 import 'package:price_list/components/custom_textfield.dart';
 import 'package:price_list/constants/constants.dart';
@@ -99,7 +99,6 @@ class GroupManagePanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomDialog(
       title: 'ویرایش گروه',
-      height: 250,
       child: Consumer<WareProvider>(
 
         builder: (context,provider,child) {

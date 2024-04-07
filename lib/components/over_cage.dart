@@ -3,8 +3,8 @@ import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:price_list/components/custom_text.dart';
 
 class OverCage extends StatelessWidget {
-  const OverCage({super.key, required this.child, this.count, this.active=false});
-  final Widget child;
+  const OverCage({super.key,this.child, this.count, this.active=false});
+  final Widget? child;
   final int? count;
   final bool active;
 
@@ -20,7 +20,8 @@ class OverCage extends StatelessWidget {
           backgroundColor: Colors.red,
           child:count==null?null: CText(count.toString().toPersianDigit(),fontSize: 10,),
         ),
-        child
+        if(child!=null)
+        child!
       ],
     );
   }

@@ -11,8 +11,10 @@ class WareTools {
       list = list.where((element) {
         String wareName = element.wareName.toLowerCase().replaceAll(" ", "");
         String serial = element.wareSerial.toString().toLowerCase().replaceAll(" ", "");
+        String description = element.description.toString().toLowerCase().replaceAll(" ", "");
+        String groupName = element.groupName.toString().toLowerCase().replaceAll(" ", "");
         String key = keyWord.toLowerCase().replaceAll(" ", "");
-        if (wareName.contains(key) ||serial.contains(key)) {
+        if (wareName.contains(key) || serial.contains(key) || description.contains(key) || groupName.contains(key)) {
           return true;
         } else {
           return false;

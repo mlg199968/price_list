@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Price List"
-#define MyAppVersion "1.0"
+#define MyAppVersion "1.3"
 #define MyAppPublisher "MLG GRAND"
 #define MyAppURL "https://www.mlggrand.ir"
 #define MyAppExeName "price_list.exe"
@@ -23,7 +23,7 @@ DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 OutputDir=C:\Users\MLG GRAND\StudioProjects\price_list\installers
-OutputBaseFilename=price-list-setup
+OutputBaseFilename=price-list-1.3-setup
 SetupIconFile=E:\install_icon.ico
 Compression=lzma
 SolidCompression=yes
@@ -36,13 +36,13 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\MLG GRAND\StudioProjects\price_list\build\windows\runner\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\MLG GRAND\StudioProjects\price_list\build\windows\runner\Release\flutter_windows.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\MLG GRAND\StudioProjects\price_list\build\windows\runner\Release\image_compression_flutter_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\MLG GRAND\StudioProjects\price_list\build\windows\runner\Release\permission_handler_windows_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\MLG GRAND\StudioProjects\price_list\build\windows\runner\Release\share_plus_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\MLG GRAND\StudioProjects\price_list\build\windows\runner\Release\url_launcher_windows_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\MLG GRAND\StudioProjects\price_list\build\windows\runner\Release\data\*"; DestDir: "{app}\data"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\Users\MLG GRAND\StudioProjects\price_list\build\windows\x64\runner\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\MLG GRAND\StudioProjects\price_list\build\windows\x64\runner\Release\flutter_windows.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\MLG GRAND\StudioProjects\price_list\build\windows\x64\runner\Release\image_compression_flutter_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\MLG GRAND\StudioProjects\price_list\build\windows\x64\runner\Release\permission_handler_windows_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\MLG GRAND\StudioProjects\price_list\build\windows\x64\runner\Release\share_plus_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\MLG GRAND\StudioProjects\price_list\build\windows\x64\runner\Release\url_launcher_windows_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\MLG GRAND\StudioProjects\price_list\build\windows\x64\runner\Release\data\*"; DestDir: "{app}\data"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
