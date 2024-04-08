@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:blurrycontainer/blurrycontainer.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:price_list/components/hide_keyboard.dart';
 import 'package:price_list/constants/constants.dart';

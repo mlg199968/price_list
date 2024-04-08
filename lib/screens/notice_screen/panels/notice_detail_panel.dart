@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
-import 'package:price_list/components/custom_dialog.dart';
 import 'package:price_list/components/custom_button.dart';
 import 'package:price_list/components/notification_dialog.dart';
 import 'package:price_list/constants/utils.dart';

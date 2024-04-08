@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:blurrycontainer/blurrycontainer.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:price_list/components/action_button.dart';
@@ -13,7 +12,6 @@ import 'package:price_list/screens/purchase_screen/bazaar_purchase_screen.dart';
 import 'package:price_list/screens/group_management_screen.dart';
 import 'package:price_list/screens/notice_screen/notice_screen.dart';
 import 'package:price_list/screens/notice_screen/services/notice_tools.dart';
-import 'package:price_list/screens/purchase_screen/purchase_screen.dart';
 import 'package:price_list/screens/setting/setting_screen.dart';
 import 'package:price_list/providers/ware_provider.dart';
 import 'package:price_list/screens/shop_info_screen/shop_info_screen.dart';
@@ -225,8 +223,8 @@ class PurchaseButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
-        Navigator.pushNamed(context, PurchaseScreen.id);
-        //Navigator.pushNamed(context, PurchaseScreen.id);
+        // Navigator.pushNamed(context, PurchaseScreen.id);
+        Navigator.pushNamed(context, BazaarPurchaseScreen.id);
       },
       child: Container(
         width: 400,
