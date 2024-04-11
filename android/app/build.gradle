@@ -28,7 +28,7 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 android {
-    namespace "com.example.price_list"
+    namespace "ir.mlggrand.priceList"
     compileSdk flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
@@ -91,4 +91,8 @@ flutter {
 
 dependencies {
     implementation 'com.google.mlkit:barcode-scanning:17.2.0'
+    // RxJava 3
+    implementation "com.github.cafebazaar.Poolakey:poolakey-rx3:2.2.0"
+    // RxJava 2
+    implementation "com.github.cafebazaar.Poolakey:poolakey-rx:2.2.0"
 }

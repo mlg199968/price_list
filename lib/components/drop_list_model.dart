@@ -33,29 +33,38 @@ class DropListModel extends StatelessWidget {
         elevation: icon==null?elevation:0,
         child: DropdownButtonHideUnderline(
           child: DropdownButton2(
-            iconDisabledColor: Colors.black26,
-            iconEnabledColor: kMainColor,
-            icon: const Icon(Icons.keyboard_arrow_down),
-            iconOnClick: const Icon(Icons.keyboard_arrow_up),
-
-            isExpanded: true,
-            itemPadding: const EdgeInsets.all(0),
-
-            customButton:icon,
-            isDense: true,
-            dropdownWidth: width,
-            alignment: Alignment.centerRight,
-            scrollbarRadius: const Radius.circular(20),
-            dropdownDecoration:BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              //border: Border.all(color: kColorController)
+            iconStyleData: const IconStyleData(
+              icon: Icon(Icons.keyboard_arrow_down),
+              openMenuIcon: Icon(Icons.keyboard_arrow_up),
+              iconDisabledColor: Colors.black26,
+              iconEnabledColor: kMainColor,),
+            dropdownStyleData: DropdownStyleData(
+              width: width,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                //border: Border.all(color: kColorController)
+              ),
+              scrollbarTheme: const ScrollbarThemeData(radius:Radius.circular(20), ),
+              padding: const EdgeInsets.all(0),
             ),
-            buttonDecoration: BoxDecoration(
+            buttonStyleData: ButtonStyleData(
+              width: width,
+              height: height,
+              decoration:BoxDecoration(
                 color:icon!=null?null:Colors.white,
                 borderRadius: BorderRadius.circular(200),
                 //border: Border.all(color: kColorController)
-            ),
+              ), ),
+
+
+
+            isExpanded: true,
+
+
+            customButton:icon,
+            isDense: true,
+            alignment: Alignment.centerRight,
             hint: const Text(
               'no Group',
               style: TextStyle(fontSize: 20, color: Colors.black38),
@@ -63,33 +72,28 @@ class DropListModel extends StatelessWidget {
             items: listItem
                 .map((item) => DropdownMenuItem<String>(
               alignment: Alignment.centerRight,
-                      value: item,
-                      child: Container(
-                        alignment: Alignment.centerRight,
-                        color:icon!=null?(selectedValue==item?kMainColor:null):null,
-                        padding: const EdgeInsets.only(right: 5),
-                        width: width *.7,
-                        child: Text(
-                          item,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            color: Colors.blueGrey,
-                          ),
-                        ),
-                      ),
-                    ))
+              value: item,
+              child: Container(
+                alignment: Alignment.centerRight,
+                color:icon!=null?(selectedValue==item?kMainColor:null):null,
+                padding: const EdgeInsets.only(right: 5),
+                width: width *.7,
+                child: Text(
+                  item,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    color: Colors.blueGrey,
+                  ),
+                ),
+              ),
+            ))
                 .toList(),
             value: selectedValue,
             onChanged: (val) {
               onChanged(val);
             },
-
-
-            buttonHeight: height,
-            buttonWidth: width,
-            itemHeight: height,
           ),
         ),
       ),

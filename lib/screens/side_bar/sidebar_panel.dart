@@ -332,7 +332,7 @@ class BarButton extends StatelessWidget {
               data: const TextButtonThemeData(
                 style: ButtonStyle(
                   alignment: Alignment.centerRight,
-                  padding: MaterialStatePropertyAll(EdgeInsets.all(5)),
+                  padding: WidgetStatePropertyAll(EdgeInsets.all(5)),
                 ),
               ),
               child: TextButton(

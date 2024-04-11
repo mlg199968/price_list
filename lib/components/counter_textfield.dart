@@ -163,7 +163,7 @@ class MiniButton extends StatelessWidget {
         onPressed: onPress,
         color: kMainColor,
         style: ButtonStyle(
-          padding: MaterialStateProperty.all(const EdgeInsets.all(0)),
+          padding: WidgetStateProperty.all(const EdgeInsets.all(0)),
         ),
         icon: Icon(icon),
       ),

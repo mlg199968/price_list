@@ -6,7 +6,11 @@ class CText extends StatelessWidget {
     this.text, {
     super.key,
     this.fontSize = 12,
-    this.color = Colors.black87, this.maxLine, this.textDirection=TextDirection.ltr, this.textAlign, this.minFontSize=9,
+    this.color = Colors.black87,
+    this.maxLine,
+    this.textDirection = TextDirection.ltr,
+    this.textAlign,
+    this.minFontSize = 9,
   });
   final String? text;
   final double fontSize;
@@ -22,10 +26,10 @@ class CText extends StatelessWidget {
       text ?? "",
       style: TextStyle(color: color),
       overflow: TextOverflow.fade,
-      maxLines:maxLine ,
-      textDirection:textDirection,
+      maxLines: maxLine,
+      textDirection: textDirection,
       textAlign: textAlign,
-      minFontSize:minFontSize ,
+      minFontSize: minFontSize,
       maxFontSize: fontSize,
     );
   }

@@ -52,12 +52,12 @@ class ActionButton extends StatelessWidget {
             height: height,
             child: ElevatedButton(
               style: ButtonStyle(
-                  shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                  shape: WidgetStatePropertyAll(RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(borderRadius))),
-                  padding: MaterialStatePropertyAll(padding ??
+                  padding: WidgetStatePropertyAll(padding ??
                       EdgeInsets.symmetric(
                           horizontal: label == null ? 0 : 5, vertical: 0)),
-                  backgroundColor: MaterialStateProperty.all(bgColor)),
+                  backgroundColor: WidgetStateProperty.all(bgColor)),
               onPressed: disable ? () {} :onPress ,
               onLongPress: onLongPress,
               child: loading

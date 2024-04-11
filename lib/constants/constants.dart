@@ -111,18 +111,18 @@ final kInputDecoration = InputDecoration(
 
 final kButtonStyle = TextButtonThemeData(
   style: ButtonStyle(
-    backgroundColor: MaterialStateProperty.resolveWith((states) {
-      if (states.contains(MaterialState.focused) ||
-          states.contains(MaterialState.pressed)) {
+    backgroundColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.focused) ||
+          states.contains(WidgetState.pressed)) {
         return kColorController;
       }
-      if (states.contains(MaterialState.disabled)) {
+      if (states.contains(WidgetState.disabled)) {
         return kColorController.withOpacity(0.3);
       } else {
         return kColorController;
       }
     }),
-    foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+    foregroundColor: WidgetStateProperty.all<Color>(Colors.white),
   ),
 );
 
