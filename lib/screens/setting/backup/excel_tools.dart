@@ -8,7 +8,7 @@ import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/enums.dart';
 import 'package:price_list/constants/error_handler.dart';
 import 'package:price_list/constants/utils.dart';
-import 'package:price_list/model/ware_hive.dart';
+import 'package:price_list/model/ware.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:price_list/services/hive_boxes.dart';
 import 'package:uuid/uuid.dart';
@@ -22,7 +22,7 @@ static Future<String?> createExcel(context,String? directory)async{
           context, "مسیر ذخیره سازی انتخاب نشده است!", type: SnackType.warning);
     }
     else {
-      List<WareHive> wares = HiveBoxes
+      List<Ware> wares = HiveBoxes
           .getWares()
           .values
           .toList();
@@ -45,7 +45,7 @@ static Future<String?> createExcel(context,String? directory)async{
       ///import data to cells
       for (int i = 0; i < wares.length; i++) {
         int index = i + 2;
-        WareHive ware = wares[i];
+        Ware ware = wares[i];
         ///index
         Data indexCell = sheet.cell(CellIndex.indexByString('A$index'));
         indexCell.cellStyle=CellStyle(
@@ -114,11 +114,11 @@ static Future<String?> createExcel(context,String? directory)async{
       List<int> bytes=await File(result.files.single.path!).readAsBytes();
         Excel excel = await Excel.decodeBytes(bytes);
         Sheet sheet = excel["Sheet1"];
-        WareHive ware = WareHive();
+        Ware ware = Ware();
         print(sheet.maxRows);
         for (int i = 0; i < sheet.maxRows-1; i++) {
           int index = i + 2;
-          ware = WareHive();
+          ware = Ware();
 
           ///ware name
           Data nameCell = sheet.cell(CellIndex.indexByString('B$index'));
@@ -132,8 +132,22 @@ static Future<String?> createExcel(context,String? directory)async{
 
           ///quantity
           Data quantityCell = sheet.cell(CellIndex.indexByString('D$index'));
-          ware.quantity =
-              quantityCell.value == null ? 0 : (quantityCell.value as IntCellValue).value;
+          if(quantityCell.value == null){
+            ware.quantity =0;
+          }
+          else if(quantityCell.value.runtimeType==IntCellValue) {
+            ware.quantity =(quantityCell.value as IntCellValue).value;
+          }
+          else if(quantityCell.value.runtimeType==DoubleCellValue) {
+            ware.quantity =(quantityCell.value as DoubleCellValue).value;
+          }
+          else if(quantityCell.value.runtimeType==TextCellValue) {
+            ware.quantity =stringToDouble((quantityCell.value as TextCellValue).value);
+          }
+          else{
+            showSnackBar(context, "سلول تعداد منطقی نیست ${ware.wareName}",type: SnackType.error);
+            break;
+          }
 
           ///unit
           Data unitCell = sheet.cell(CellIndex.indexByString('E$index'));
@@ -142,11 +156,40 @@ static Future<String?> createExcel(context,String? directory)async{
 
           ///cost
           Data costCell = sheet.cell(CellIndex.indexByString('F$index'));
-          ware.cost = costCell.value == null ? 0 : (costCell.value as IntCellValue).value;
-
+          if(costCell.value == null){
+            ware.cost =0;
+          }
+          else if(costCell.value.runtimeType==IntCellValue) {
+            ware.cost =(costCell.value as IntCellValue).value;
+          }
+          else if(costCell.value.runtimeType==DoubleCellValue){
+            ware.cost = (costCell.value as DoubleCellValue).value;
+          }
+          else if(costCell.value.runtimeType==TextCellValue){
+            ware.cost = stringToDouble((costCell.value as TextCellValue).value);
+          }
+          else{
+            showSnackBar(context, "قیمت خرید منطقی نیست ${ware.wareName}",type: SnackType.error);
+            break;
+          }
           ///sale
           Data saleCell = sheet.cell(CellIndex.indexByString('G$index'));
-          ware.sale = saleCell.value == null ? 0 : (saleCell.value as IntCellValue).value;
+          if(saleCell.value == null){
+            ware.sale =0;
+          }
+          else if(saleCell.value.runtimeType==IntCellValue) {
+            ware.sale =(saleCell.value as IntCellValue).value;
+          }
+          else if(saleCell.value.runtimeType==DoubleCellValue){
+            ware.sale = (saleCell.value as DoubleCellValue).value;
+          }
+          else if(saleCell.value.runtimeType==TextCellValue){
+            ware.sale = stringToDouble((saleCell.value as TextCellValue).value);
+          }
+          else{
+            showSnackBar(context, "قیمت فروش منطقی نیست ${ware.wareName}",type: SnackType.error);
+            break;
+          }
 
           ///category
           Data categoryCell =

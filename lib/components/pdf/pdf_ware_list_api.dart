@@ -8,7 +8,7 @@ import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:price_list/components/pdf/pdf_api.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/model/shop.dart';
-import 'package:price_list/model/ware_hive.dart';
+import 'package:price_list/model/ware.dart';
 import 'package:price_list/providers/ware_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -16,16 +16,17 @@ class PdfWareListApi {
   const PdfWareListApi(
     this.context,
     this.wareList,
-  {this.showHeader=true, this.showFooter=true}
+  {this.showHeader=true, this.showFooter=true ,required this.pdfFont,}
   );
   final mat.BuildContext context;
-  final List<WareHive> wareList;
+  final List<Ware> wareList;
   final bool showHeader;
   final bool showFooter;
-  static _customTheme() async {
+  final String pdfFont;
+  _customTheme() async {
     return ThemeData.withFont(
-        base: Font.ttf(await rootBundle.load("assets/fonts/mitra.ttf")),
-        bold: Font.ttf(await rootBundle.load("assets/fonts/mitra.ttf")),
+        base: Font.ttf(await rootBundle.load("assets/fonts/$pdfFont.ttf")),
+        bold: Font.ttf(await rootBundle.load("assets/fonts/$pdfFont.ttf")),
         italic: Font.ttf(await rootBundle.load("assets/fonts/ariali.ttf")),
         boldItalic: Font.ttf(await rootBundle.load("assets/fonts/arialbi.ttf")),
         icons: Font.ttf(await rootBundle.load("assets/fonts/arial.ttf")),
@@ -46,6 +47,7 @@ class PdfWareListApi {
     final invoicePart = await simpleList(wareList, shopData, scale: scale);
     final invoiceHeader = await buildTitle(shopData, scale: scale);
     pdf.addPage(MultiPage(
+      maxPages: 500,
       build: (context) => [
         invoicePart,
       ],
@@ -77,13 +79,14 @@ class PdfWareListApi {
     final invoiceHeader = await buildTitle(shopData, scale: scale);
     pdf.addPage(MultiPage(
       margin: EdgeInsets.all(10),
+      maxPages: 100,
       build: (context) => [
         invoicePart,
       ],
       header:showHeader? (context) => invoiceHeader:null,
       footer:showFooter? (context) => buildFooter(shopData, scale: scale):null,
     ));
-    return PdfApi.saveDocument(name: "ticket Ware List.pdf", pdf: pdf);
+    return PdfApi.saveDocument(name: "catalog Ware List.pdf", pdf: pdf);
   }
 
   ///generate legacy ware list
@@ -94,6 +97,7 @@ class PdfWareListApi {
     final invoiceHeader = await buildTitle(shopData, scale: scale);
     pdf.addPage(
       MultiPage(
+        maxPages: 100,
           build: (context) => [
                 invoicePart,
               ],
@@ -101,7 +105,7 @@ class PdfWareListApi {
         footer:showFooter? (context) => buildFooter(shopData, scale: scale):null,
       ),
     );
-    return PdfApi.saveDocument(name: "ticket Ware List.pdf", pdf: pdf);
+    return PdfApi.saveDocument(name: "legacy Ware List.pdf", pdf: pdf);
   }
 
   ///generate custom ware list
@@ -120,7 +124,7 @@ class PdfWareListApi {
         footer:showFooter? (context) => buildFooter(shopData, scale: scale):null,
       ),
     );
-    return PdfApi.saveDocument(name: "ticket Ware List.pdf", pdf: pdf);
+    return PdfApi.saveDocument(name: "custom Ware List.pdf", pdf: pdf);
   }
 
   ///******************parts*****************
@@ -192,7 +196,7 @@ class PdfWareListApi {
       );
 
   /// print simple ware list
-  static Future<Widget> simpleList(List<WareHive> list, WareProvider shopData,
+  static Future<Widget> simpleList(List<Ware> list, WareProvider shopData,
       {double scale = 1}) async {
     // String currency = shopData.currency;
     // final headers =
@@ -231,7 +235,7 @@ class PdfWareListApi {
     return Wrap(children: data);
   }
   /// print custom ware list
-  static Future<Widget> customList(List<WareHive> list, WareProvider shopData,
+  static Future<Widget> customList(List<Ware> list, WareProvider shopData,
       {double scale = 1,required Map<String,bool> show}) async {
     String currency = shopData.currency;
     final headers =
@@ -298,7 +302,7 @@ class PdfWareListApi {
 
   ///ticket type model for print price ware list
   static Future<Widget> ticketTypeList(
-      List<WareHive> list, WareProvider shopData,
+      List<Ware> list, WareProvider shopData,
       {double scale = 1}) async {
     // String currency = shopData.currency;
     final data = list.map((item) {
@@ -360,7 +364,7 @@ class PdfWareListApi {
   }
 
   ///catalog type print with image
-  static Future<Widget> catalogType(List<WareHive> list, WareProvider shopData,
+  static Future<Widget> catalogType(List<Ware> list, WareProvider shopData,
       {double scale = 1,required Map<String,bool> show}) async {
     final emptyImage = (await rootBundle.load("assets/images/empty-image.jpg"))
         .buffer
@@ -463,7 +467,7 @@ class PdfWareListApi {
     );
   }
 
-  static Future<Widget> legacyList(List<WareHive> list, WareProvider shopData,
+  static Future<Widget> legacyList(List<Ware> list, WareProvider shopData,
       {double scale = 1}) async {
     String currency = shopData.currency;
     final headers =

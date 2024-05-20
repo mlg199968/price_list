@@ -18,6 +18,8 @@ class WareProvider extends ChangeNotifier {
   String currency = "ریال";
   String _fontFamily = kFonts[0];
   String get fontFamily => _fontFamily;
+  String _pdfFont = kFonts[0];
+  String get pdfFont => _pdfFont;
   bool _showCostPrice = false;
   bool get showCostPrice => _showCostPrice;
   bool _showQuantity = false;
@@ -47,6 +49,7 @@ class WareProvider extends ChangeNotifier {
     shopCode = shop.shopCode;
     currency = shop.currency;
     _fontFamily = shop.fontFamily ?? kFonts[0];
+    _pdfFont = shop.pdfFont ?? kPdfFonts[0];
     _userLevel = shop.userLevel;
     _showQuantity = shop.showQuantity;
     _showCostPrice = shop.showCost;

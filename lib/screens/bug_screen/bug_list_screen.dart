@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
+import 'package:price_list/components/empty_holder.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/model/bug.dart';
 import 'package:price_list/screens/bug_screen/panels/bug_detail_panel.dart';
@@ -24,15 +25,24 @@ class BugListScreen extends StatelessWidget {
           child: ValueListenableBuilder(
             valueListenable: HiveBoxes.getBugs().listenable(),
             builder: (context, snap,child) {
-                if (snap.isNotEmpty) {
-                  return SingleChildScrollView(
-                    child: Column(
-                        children: snap.values.map((bug) => ErrorTile(bug: bug),).toList()
-                    ),
-                  );
-                } else {
-                  return const Center(child: Text("خطایی یافت نشد"));
+              List<Bug> bugList=snap.values.toList();
+
+              if (snap.isNotEmpty) {
+                bugList.sort((b,a){
+                  return a.bugDate.compareTo(b.bugDate);
+                });
+                if(bugList.length>200){
+                  bugList.last.delete();
                 }
+                return ListView.builder(
+                  itemCount: bugList.length,
+                   itemBuilder :(context,index){
+                     return ErrorTile(bug: bugList[index]);
+                   }
+                );
+              } else {
+                return EmptyHolder(text: "خطایی یافت نشد",icon: Icons.error_outline_rounded,);
+              }
 
             },
           ),
@@ -54,12 +64,15 @@ class ErrorTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       color: Colors.white,
+      surfaceTintColor: Colors.white,
       elevation: 1,
       child: ListTile(
         title: Text(bug.title ?? ""),
         subtitle: Text(
           bug.errorText ?? "",
           style: const TextStyle(fontSize: 11),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
         ),
         onTap: () {
           showDialog(

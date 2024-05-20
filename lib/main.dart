@@ -4,7 +4,7 @@ import 'package:price_list/constants/consts_class.dart';
 import 'package:price_list/model/bug.dart';
 import 'package:price_list/model/notice.dart';
 import 'package:price_list/model/shop.dart';
-import 'package:price_list/model/ware_hive.dart';
+import 'package:price_list/model/ware.dart';
 import 'package:price_list/router.dart';
 import 'package:price_list/providers/ware_provider.dart';
 import 'package:provider/provider.dart';
@@ -14,12 +14,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   //Adaptors
-  Hive.registerAdapter(WareHiveAdapter());
+  Hive.registerAdapter(WareAdapter());
   Hive.registerAdapter(ShopAdapter());
   Hive.registerAdapter(NoticeAdapter());
   Hive.registerAdapter(BugAdapter());
   //create box for store data
-  await Hive.openBox<WareHive>("ware_db",path:await Address.hiveDirectory());
+  await Hive.openBox<Ware>("ware_db",path:await Address.hiveDirectory());
   await Hive.openBox<Shop>("shop_db",path:await Address.hiveDirectory());
   await Hive.openBox<Bug>("bug_db",path:await Address.hiveDirectory());
   await Hive.openBox<Notice>("notice_db",path:await Address.hiveDirectory());

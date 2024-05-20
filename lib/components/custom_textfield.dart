@@ -17,7 +17,7 @@ class CustomTextField extends StatelessWidget {
     this.maxLength = 35,
     this.width = 150,
     this.height,
-    this.borderRadius=10,
+    this.borderRadius=5,
     this.hint,
     this.textFormat = TextFormatter.normal,
     this.onChange,
@@ -120,7 +120,7 @@ class CustomTextField extends StatelessWidget {
             label:label==null?null: Text(
               textFormat == TextFormatter.price?
               "${label!} ($currency)":label!,
-              style: const TextStyle(color: kMainColor3),
+              style: const TextStyle(color: Colors.black54,fontSize: 14),
               maxLines: 1,
               overflow: TextOverflow.fade,
             ),

@@ -5,7 +5,7 @@ import 'package:price_list/components/custom_textfield.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/services/hive_boxes.dart';
-import 'package:price_list/model/ware_hive.dart';
+import 'package:price_list/model/ware.dart';
 import 'package:price_list/providers/ware_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -132,9 +132,9 @@ class GroupManagePanel extends StatelessWidget {
                                   context, "نام گروه انتخاب شده قبلا افزوده شده");
                             }
                           }
-                          List<WareHive> wares =
+                          List<Ware> wares =
                               HiveBoxes.getWares().values.toList();
-                          for (WareHive ware in wares) {
+                          for (Ware ware in wares) {
                             if (oldName == ware.groupName) {
                               ware.groupName = groupTextController.text;
                             }

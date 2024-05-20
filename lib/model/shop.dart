@@ -34,6 +34,8 @@ class Shop extends HiveObject {
   int userLevel=0;
   @HiveField(14)
   String? backupDirectory;
+  @HiveField(15)
+  String? pdfFont;
 
   Shop copyWith({
     String? shopName,
@@ -49,6 +51,7 @@ class Shop extends HiveObject {
     bool? showCost,
     bool? showQuantity,
     String? fontFamily,
+    String? pdfFont,
     String? backupDirectory,
     int? userLevel,
   }) {
@@ -66,6 +69,7 @@ class Shop extends HiveObject {
       ..showCost= showCost ?? this.showCost
       ..showQuantity= showQuantity ?? this.showQuantity
       ..fontFamily= fontFamily ?? this.fontFamily
+      ..pdfFont= pdfFont ?? this.pdfFont
       ..userLevel= userLevel ?? this.userLevel
       ..backupDirectory= backupDirectory ?? this.backupDirectory;
     return shop;

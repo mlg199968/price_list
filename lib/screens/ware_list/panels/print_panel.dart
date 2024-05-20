@@ -13,9 +13,11 @@ import 'package:price_list/components/pdf/pdf_api.dart';
 import 'package:price_list/components/pdf/pdf_ware_list_api.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/utils.dart';
-import 'package:price_list/model/ware_hive.dart';
+import 'package:price_list/model/ware.dart';
 import 'package:price_list/providers/ware_provider.dart';
 import 'package:price_list/screens/setting/backup/backup_tools.dart';
+import 'package:price_list/screens/ware_list/services/ware_tools.dart';
+import 'package:price_list/services/hive_boxes.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -24,7 +26,7 @@ class PrintPanel extends StatefulWidget {
   const PrintPanel(
       {Key? key, required this.wares, required this.subGroup})
       : super(key: key);
-  final List<WareHive> wares;
+  final List<Ware> wares;
   final String subGroup;
 
   @override
@@ -34,6 +36,7 @@ class PrintPanel extends StatefulWidget {
 class _PrintPanelState extends State<PrintPanel> {
   final TextEditingController textScaleController = TextEditingController(text: "1");
   late String subGroup;
+   String pdfFont=kPdfFonts[0];
   double get textScale => stringToDouble(textScaleController.text);
   String printType = kPrintTypeList[0];
   bool showHeader=true;
@@ -45,15 +48,12 @@ class _PrintPanelState extends State<PrintPanel> {
   "count":false,
   "serial":false,
   };
+  String sortItem = kSortList[0];
   /// pdf type file
   Future<File> pdfTypeFile() async {
-    List<WareHive> filteredList = [];
-    for (WareHive ware in widget.wares) {
-      if (ware.groupName == subGroup || subGroup == "همه" || subGroup == "selected") {
-        filteredList.add(ware);
-      }
-    }
-    final pdfWareListApi=PdfWareListApi(context, filteredList,showFooter: showFooter,showHeader: showHeader);
+    List<Ware> filteredList = WareTools.filterList(
+        widget.wares, "", sortItem,subGroup);
+    final pdfWareListApi=PdfWareListApi(context, filteredList,showFooter: showFooter,showHeader: showHeader,pdfFont: pdfFont);
     late File file;
     if (printType == "اتیکت") {
       file = await pdfWareListApi
@@ -71,11 +71,14 @@ class _PrintPanelState extends State<PrintPanel> {
       file = await pdfWareListApi
           .generateSimpleWareList(scale: textScale);
     }
+    print("***************object************");
+    print(file.path);
     return file;
   }
   @override
   void initState() {
     subGroup = widget.subGroup;
+    pdfFont=HiveBoxes.getShopInfo().values.first.pdfFont ?? kPdfFonts[0];
     super.initState();
   }
 
@@ -99,7 +102,7 @@ class _PrintPanelState extends State<PrintPanel> {
     return CustomDialog(
         vip:!Provider.of<WareProvider>(context, listen: false).isVip,
         contentPadding: EdgeInsets.all(8),
-        height: 400,
+        height: 500,
         title: "",
         topTrail: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -170,8 +173,6 @@ class _PrintPanelState extends State<PrintPanel> {
                   children: [
                     const Text("انتخاب گروه کالا"),
                     const Gap(10),
-
-
                     Flexible(
                       child: DropListModel(
                         selectedValue: subGroup,
@@ -229,6 +230,40 @@ class _PrintPanelState extends State<PrintPanel> {
                   ],
                 ),
                 const Gap(30),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text("فونت چاپ"),
+                    const Gap(10),
+                    Flexible(
+                      child: DropListModel(
+                        selectedValue: pdfFont,
+                        height: 40,
+                        listItem: kPdfFonts,
+                        onChanged: (val) {
+                          pdfFont = val;
+                          setState(() {});
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text("ترتیب براساس"),
+                    const Gap(10),
+                    Flexible(
+                      child: DropListModel(
+                          listItem: kSortList,
+                          selectedValue: sortItem,
+                          onChanged: (val) {
+                            sortItem = val;
+                            setState(() {});
+                          }),
+                    ),
+                  ],
+                ),
                 ///text scale
                 Row(
                   children: [

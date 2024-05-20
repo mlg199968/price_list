@@ -5,13 +5,14 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:path_provider/path_provider.dart';
+import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/consts_class.dart';
 import 'package:price_list/constants/enums.dart';
 import 'package:price_list/constants/error_handler.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/providers/ware_provider.dart';
 import 'package:price_list/services/hive_boxes.dart';
-import 'package:price_list/model/ware_hive.dart';
+import 'package:price_list/model/ware.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -31,7 +32,7 @@ class BackupTools {
   }
   ///
   static Future<void> createBackup(BuildContext context,{String? directory,bool isSharing=false}) async{
-    List<WareHive> wares = HiveBoxes.getWares().values.toList();
+    List<Ware> wares = HiveBoxes.getWares().values.toList();
    List wareListJson=wares.map((e) => e.toJson()).toList();
     try {
       if(directory!=null && directory!="") {
@@ -52,9 +53,9 @@ class BackupTools {
         File backupFile = File(filePath);
         String jsonFile = await backupFile.readAsString();
         Iterable l = json.decode(jsonFile);
-        List<WareHive> restoredDb = List<WareHive>.from(
-            l.map((e) => WareHive().fromJson(e)));
-        for (WareHive ware in restoredDb) {
+        List<Ware> restoredDb = List<Ware>.from(
+            l.map((e) => Ware().fromJson(e)));
+        for (Ware ware in restoredDb) {
           HiveBoxes.getWares().put(ware.wareID, ware);
         }
         Provider.of<WareProvider>(context,listen: false).loadGroupList();
@@ -121,7 +122,7 @@ ErrorHandler.errorManger(context, e,title: "BackupTools restoreMlgFileBackup fun
         // Zip a directory to out.zip using the zipDirectory convenience method
         var encoder = ZipFileEncoder();
         // Manually create a zip of a directory and individual files.
-      final String path='$directory/price_list$formattedDate.plmlg';
+      final String path='$directory/$kAppName$formattedDate.plmlg';
         encoder.create(path);
         encoder.addDirectory(Directory(imagesDir));
         File jsonFile = await _createJsonFile(json, directory);
@@ -151,11 +152,11 @@ ErrorHandler.errorManger(context, e,title: "BackupTools restoreMlgFileBackup fun
     try {
       String jsonFile = await jsonBack.readAsString();
       Iterable l = json.decode(jsonFile);
-      List<WareHive> restoredDb = List<WareHive>.from(
-          l.map((e) => WareHive().fromJson(e)));
+      List<Ware> restoredDb = List<Ware>.from(
+          l.map((e) => Ware().fromJson(e)));
 
 
-      for (WareHive ware in restoredDb) {
+      for (Ware ware in restoredDb) {
         HiveBoxes.getWares().put(ware.wareID, ware);
       }
       Provider.of<WareProvider>(context,listen: false).loadGroupList();
@@ -169,7 +170,7 @@ ErrorHandler.errorManger(context, e,title: "BackupTools restoreMlgFileBackup fun
   ///
   static Future<void> updateImagePath()async{
     String directoryPath=await Address.waresImage();
-    List<WareHive> itemsList=HiveBoxes.getWares().values.toList();
+    List<Ware> itemsList=HiveBoxes.getWares().values.toList();
     for (int i = 0; i < itemsList.length; i++) {
       String id=itemsList[i].wareID!;
       String imagePath="$directoryPath/$id.jpg";

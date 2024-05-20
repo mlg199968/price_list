@@ -12,11 +12,11 @@ import 'package:price_list/components/empty_holder.dart';
 import 'package:price_list/constants/enums.dart';
 import 'package:price_list/constants/error_handler.dart';
 import 'package:price_list/constants/utils.dart';
-import 'package:price_list/model/ware_hive.dart';
+import 'package:price_list/model/ware.dart';
 import 'package:price_list/screens/ware_list/add_ware_screen.dart';
 import 'package:price_list/screens/ware_list/widgets/row_info.dart';
 
-InfoPanel({required BuildContext context, required WareHive wareInfo}) {
+InfoPanel({required BuildContext context, required Ware wareInfo}) {
   return CustomDialog(
     height: MediaQuery.of(context).size.height * .8,
     image: wareInfo.imagePath,
@@ -103,7 +103,7 @@ InfoPanel({required BuildContext context, required WareHive wareInfo}) {
 
 InfoPanelDesktop(
     {required BuildContext context,
-    required WareHive wareInfo,
+    required Ware wareInfo,
     required VoidCallback onReload}) {
   return Directionality(
     textDirection: TextDirection.rtl,
@@ -113,7 +113,7 @@ InfoPanelDesktop(
           controller: ScrollController(),
           child: Container(
             height: 700,
-            width: 300,
+            width: 550,
             margin: const EdgeInsets.symmetric(vertical: 30, horizontal: 5),
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
             decoration: BoxDecoration(

@@ -59,14 +59,14 @@ class _DynamicButtonState extends State<DynamicButton> {
             height: widget.height,
             child: ElevatedButton(
               style: ButtonStyle(
-                  shape: WidgetStatePropertyAll(RoundedRectangleBorder(
+                  shape: MaterialStatePropertyAll(RoundedRectangleBorder(
                       borderRadius:
                           BorderRadius.circular(widget.borderRadius))),
-                  padding: WidgetStatePropertyAll(widget.padding ??
+                  padding: MaterialStatePropertyAll(widget.padding ??
                       EdgeInsets.symmetric(
                           horizontal: widget.label == null ? 0 : 5,
                           vertical: 0)),
-                  backgroundColor: WidgetStateProperty.all(widget.bgColor)),
+                  backgroundColor: MaterialStateProperty.all(widget.bgColor)),
               onPressed: widget.disable
                   ? () {}
                   : () async{

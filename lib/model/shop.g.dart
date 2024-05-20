@@ -31,13 +31,14 @@ class ShopAdapter extends TypeAdapter<Shop> {
       ..showQuantity = fields[11] as bool
       ..fontFamily = fields[12] as String?
       ..userLevel = fields[13] as int
-      ..backupDirectory = fields[14] as String?;
+      ..backupDirectory = fields[14] as String?
+      ..pdfFont = fields[15] as String?;
   }
 
   @override
   void write(BinaryWriter writer, Shop obj) {
     writer
-      ..writeByte(15)
+      ..writeByte(16)
       ..writeByte(0)
       ..write(obj.shopName)
       ..writeByte(1)
@@ -67,7 +68,9 @@ class ShopAdapter extends TypeAdapter<Shop> {
       ..writeByte(13)
       ..write(obj.userLevel)
       ..writeByte(14)
-      ..write(obj.backupDirectory);
+      ..write(obj.backupDirectory)
+      ..writeByte(15)
+      ..write(obj.pdfFont);
   }
 
   @override

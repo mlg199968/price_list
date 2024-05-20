@@ -1,5 +1,7 @@
 
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
+import 'package:price_list/components/action_button.dart';
 import 'package:price_list/components/counter_textfield.dart';
 import 'package:price_list/components/custom_alert.dart';
 import 'package:price_list/components/custom_dialog.dart';
@@ -8,18 +10,21 @@ import 'package:price_list/components/custom_text.dart';
 import 'package:price_list/components/custom_textfield.dart';
 import 'package:price_list/components/drop_list_model.dart';
 import 'package:price_list/constants/utils.dart';
-import 'package:price_list/model/ware_hive.dart';
+import 'package:price_list/model/ware.dart';
 import 'package:price_list/providers/ware_provider.dart';
 import 'package:price_list/screens/setting/backup/backup_tools.dart';
 import 'package:price_list/services/hive_boxes.dart';
 import 'package:provider/provider.dart';
+
+import 'change_group_panel.dart';
+
 
 class WareActionsPanel extends StatefulWidget {
   static const String id = "/WareActionPanel";
   const WareActionsPanel(
       {Key? key, required this.wares, required this.subGroup})
       : super(key: key);
-  final List<WareHive> wares;
+  final List<Ware> wares;
   final String subGroup;
 
   @override
@@ -34,7 +39,7 @@ class _WareActionsPanelState extends State<WareActionsPanel> {
   bool isNegative = false;
 ///save button function
   void saveButtonFunction() {
-    for (WareHive ware in widget.wares) {
+    for (Ware ware in widget.wares) {
       double fixPrice = fixAmountController.text == ""
           ? 0
           : stringToDouble(fixAmountController.text);
@@ -212,10 +217,18 @@ class _WareActionsPanelState extends State<WareActionsPanel> {
                   ),
                 ],
               ),
-              const Expanded(
-                child: SizedBox(
-                  height: 15,
-                ),
+              Gap(10),
+              if(subGroup!="همه")
+              ActionButton(
+                icon: Icons.account_tree_rounded,
+                label: "تغییر نام گروه",
+                onPress: (){
+                  showDialog(
+                      context: context,
+                      builder: (context) => GroupManagePanel(wares:widget.wares)).then((value) {
+                    setState(() {});
+                  });
+                },
               ),
             ],
           );

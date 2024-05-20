@@ -2,6 +2,7 @@ import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
@@ -10,6 +11,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:lottie/lottie.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:price_list/components/action_button.dart';
+import 'package:price_list/components/check_button.dart';
 import 'package:price_list/components/custom_alert.dart';
 import 'package:price_list/components/custom_float_action_button.dart';
 import 'package:price_list/components/custom_icon_button.dart';
@@ -26,8 +28,9 @@ import 'package:price_list/screens/notice_screen/notice_screen.dart';
 import 'package:price_list/screens/notice_screen/services/notice_tools.dart';
 import 'package:price_list/screens/side_bar/sidebar_panel.dart';
 import 'package:price_list/screens/ware_list/panels/print_panel.dart';
+import 'package:price_list/screens/ware_list/widgets/label_tile.dart';
 import 'package:price_list/services/hive_boxes.dart';
-import 'package:price_list/model/ware_hive.dart';
+import 'package:price_list/model/ware.dart';
 import 'package:price_list/screens/ware_list/add_ware_screen.dart';
 import 'package:price_list/screens/ware_list/panels/info_panel.dart';
 import 'package:price_list/screens/ware_list/panels/ware_action_panel.dart';
@@ -51,15 +54,10 @@ class _WareListScreenState extends State<WareListScreen> {
   late final SharedPreferences prefs;
   late final WareProvider provider;
   String selectedDropListGroup = "همه";
-  final List<String> sortList = [
-    'تاریخ ویرایش',
-    'تاریخ ثبت',
-    'حروف الفبا',
-    'موجودی کالا',
-  ];
-  String sortItem = 'تاریخ ویرایش';
+  int? listLength=0;
+  String sortItem = kSortList[0];
   String? keyWord;
-  List<WareHive> waresList = [];
+  List<Ware> waresList = [];
   bool showAlertNotice = true;
 
   @override
@@ -73,7 +71,9 @@ class _WareListScreenState extends State<WareListScreen> {
     return HideKeyboard(
       child: Scaffold(
         key: scaffoldKey,
-        floatingActionButton: CustomFloatActionButton(onPressed: () async {
+        floatingActionButton: CustomFloatActionButton(
+          // label: "افزودن کالا",
+            onPressed: () async {
           Navigator.pushNamed(context, AddWareScreen.id);
         }),
         drawer: SideBarPanel(),
@@ -82,21 +82,6 @@ class _WareListScreenState extends State<WareListScreen> {
             return [
               SliverAppBar(
                 actions: [
-                  ///dropDown list for Group Select
-                  Consumer<WareProvider>(
-                    builder: (context, wareData, child) {
-                      return DropListModel(
-                        selectedValue: selectedDropListGroup,
-                        height: 40,
-                        listItem: ["همه", ...wareData.groupList],
-                        onChanged: (val) {
-                          selectedDropListGroup = val;
-                          setState(() {});
-                        },
-                      );
-                    },
-                  ),
-
                   ///print Panel
                   IconButton(
                       onPressed: () {
@@ -136,9 +121,6 @@ class _WareListScreenState extends State<WareListScreen> {
                       },
                       child: Image.asset('assets/images/logo.png')),
                 ),
-                flexibleSpace: Container(
-                  decoration: const BoxDecoration(gradient: kMainGradiant),
-                ),
                 title: Container(
                   padding: const EdgeInsets.only(right: 5),
                   child: Row(
@@ -157,12 +139,52 @@ class _WareListScreenState extends State<WareListScreen> {
                     ],
                   ),
                 ),
+                bottom: PreferredSize (
+                  preferredSize: Size.fromHeight(35),
+                  child: Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: Container(
+                      alignment: Alignment.center,
+                      height: 35,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Padding(
+                          padding: const EdgeInsets.all(0),
+                          child: Row(
+                            children: [
+                              "همه",
+                              ...context.watch<WareProvider>().groupList
+                            ].map((group) {
+                              return LabelTile(
+                                activeColor: Colors.teal,
+                                disableColor: Colors.blueGrey,
+                                elevation: 0,
+                                disable: selectedDropListGroup != group,
+                                fontSize: 11,
+                                label: group,
+                                onTap: () {
+                                  selectedDropListGroup = group;
+                                  setState(() {});
+                                },
+                              );
+
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                flexibleSpace: Container(
+                  decoration: BoxDecoration(gradient: kMainGradiant),
+                ),
                 elevation: 5.0,
                 automaticallyImplyLeading: false,
                 expandedHeight: 0,
                 floating: true,
                 snap: true,
-              )
+              ),
+
             ];
           },
           body: DoubleBackToCloseApp(
@@ -235,7 +257,7 @@ class _WareListScreenState extends State<WareListScreen> {
                           setState(() {});
                         },
                         selectedSort: sortItem,
-                        sortList: sortList,
+                        sortList: kSortList,
                         onSort: (val) {
                           sortItem = val;
                           setState(() {});
@@ -244,14 +266,16 @@ class _WareListScreenState extends State<WareListScreen> {
                     ),
 
                     ///get ware list
-                    ValueListenableBuilder<Box<WareHive>>(
+                    ValueListenableBuilder<Box<Ware>>(
                         valueListenable: HiveBoxes.getWares().listenable(),
                         builder: (context, box, _) {
                           final productList =
-                              box.values.toList().cast<WareHive>();
+                              box.values.toList().cast<Ware>();
                           waresList = productList;
-                          List<WareHive> filteredList = WareTools.filterList(
+                          List<Ware> filteredList = WareTools.filterList(
                               productList, keyWord, sortItem,selectedDropListGroup);
+                          listLength=filteredList.length;
+                          print(filteredList.length);
                           if (filteredList.isEmpty) {
                             return Expanded(
                               child: const EmptyHolder(
@@ -278,11 +302,11 @@ class _WareListScreenState extends State<WareListScreen> {
 
   }
 }
-
+///
 class ListPart extends StatefulWidget {
   const ListPart({super.key, required this.wareList, required this.category});
 
-  final List<WareHive> wareList;
+  final List<Ware> wareList;
   final String category;
 
   @override
@@ -290,8 +314,8 @@ class ListPart extends StatefulWidget {
 }
 
 class _ListPartState extends State<ListPart> {
-  List<int> selectedItems = [];
-  WareHive? selectedWare;
+  List<Ware> selectedItems = [];
+  Ware? selectedWare;
 
   @override
   Widget build(BuildContext context) {
@@ -311,6 +335,10 @@ class _ListPartState extends State<ListPart> {
             builder: (context,constraint) {
               return Column(
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: CText("${widget.wareList.length}".toPersianDigit(),color: Colors.white70,),
+                  ),
                   Expanded(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -335,11 +363,11 @@ class _ListPartState extends State<ListPart> {
                                 ListView.builder(
                                     itemCount: widget.wareList.length,
                                     itemBuilder: (context, index) {
-                                      WareHive ware = widget.wareList[index];
+                                      Ware ware = widget.wareList[index];
                                         return InkWell(
                                           onLongPress: () {
-                                            if (!selectedItems.contains(index)) {
-                                              selectedItems.add(index);
+                                            if (!selectedItems.map((e) => e.wareID).contains(ware.wareID)) {
+                                              selectedItems.add(ware);
                                               setState(() {});
                                             }
                                           },
@@ -347,7 +375,8 @@ class _ListPartState extends State<ListPart> {
                                             if (selectedItems.isEmpty) {
                                               if (widget.key != null) {
                                                 Navigator.pop(context, ware);
-                                              } else {
+                                              }
+                                              else {
                                                 selectedWare=ware;
                                                 setState(() {});
                                                 !isMobile?null:showDialog(
@@ -356,17 +385,18 @@ class _ListPartState extends State<ListPart> {
                                                         context: context,
                                                         wareInfo: ware));
                                               }
-                                            } else {
-                                              if (selectedItems.contains(index)) {
-                                                selectedItems.remove(index);
+                                            }
+                                            else {
+                                              if (selectedItems.map((e) => e.wareID).contains(ware.wareID)) {
+                                                selectedItems.removeWhere((element) => ware.wareID==element.wareID);
                                               } else {
-                                                selectedItems.add(index);
+                                                selectedItems.add(ware);
                                               }
                                               setState(() {});
                                             }
                                           },
                                           child:  CustomTile(
-                                            selected: selectedItems.contains(index),
+                                            selected: selectedItems.map((e) => e.wareID).contains(ware.wareID),
                                             height: 50,
                                             color: selectedWare?.wareID==widget.wareList[index].wareID?kSecondaryColor:kMainColor,
                                             surfaceColor: selectedWare?.wareID==widget.wareList[index].wareID?kSecondaryColor:null,
@@ -399,93 +429,123 @@ class _ListPartState extends State<ListPart> {
                                         border: Border.all(color: Colors.black87),
                                       borderRadius: BorderRadius.circular(20)
                                     ),
-                                    height: selectedItems.isNotEmpty ? 50 : 0,
+                                    height: selectedItems.isNotEmpty ? 80 : 0,
                                     width: double.maxFinite,
                                     child: BlurryContainer(
                                       padding: EdgeInsets.zero,
-                                      child: Row(
+                                      child: Column(
                                         children: [
-                                          ///close icon
-                                          CustomIconButton(
-                                            margin: EdgeInsets.symmetric(horizontal: 3),
-                                            showShadow: true,
-                                            onPress: () {
-                                              selectedItems.clear();
-                                              setState(() {});
-                                            },
-                                            icon:
-                                            CupertinoIcons.multiply_circle,
-                                            iconSize: 25,
-                                            iconColor: Colors.black,
+                                          ///group selection
+                                          Directionality(
+                                            textDirection: TextDirection.rtl,
+                                            child: Container(
+                                              alignment: Alignment.center,
+                                              height: 30,
+                                              child: SingleChildScrollView(
+                                                scrollDirection: Axis.horizontal,
+                                                child: Row(
+                                                  children:context.watch<WareProvider>().groupList.map((group) {
+                                                    bool groupExist= WareTools.groupExist(selectedWares: selectedItems, group: group);
+                                                    return CheckButton(
+                                                      label: group,
+                                                      value: groupExist,
+                                                      onChange: (val) {
+                                                        if(groupExist){
+                                                          selectedItems.removeWhere((element) => element.groupName==group);
+                                                        }else{
+                                                          selectedItems.removeWhere((element) => element.groupName==group);
+                                                          List<Ware> wares=HiveBoxes.getWares().values.where((element) => element.groupName==group).toList();
+                                                          selectedItems.addAll(wares);
+                                                        }
+                                                        setState(() {});
+                                                      },
+                                                    );
+
+                                                  }).toList(),
+                                                ),
+                                              ),
+                                            ),
                                           ),
-                                          Text(selectedItems.length.toString().toPersianDigit()),
-                                          const VerticalDivider(),
-                                          ///delete icon
-                                          CustomIconButton(
-                                            margin: EdgeInsets.symmetric(horizontal: 3),
-                                            showShadow: true,
-                                              onPress: () {
-                                                showDialog(
-                                                    context: context,
-                                                    builder: (_) => CustomAlert(
-                                                        title:
-                                                            "آیا از حذف موارد انتخاب شده مطمئن هستید؟",
-                                                        onYes: () {
-                                                          for (int item in selectedItems) {
-                                                            widget.wareList[item].delete();
-                                                          }
-                                                          showSnackBar(context,
-                                                              " ${selectedItems.length} کالا حذف شد!  ",
-                                                              type: SnackType.success);
-                                                          selectedItems.clear();
-                                                          Navigator.pop(context);
-                                                        },
-                                                        onNo: () {
-                                                          Navigator.pop(context);
-                                                        }));
-                                              },
-                                              icon:
-                                                Icons.delete_forever,
-                                                iconSize: 35,
-                                                iconColor: Colors.red,
+                                          Row(
+                                            children: [
+                                              ///close icon
+                                              CustomIconButton(
+                                                margin: EdgeInsets.symmetric(horizontal: 3),
+                                                showShadow: true,
+                                                onPress: () {
+                                                  selectedItems.clear();
+                                                  setState(() {});
+                                                },
+                                                icon:
+                                                CupertinoIcons.multiply_circle,
+                                                iconSize: 25,
+                                                iconColor: Colors.black,
                                               ),
-                                          ///print icon
-                                          CustomIconButton(
-                                            margin: EdgeInsets.symmetric(horizontal: 3),
-                                            showShadow: true,
-                                              onPress: () async {
-                                                List<WareHive> selectedList = [];
-                                                for (int item in selectedItems) {
-                                                  selectedList.add(widget.wareList[item]);
-                                                }
-                                                    showDialog(context: context, builder: (context)=>PrintPanel(wares: selectedList, subGroup: "selected"));
-                                              },
-                                              icon:
-                                                CupertinoIcons.printer_fill,
-                                                iconSize: 29,
+                                              Text(selectedItems.length.toString().toPersianDigit()),
+                                              SizedBox(
+                                                height: 40,
+                                                  child: const VerticalDivider()),
+                                              ///delete icon
+                                              CustomIconButton(
+                                                margin: EdgeInsets.symmetric(horizontal: 3),
+                                                showShadow: true,
+                                                  onPress: () {
+                                                    showDialog(
+                                                        context: context,
+                                                        builder: (_) => CustomAlert(
+                                                            title:
+                                                                "آیا از حذف موارد انتخاب شده مطمئن هستید؟",
+                                                            onYes: () {
+                                                              for (Ware item in selectedItems) {
+                                                                item.delete();
+                                                              }
+                                                              showSnackBar(context,
+                                                                  " ${selectedItems.length} کالا حذف شد!  ",
+                                                                  type: SnackType.success);
+                                                              selectedItems.clear();
+                                                              Navigator.pop(context);
+                                                            },
+                                                            onNo: () {
+                                                              Navigator.pop(context);
+                                                            }));
+                                                  },
+                                                  icon:
+                                                    Icons.delete_forever,
+                                                    iconSize: 35,
+                                                    iconColor: Colors.red,
+                                                  ),
+                                              ///print icon
+                                              CustomIconButton(
+                                                margin: EdgeInsets.symmetric(horizontal: 3),
+                                                showShadow: true,
+                                                  onPress: () async {
+                                                        showDialog(context: context, builder: (context)=>PrintPanel(wares: selectedItems, subGroup: "selected"));
+                                                  },
+                                                  icon:
+                                                    CupertinoIcons.printer_fill,
+                                                    iconSize: 29,
+                                                    iconColor: Colors.black87,
+                                                  ),
+
+
+                                              ///edit selected icon
+                                              CustomIconButton(
+                                                margin: EdgeInsets.symmetric(horizontal: 3),
+                                                icon: FontAwesomeIcons.filePen,
+                                                iconSize: 25,
                                                 iconColor: Colors.black87,
-                                              ),
+                                                  onPress: () {
 
+                                                    showDialog(
+                                                        context: context,
+                                                        builder: (context) => WareActionsPanel(
+                                                          subGroup: "selected",
+                                                            wares: selectedItems));
+                                                  },
 
-                                          ///edit selected icon
-                                          CustomIconButton(
-                                            margin: EdgeInsets.symmetric(horizontal: 3),
-                                            icon: FontAwesomeIcons.filePen,
-                                            iconSize: 25,
-                                            iconColor: Colors.black87,
-                                              onPress: () {
-                                                List<WareHive> selectedList = [];
-                                                for (int item in selectedItems) {
-                                                  selectedList.add(widget.wareList[item]);
-                                                }
-                                                showDialog(
-                                                    context: context,
-                                                    builder: (context) => WareActionsPanel(
-                                                      subGroup: "selected",
-                                                        wares: selectedList));
-                                              },
-
-                                              ),
+                                                  ),
+                                            ],
+                                          ),
                                         ],
                                       ),
                                     ),

@@ -9,7 +9,6 @@ import 'package:price_list/components/over_cage.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/screens/purchase_screen/bazaar_purchase_screen.dart';
-import 'package:price_list/screens/group_management_screen.dart';
 import 'package:price_list/screens/notice_screen/notice_screen.dart';
 import 'package:price_list/screens/notice_screen/services/notice_tools.dart';
 import 'package:price_list/screens/setting/setting_screen.dart';
@@ -35,8 +34,8 @@ class SideBarPanel extends StatelessWidget {
             child: Container(
               child: BlurryContainer(
                 color: Colors.white.withOpacity(.3),
-                borderRadius: BorderRadius.only(topRight: Radius.circular(10),bottomRight: Radius.circular(40)),
-                elevation: 10,
+                borderRadius: BorderRadius.only(topRight: Radius.circular(0),bottomRight: Radius.circular(40)),
+                elevation: 1,
                 padding: EdgeInsets.all(0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -94,13 +93,13 @@ class SideBarPanel extends StatelessWidget {
                           onPress: () {
                               Navigator.pushNamed(context, ShopInfoScreen.id);}
                         ),
-                        BarButton(
-                          text: "مدیریت گروه ها",
-                          icon: Icons.account_tree_rounded,
-                          onPress: () {
-                            Navigator.pushNamed(context, GroupManagementScreen.id);
-                          },
-                        ),
+                        // BarButton(
+                        //   text: "مدیریت گروه ها",
+                        //   icon: Icons.account_tree_rounded,
+                        //   onPress: () {
+                        //     Navigator.pushNamed(context, GroupManagementScreen.id);
+                        //   },
+                        // ),
                         BarButton(
                           text: "اطلاع رسانی ها",
                           active:NoticeTools.checkNewNotifications(),
@@ -308,7 +307,7 @@ class BarButton extends StatelessWidget {
     //decelerations
     Color textColor = Colors.white;
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8,vertical: 3),
+      margin: const EdgeInsets.symmetric(horizontal: 8,vertical: 1),
       decoration: BoxDecoration(
           borderRadius:BorderRadius.circular(5),
           // boxShadow: const [BoxShadow(color: Colors.black45,blurRadius: 3,offset: Offset(2, 3))]
@@ -320,7 +319,7 @@ class BarButton extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 5,vertical: 0),
             decoration: BoxDecoration(
               color: Colors.black,
-              gradient: kMainGradiant,
+              gradient: LinearGradient(colors: [Colors.indigoAccent,Colors.deepPurpleAccent]),
               // border: Border(
               //   bottom: BorderSide(
               //     width: 2,
@@ -332,7 +331,7 @@ class BarButton extends StatelessWidget {
               data: const TextButtonThemeData(
                 style: ButtonStyle(
                   alignment: Alignment.centerRight,
-                  padding: WidgetStatePropertyAll(EdgeInsets.all(5)),
+                  padding: MaterialStatePropertyAll(EdgeInsets.all(5)),
                 ),
               ),
               child: TextButton(
@@ -357,7 +356,7 @@ class BarButton extends StatelessWidget {
                         width: 5,
                       ),
                       if(icon!=null)
-                      Icon(icon, color: Colors.amber,size: 20,),
+                      Icon(icon, color: Colors.amber.withOpacity(.7),size: 20,),
                     ],
                   )),
             )),

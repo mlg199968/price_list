@@ -1,5 +1,7 @@
 import 'package:blurrycontainer/blurrycontainer.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:price_list/components/action_button.dart';
@@ -24,6 +26,8 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../components/custom_alert.dart';
+
 class SettingScreen extends StatefulWidget {
   static const String id = "/SettingScreen";
 
@@ -41,14 +45,15 @@ class _SettingScreenState extends State<SettingScreen> {
   bool showQuantity = false;
   String selectedCurrency=kCurrencyList[0];
   String selectedFont = kFonts[0];
+  String selectedPdfFont = kPdfFonts[0];
   String? backupDirectory;
-  bool isBackupLoading = false;
 
   void storeInfoShop() {
     Shop dbShop=HiveBoxes.getShopInfo().values.first.copyWith(
       showCost: showCostPrice,
       showQuantity: showQuantity,
       fontFamily: selectedFont,
+      pdfFont: selectedPdfFont,
       currency: selectedCurrency,
       backupDirectory: backupDirectory,
     );
@@ -61,6 +66,7 @@ class _SettingScreenState extends State<SettingScreen> {
     showCostPrice=provider.showCostPrice;
     showQuantity=provider.showQuantity;
     selectedFont=provider.fontFamily;
+    selectedPdfFont=provider.pdfFont;
     selectedCurrency=provider.currency;
     backupDirectory=provider.backupDirectory;
   setState(() {});
@@ -210,7 +216,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                     height: 40,
                                       child: Image(image: AssetImage("assets/images/excel.png"),)),
                                   Gap(10),
-                                  CText("فایل اکسل",color: Colors.white,),
+                                  Flexible(child: CText("فایل اکسل",color: Colors.white,maxLine: 2,)),
                                   Expanded(child: SizedBox()),
                                   DynamicButton(
                                     label: "export",
@@ -257,7 +263,7 @@ class _SettingScreenState extends State<SettingScreen> {
                             const Gap(30),
                             ///currency unit
                             DropListItem(
-                                title: "واحد پول",
+                                title: "واحد ارز",
                                 selectedValue: selectedCurrency,
                                 listItem: kCurrencyList,
                                 onChange: (val) {
@@ -295,6 +301,17 @@ class _SettingScreenState extends State<SettingScreen> {
                                 setState(() {});
                               },
                             ),
+                            ///change pdf font family
+                            DropListItem(
+                              title: "فونت چاپ",
+                              selectedValue: selectedPdfFont,
+                              listItem: kPdfFonts,
+                              dropWidth: 120,
+                              onChange: (val) {
+                                selectedPdfFont = val;
+                                setState(() {});
+                              },
+                            ),
 
                             ///developer section
                             const CText(
@@ -305,6 +322,27 @@ class _SettingScreenState extends State<SettingScreen> {
                             ButtonTile(onPress: (){
                               Navigator.pushNamed(context, BugListScreen.id);
                             }, label: "error List", buttonLabel:"see"),
+                          ButtonTile(
+                            label: "reset",
+                            buttonLabel:"delete all",
+                            onPress: (){
+                              showDialog(
+                                  context: context,
+                                  builder: (_) => CustomAlert(
+                                      title:
+                                      "آیا از حذف تمام کالا ها مطمئن هستید؟",
+                                      onYes: () {
+                                        HiveBoxes.getWares().clear();
+                                        showSnackBar(context,
+                                            "انبار کالا خالی شد!",
+                                            type: SnackType.success);
+                                        Navigator.pop(context);
+                                      },
+                                      onNo: () {
+                                        Navigator.pop(context);
+                                      }));
+                            },
+                             ),
                           ],
                         ),
                       ),

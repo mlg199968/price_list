@@ -1,21 +1,25 @@
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:gap/gap.dart';
 import 'package:price_list/components/action_button.dart';
 import 'package:price_list/components/custom_float_action_button.dart';
 import 'package:price_list/components/custom_icon_button.dart';
 import 'package:price_list/components/custom_textfield.dart';
 import 'package:price_list/components/drop_list_model.dart';
 import 'package:price_list/components/hide_keyboard.dart';
+import 'package:price_list/components/ware_suggestion_textfield.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/screens/ware_list/services/barcode_scanner.dart';
+import '../../components/custom_text.dart';
 import '../../constants/consts_class.dart';
 import 'package:price_list/constants/enums.dart';
 import 'package:price_list/constants/error_handler.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/screens/ware_list/widgets/item_image_holder.dart';
 import 'package:price_list/services/hive_boxes.dart';
-import 'package:price_list/model/ware_hive.dart';
+import 'package:price_list/model/ware.dart';
 import 'package:price_list/screens/ware_list/panels/create_group_panel.dart';
 import 'package:price_list/providers/ware_provider.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +29,7 @@ class AddWareScreen extends StatefulWidget {
   static const String id = "/addWareScreen";
   const AddWareScreen({Key? key, this.oldWare}) : super(key: key);
 
-  final WareHive? oldWare;
+  final Ware? oldWare;
   @override
   State<AddWareScreen> createState() => _AddWareScreenState();
 }
@@ -42,9 +46,11 @@ class _AddWareScreenState extends State<AddWareScreen> {
 
   String unitItem = kUnitList[0];
   String? imagePath;
-
+  late List<Ware> wareList;
+  bool repeatName = false;
+  bool repeatSerial = false;
   void saveWare({String? id}) async {
-    WareHive wareHive = WareHive()
+    Ware wareHive = Ware()
       ..wareName = wareNameController.text
       ..wareSerial = wareSerialController.text
       ..unit = unitItem
@@ -62,7 +68,7 @@ class _AddWareScreenState extends State<AddWareScreen> {
       ..description =
           descriptionController.text.isEmpty ? "" : descriptionController.text
       ..wareID = id ?? const Uuid().v1()
-      ..date = id!=null ?widget.oldWare!.date:DateTime.now()
+      ..date = id != null ? widget.oldWare!.date : DateTime.now()
       ..modifyDate = DateTime.now()
       ..imagePath = id == null ? null : widget.oldWare!.imagePath;
     // save image if exist
@@ -85,20 +91,20 @@ class _AddWareScreenState extends State<AddWareScreen> {
       salePriceController.text = addSeparator(widget.oldWare!.sale);
       quantityController.text = widget.oldWare!.quantity.toString();
       descriptionController.text = widget.oldWare!.description;
-      Provider
-          .of<WareProvider>(context, listen: false)
-          .selectedGroup =
+      Provider.of<WareProvider>(context, listen: false).selectedGroup =
           widget.oldWare!.groupName;
       unitItem = widget.oldWare!.unit;
       imagePath = widget.oldWare!.imagePath;
-    }catch(e){
-      ErrorHandler.errorManger(context, e,title: "AddWareScreen replaceOldWare function error ");
+    } catch (e) {
+      ErrorHandler.errorManger(context, e,
+          title: "AddWareScreen replaceOldWare function error ");
     }
   }
 
   @override
   void initState() {
-    Provider.of<WareProvider>(context,listen: false).loadGroupList();
+    Provider.of<WareProvider>(context, listen: false).loadGroupList();
+    wareList = HiveBoxes.getWares().values.toList();
     if (widget.oldWare != null) {
       replaceOldWare();
     }
@@ -123,15 +129,18 @@ class _AddWareScreenState extends State<AddWareScreen> {
 
   @override
   Widget build(BuildContext context) {
-final bool isMobileSize=screenType(context)==ScreenType.mobile;
+    final bool isMobileSize = screenType(context) == ScreenType.mobile;
     return HideKeyboard(
       child: Scaffold(
-        floatingActionButtonLocation:isMobileSize ?null: FloatingActionButtonLocation.centerFloat,
+        floatingActionButtonLocation:
+            isMobileSize ? null : FloatingActionButtonLocation.centerFloat,
         floatingActionButton: CustomFloatActionButton(
+          iconSize: 35,
             label: widget.oldWare != null ? "ذخیره تغییرات" : "افزودن به لیست",
             icon: Icons.save,
             onPressed: () {
-              if (_formKey.currentState!.validate()) {
+              if (_formKey.currentState!.validate() &&
+                  wareNameController.text.isNotEmpty) {
                 if (widget.oldWare != null) {
                   saveWare(id: widget.oldWare!.wareID);
                   Navigator.pop(context, false);
@@ -145,6 +154,9 @@ final bool isMobileSize=screenType(context)==ScreenType.mobile;
                   descriptionController.clear();
                   setState(() {});
                 }
+              } else {
+                showSnackBar(context, "نام کالا وارد نشده است!",
+                    type: SnackType.error);
               }
             }),
         extendBodyBehindAppBar: true,
@@ -152,141 +164,179 @@ final bool isMobileSize=screenType(context)==ScreenType.mobile;
           backgroundColor: Colors.transparent,
           title: Text(widget.oldWare == null ? "افزودن کالا" : "ویرایش کالا"),
         ),
-        body: Consumer<WareProvider>(
-          builder: (context,wareProvider,child) {
-            return Container(
-              alignment: Alignment.center,
+        body: Consumer<WareProvider>(builder: (context, wareProvider, child) {
+          return Container(
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              gradient: kMainGradiant,
+            ),
+            child: Container(
+              width: 550,
+              margin: isMobileSize
+                  ? EdgeInsets.all(5).copyWith(top: 60)
+                  : EdgeInsetsDirectional.symmetric(
+                      horizontal: 10, vertical: 30).copyWith(top: 60),
+              alignment: Alignment.topCenter,
               decoration: BoxDecoration(
-                gradient: kMainGradiant,
-              ),
-              child: Container(
-                width: 550,
-                margin:isMobileSize?null: EdgeInsetsDirectional.symmetric(horizontal: 10,vertical: 30),
-                alignment: Alignment.topCenter,
-                decoration: BoxDecoration(
-                    gradient: kBlackWhiteGradiant,
+                gradient: kBlackWhiteGradiant,
                 borderRadius: BorderRadius.circular(20),
-                ),
-                child: Form(
-                  key: _formKey,
-                  child: SingleChildScrollView(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Stack(
-                        children: [
-                          ///top rounded part
-                          Container(
-                            height: 200,
-                            decoration: BoxDecoration(
-                                gradient: kMainGradiant,
-                                borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(50),
-                                    bottomRight: Radius.circular(50))),
-                          ),
-                          ///
-                          Padding(
-                            padding: const EdgeInsets.all(20).copyWith(top: 100),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: AnimateList(
-                                interval: 50.ms,
-                                effects: [FadeEffect(duration: 300.ms)],
-                                children: [
-                                  ///photo part
-                                  AspectRatio(
-                                    aspectRatio: 16/9,
-                                    child: Container(
-                                      height: 150,
-                                      margin: const EdgeInsets.all(5),
-                                      child: ItemImageHolder(
-                                        imagePath: imagePath,
-                                        onSet: (path) {
-                                          imagePath = path;
-                                          setState(() {});
-                                        },
-                                      ),
+              ),
+              child: Form(
+                key: _formKey,
+                child: SingleChildScrollView(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Stack(
+                      children: [
+                        ///top rounded part
+                        Container(
+                          margin: EdgeInsets.only(top: 150),
+                          height: 100,
+                          decoration: BoxDecoration(
+                              gradient: kMainGradiant,
+                              ),
+                        ),
+
+                        ///
+                        Padding(
+                          padding: const EdgeInsets.all(20).copyWith(top: 100),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children:[
+                                ///photo part
+                                AspectRatio(
+                                  aspectRatio: 16 / 9,
+                                  child: Container(
+                                    height: 150,
+                                    margin: const EdgeInsets.all(5),
+                                    child: ItemImageHolder(
+                                      imagePath: imagePath,
+                                      onSet: (path) {
+                                        imagePath = path;
+                                        setState(() {});
+                                      },
                                     ),
                                   ),
-                                  const SizedBox(
-                                    height: 20,
+                                ),
+                                const Gap(20),
+                                ///select group dropdown list and add group
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    ActionButton(
+                                        height: 30,
+                                        label: "افزودن گروه",
+                                        borderRadius: 5,
+                                        icon: Icons.category,
+                                        onPress: () {
+                                          showDialog(
+                                              context: context,
+                                              builder: (context) =>
+                                                  CreateGroupPanel());
+                                        }),
+                                    DropListModel(
+                                      selectedValue: wareProvider.selectedGroup,
+                                      listItem: wareProvider.groupList,
+                                      onChanged: (value) {
+                                        wareProvider.updateSelectedGroup(value);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                const Gap(20),
+                                ///ware name textfield
+                                WareSuggestionTextField(
+                                  label: "نام کالا",
+                                  maxLength: 50,
+                                  //focus: wareNameFocus,
+                                  controller: wareNameController,
+                                  onSuggestionSelected: (val) {
+                                    wareNameController.text = val.wareName;
+                                    unitItem = val.unit;
+                                    repeatName = wareList
+                                        .map((e) => e.wareName)
+                                        .contains(val.wareName);
+                                    setState(() {});
+                                  },
+                                  onChange: (val) {
+                                    print(val);
+                                    repeatName = (widget.oldWare != null &&
+                                                widget.oldWare!.wareName ==
+                                                    val) ||
+                                            val == ""
+                                        ? false
+                                        : wareList
+                                            .map((e) => e.wareName)
+                                            .contains(val);
+                                    setState(() {});
+                                  },
+                                ),
+                                if (repeatName)
+                                  Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: CText(
+                                      "کالایی با این نام قبلا ثبت شده است",
+                                      color: Colors.red,
+                                      fontSize: 10,
+                                      textDirection: TextDirection.rtl,
+                                    ),
                                   ),
 
-                                  ///select group dropdown list and add group
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      ActionButton(
-                                          height: 40,
-                                          label: "افزودن گروه",
-                                          icon: Icons.category,
+                                const Gap(20),
+                                CustomTextField(
+                                  label: "شماره سریال کالا",
+                                  maxLength: 25,
+                                  controller: wareSerialController,
+                                  onChange: (val) {
+                                    print(val);
+                                    repeatSerial = (widget.oldWare != null &&
+                                                widget.oldWare!.wareSerial ==
+                                                    val) ||
+                                            val == ""
+                                        ? false
+                                        : wareList
+                                            .map((e) => e.wareSerial)
+                                            .contains(val);
+                                    setState(() {});
+                                  },
+                                  suffixIcon: Platform.isAndroid ||
+                                          Platform.isIOS
+                                      ? CustomIconButton(
+                                          icon: Icons.qr_code_scanner_rounded,
+                                          iconSize: 25,
                                           onPress: () {
-                                            showDialog(
-                                                context: context,
-                                                builder: (context) =>
-                                                    CreateGroupPanel());
-                                          }),
-                                      DropListModel(
-                                        selectedValue: wareProvider.selectedGroup,
-                                        listItem: wareProvider.groupList,
-                                        onChanged: (value) {
-                                          wareProvider.updateSelectedGroup(value);
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    height: kSpaceBetween,
-                                  ),
-                                  CustomTextField(
-                                    label: "نام کالا",
-                                    maxLength: 50,
-                                    //focus: wareNameFocus,
-                                    controller: wareNameController,
-                                    validate: true,
-                                    extraValidate: (val) {
-                                      final wareList = HiveBoxes.getWares()
-                                          .values
-                                          .map((e) => e.wareName)
-                                          .toList();
-                                      if (wareList.contains(val) &&
-                                          widget.oldWare == null) {
-                                        return "کالایی با این نام قبلا ثبت شده است";
-                                      }
-                                    },
-                                  ),
-                                  const SizedBox(
-                                    height: kSpaceBetween,
-                                  ),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: CustomTextField(
-                                          label: "شماره سریال کالا",
-                                          maxLength: 25,
-                                          controller: wareSerialController,
-                                          suffixIcon:Platform.isAndroid ||Platform.isIOS? CustomIconButton(
-                                            icon: Icons.qr_code_scanner_rounded,
-                                            iconSize: 25,
-                                            onPress: (){
-                                              Navigator.push(context, MaterialPageRoute(builder: (context)=>BarcodeScannerScreen())).then((value) {
-                                                wareSerialController.text=value;
-                                                setState(() {});
-                                              });
+                                            Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            BarcodeScannerScreen()))
+                                                .then((value) {
+                                              wareSerialController.text = value;
+                                              setState(() {});
+                                            });
                                           },
-                                          ):null,
-                                        ),
-                                      ),
-                                    ],
+                                        )
+                                      : null,
+                                ),
+                                if (repeatSerial)
+                                  Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: CText(
+                                      "کالایی با این شماره سریال قبلا ثبت شده است",
+                                      color: Colors.red,
+                                      fontSize: 10,
+                                      textDirection: TextDirection.rtl,
+                                    ),
                                   ),
-                                  const SizedBox(
-                                    height: kSpaceBetween,
-                                  ),
+                                const Gap(20),
 
-                                  ///unit dropdown list selection
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      DropListModel(
+                                ///unit dropdown list selection
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Flexible(
+                                      child: DropListModel(
                                         selectedValue: unitItem,
                                         listItem: kUnitList,
                                         onChanged: (val) {
@@ -294,57 +344,52 @@ final bool isMobileSize=screenType(context)==ScreenType.mobile;
                                           setState(() {});
                                         },
                                       ),
-                                      const SizedBox(
-                                        width: kSpaceBetween,
-                                      ),
-                                      CustomTextField(
-                                        label: "مقدار",
-                                        maxLength: 15,
-                                        controller: quantityController,
-                                        textFormat: TextFormatter.number,
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    height: kSpaceBetween,
-                                  ),
-                                  CustomTextField(
-                                    label: "قیمت خرید",
-                                    maxLength: 17,
-                                    controller: costPriceController,
-                                    textFormat: TextFormatter.price,
-                                  ),
-                                  const SizedBox(
-                                    height: kSpaceBetween,
-                                  ),
-                                  CustomTextField(
-                                    label: "قیمت فروش",
-                                    maxLength: 17,
-                                    controller: salePriceController,
-                                    textFormat: TextFormatter.price,
-                                  ),
-                                  const SizedBox(
-                                    height: kSpaceBetween,
-                                  ),
-                                  CustomTextField(
-                                    label: "توضیحات",
-                                    maxLength: 200,
-                                    controller: descriptionController,
-                                    maxLine: 5,
-                                  ),
-                                ],
-                              ),
+                                    ),
+                                    const SizedBox(
+                                      width: kSpaceBetween,
+                                    ),
+                                    CustomTextField(
+                                      label: "مقدار",
+                                      maxLength: 15,
+                                      controller: quantityController,
+                                      textFormat: TextFormatter.number,
+                                    ),
+                                  ],
+                                ),
+                                const Gap(20),
+                                CustomTextField(
+                                  label: "قیمت خرید",
+                                  maxLength: 17,
+                                  controller: costPriceController,
+                                  textFormat: TextFormatter.price,
+                                ),
+                                const Gap(20),
+                                ///sale textfield
+                                CustomTextField(
+                                  label: "قیمت فروش",
+                                  maxLength: 17,
+                                  controller: salePriceController,
+                                  textFormat: TextFormatter.price,
+                                ),
+                                const Gap(20),
+                                ///description textfield
+                                CustomTextField(
+                                  label: "توضیحات",
+                                  maxLength: 200,
+                                  controller: descriptionController,
+                                  maxLine: 5,
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
+                      ],
                     ),
                   ),
                 ),
               ),
-            );
-          }
-        ),
+            ),
+          );
+        }),
       ),
     );
   }

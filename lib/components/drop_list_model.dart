@@ -10,9 +10,9 @@ class DropListModel extends StatelessWidget {
     required this.selectedValue,
     required this.onChanged,
     this.width=140,
-    this.height=40,
+    this.height=35,
     this.icon,
-    this.elevation=2
+    this.elevation=2, this.borderRadius=10,
   });
 
   final List listItem;
@@ -22,13 +22,14 @@ class DropListModel extends StatelessWidget {
   final double height;
   final Icon? icon;
   final double elevation;
+  final double borderRadius;
 
   @override
   Widget build(BuildContext context) {
     return Directionality(
       textDirection:icon==null?TextDirection.rtl : TextDirection.ltr,
       child: Card(
-        shape: RoundedRectangleBorder(borderRadius:BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(borderRadius:BorderRadius.circular(borderRadius)),
         color: Colors.transparent,
         elevation: icon==null?elevation:0,
         child: DropdownButtonHideUnderline(
@@ -42,10 +43,10 @@ class DropListModel extends StatelessWidget {
               width: width,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(borderRadius),
                 //border: Border.all(color: kColorController)
               ),
-              scrollbarTheme: const ScrollbarThemeData(radius:Radius.circular(20), ),
+              scrollbarTheme:  ScrollbarThemeData(radius:Radius.circular(borderRadius), ),
               padding: const EdgeInsets.all(0),
             ),
             buttonStyleData: ButtonStyleData(
@@ -53,7 +54,7 @@ class DropListModel extends StatelessWidget {
               height: height,
               decoration:BoxDecoration(
                 color:icon!=null?null:Colors.white,
-                borderRadius: BorderRadius.circular(200),
+                borderRadius: BorderRadius.circular(borderRadius),
                 //border: Border.all(color: kColorController)
               ), ),
 

@@ -5,7 +5,7 @@ import 'package:price_list/components/custom_button.dart';
 import 'package:price_list/components/custom_text.dart';
 import 'package:price_list/components/custom_textfield.dart';
 import 'package:price_list/constants/utils.dart';
-import 'package:price_list/model/ware_hive.dart';
+import 'package:price_list/model/ware.dart';
 import 'package:price_list/providers/ware_provider.dart';
 import 'package:price_list/services/hive_boxes.dart';
 import 'package:provider/provider.dart';
@@ -14,7 +14,7 @@ class SelectedWareActionPanel extends StatefulWidget {
   const SelectedWareActionPanel(
       {Key? key, required this.wares})
       : super(key: key);
-  final List<WareHive> wares;
+  final List<Ware> wares;
 
 
   @override
@@ -110,7 +110,7 @@ class _SelectedWareActionPanelState extends State<SelectedWareActionPanel> {
             CustomButton(
                 text: "ثبت",
                 onPressed: () {
-                  for (WareHive ware in widget.wares) {
+                  for (Ware ware in widget.wares) {
                     double fixPrice = fixAmountController.text == ""
                         ? 0
                         : stringToDouble(fixAmountController.text);

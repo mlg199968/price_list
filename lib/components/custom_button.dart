@@ -27,8 +27,8 @@ class CustomButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       style: const ButtonStyle(
-        elevation: WidgetStatePropertyAll(5),
-          padding: WidgetStatePropertyAll(EdgeInsets.all(0))),
+        elevation: MaterialStatePropertyAll(5),
+          padding: MaterialStatePropertyAll(EdgeInsets.all(0))),
       onPressed: onPressed,
       child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10),

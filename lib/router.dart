@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:price_list/model/ware_hive.dart';
+import 'package:price_list/model/ware.dart';
 import 'package:price_list/screens/ware_list/add_ware_screen.dart';
 import 'package:price_list/screens/purchase_screen/bazaar_purchase_screen.dart';
 import 'package:price_list/screens/bug_screen/bug_list_screen.dart';
@@ -14,7 +14,7 @@ import 'package:price_list/screens/setting/setting_screen.dart';
 Route generateRoute(RouteSettings routeSettings) {
   switch (routeSettings.name) {
     case AddWareScreen.id:
-      WareHive? wareHive = routeSettings.arguments as WareHive?;
+      Ware? wareHive = routeSettings.arguments as Ware?;
       return MaterialPageRoute(
           builder: (_) => AddWareScreen(
                 oldWare: wareHive,

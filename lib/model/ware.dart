@@ -2,10 +2,10 @@ import 'dart:convert';
 
 import 'package:hive/hive.dart';
 
-part 'ware_hive.g.dart';
+part 'ware.g.dart';
 
 @HiveType(typeId: 0)
-class WareHive extends HiveObject {
+class Ware extends HiveObject {
   @HiveField(0)
   late String wareName;
   @HiveField(1)
@@ -54,8 +54,8 @@ class WareHive extends HiveObject {
     };
   }
 
-  WareHive fromMap(Map<String, dynamic> map) {
-    WareHive ware = WareHive()
+  Ware fromMap(Map<String, dynamic> map) {
+    Ware ware = Ware()
       ..wareName = map['wareName'] ?? ""
       ..wareSerial = map['wareSerial'] ?? ""
       ..unit = map['unit'] ?? ""
@@ -74,7 +74,7 @@ class WareHive extends HiveObject {
   }
 
   String toJson() => jsonEncode(toMap());
-  WareHive fromJson(String source) => fromMap(jsonDecode(source));
+  Ware fromJson(String source) => fromMap(jsonDecode(source));
 }
 
 //run this code for create adaptor:

@@ -4,7 +4,7 @@ description: Price List project
 publish_to: 'none'
 
 
-version: 4.3.2+16
+version: 4.4.0+18
 
 environment:
   sdk: '>=2.18.0-271.4.beta <3.0.0'
@@ -59,7 +59,8 @@ dependencies:
 #  flutter_poolakey: ^2.2.0
   myket_iap: ^1.1.5
   image_picker: ^1.0.7
-
+  flutter_typeahead: ^4.3.1
+#  photo_view: ^0.15.0
 
 
 

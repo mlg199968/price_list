@@ -1,22 +1,22 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'ware_hive.dart';
+part of 'ware.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class WareHiveAdapter extends TypeAdapter<WareHive> {
+class WareAdapter extends TypeAdapter<Ware> {
   @override
   final int typeId = 0;
 
   @override
-  WareHive read(BinaryReader reader) {
+  Ware read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return WareHive()
+    return Ware()
       ..wareName = fields[0] as String
       ..unit = fields[1] as String
       ..groupName = fields[2] as String
@@ -34,7 +34,7 @@ class WareHiveAdapter extends TypeAdapter<WareHive> {
   }
 
   @override
-  void write(BinaryWriter writer, WareHive obj) {
+  void write(BinaryWriter writer, Ware obj) {
     writer
       ..writeByte(14)
       ..writeByte(0)
@@ -73,7 +73,7 @@ class WareHiveAdapter extends TypeAdapter<WareHive> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is WareHiveAdapter &&
+      other is WareAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

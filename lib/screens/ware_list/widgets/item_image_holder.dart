@@ -157,13 +157,6 @@ chooseImageFunction({ImageSource imageSource=ImageSource.gallery}) async {
                     shadows: [BoxShadow(blurRadius: 2,offset: Offset(2, 3),color: Colors.black45)],
                   ),
                 ),
-                // IconButton(
-                //   onPressed: () {},
-                //   icon: const Icon(
-                //     FontAwesomeIcons.pencil,
-                //     color: Colors.orange,
-                //   ),
-                // ),
               ],
             ),
         ],

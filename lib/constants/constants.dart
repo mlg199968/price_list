@@ -50,6 +50,7 @@ const List<String> kUnitList = [
   'کیلو گرم',
   'متر مربع',
   'متر مکعب',
+  'لیتر',
   'گرم',
   'شاخه',
   'بسته',
@@ -60,7 +61,12 @@ const List<String> kUnitList = [
   'میلی متر',
   'پک',
 ];
-const List<String> kSortList = ['تاریخ تسویه', 'حروف الفبا', 'تاریخ ثبت'];
+const List<String> kSortList = [
+  'تاریخ ویرایش',
+  'تاریخ ثبت',
+  'حروف الفبا',
+  'موجودی کالا',
+];
 const List<String> kCurrencyList = ["ریال", "تومان", "دلار", "لیر", "درهم"];
 const List<String> kFonts = [
   'Shabnam',
@@ -71,6 +77,15 @@ const List<String> kFonts = [
   'Terafik',
   'Elham',
   'Titr'
+];
+const List<String> kPdfFonts = [
+  'sahel',
+  'mitra',
+  'koodak',
+  'roya',
+  'terafik',
+  'elham',
+  'titr'
 ];
 const List kPrintTypeList = ['کاستوم','ساده', 'اتیکت','کاتالوگ'];
 
@@ -111,18 +126,18 @@ final kInputDecoration = InputDecoration(
 
 final kButtonStyle = TextButtonThemeData(
   style: ButtonStyle(
-    backgroundColor: WidgetStateProperty.resolveWith((states) {
-      if (states.contains(WidgetState.focused) ||
-          states.contains(WidgetState.pressed)) {
+    backgroundColor: MaterialStateProperty.resolveWith((states) {
+      if (states.contains(MaterialState.focused) ||
+          states.contains(MaterialState.pressed)) {
         return kColorController;
       }
-      if (states.contains(WidgetState.disabled)) {
+      if (states.contains(MaterialState.disabled)) {
         return kColorController.withOpacity(0.3);
       } else {
         return kColorController;
       }
     }),
-    foregroundColor: WidgetStateProperty.all<Color>(Colors.white),
+    foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
   ),
 );
 
