@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Price List"
-#define MyAppVersion "1.3"
+#define MyAppVersion "1.4"
 #define MyAppPublisher "MLG GRAND"
 #define MyAppURL "https://www.mlggrand.ir"
 #define MyAppExeName "price_list.exe"
@@ -23,7 +23,7 @@ DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 OutputDir=C:\Users\MLG GRAND\StudioProjects\price_list\installers
-OutputBaseFilename=price-list-1.3-setup
+OutputBaseFilename=price-list-1.4-setup
 SetupIconFile=E:\install_icon.ico
 Compression=lzma
 SolidCompression=yes
@@ -37,6 +37,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "C:\Users\MLG GRAND\StudioProjects\price_list\build\windows\x64\runner\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\MLG GRAND\StudioProjects\price_list\build\windows\x64\runner\Release\file_selector_windows_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\MLG GRAND\StudioProjects\price_list\build\windows\x64\runner\Release\flutter_windows.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\MLG GRAND\StudioProjects\price_list\build\windows\x64\runner\Release\image_compression_flutter_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\MLG GRAND\StudioProjects\price_list\build\windows\x64\runner\Release\permission_handler_windows_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
