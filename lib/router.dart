@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:price_list/model/ware.dart';
+import 'package:price_list/screens/setting/currency_screen/currency_screen.dart';
 import 'package:price_list/screens/ware_list/add_ware_screen.dart';
 import 'package:price_list/screens/purchase_screen/bazaar_purchase_screen.dart';
 import 'package:price_list/screens/bug_screen/bug_list_screen.dart';
-import 'package:price_list/screens/group_management_screen.dart';
 import 'package:price_list/screens/notice_screen/notice_screen.dart';
 import 'package:price_list/screens/purchase_screen/purchase_screen.dart';
 import 'package:price_list/screens/shop_info_screen/shop_info_screen.dart';
@@ -34,8 +34,8 @@ Route generateRoute(RouteSettings routeSettings) {
       return MaterialPageRoute(
           builder: (_) => WareActionsPanel(wares: [], subGroup: "subGroup"));
 
-    case GroupManagementScreen.id:
-      return MaterialPageRoute(builder: (_) => GroupManagementScreen());
+    case CurrencyScreen.id:
+      return MaterialPageRoute(builder: (_) => CurrencyScreen());
 
     case PurchaseScreen.id:
       return MaterialPageRoute(builder: (_) => PurchaseScreen());

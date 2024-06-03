@@ -36,6 +36,10 @@ class Shop extends HiveObject {
   String? backupDirectory;
   @HiveField(15)
   String? pdfFont;
+  @HiveField(16)
+  Map? currenciesValue;
+  @HiveField(17)
+  bool? replacedCurrency;
 
   Shop copyWith({
     String? shopName,
@@ -53,7 +57,9 @@ class Shop extends HiveObject {
     String? fontFamily,
     String? pdfFont,
     String? backupDirectory,
+    Map? currenciesValue,
     int? userLevel,
+    bool? replacedCurrency,
   }) {
     Shop shop=Shop()
       ..shopName= shopName ?? this.shopName
@@ -71,7 +77,9 @@ class Shop extends HiveObject {
       ..fontFamily= fontFamily ?? this.fontFamily
       ..pdfFont= pdfFont ?? this.pdfFont
       ..userLevel= userLevel ?? this.userLevel
-      ..backupDirectory= backupDirectory ?? this.backupDirectory;
+      ..currenciesValue=currenciesValue ?? this.currenciesValue
+      ..backupDirectory= backupDirectory ?? this.backupDirectory
+      ..replacedCurrency= replacedCurrency ?? this.replacedCurrency;
     return shop;
   }
 

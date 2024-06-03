@@ -1,6 +1,10 @@
 import 'dart:convert';
 
 import 'package:hive/hive.dart';
+import 'package:price_list/constants/constants.dart';
+import 'package:price_list/constants/global_task.dart';
+import 'package:price_list/providers/ware_provider.dart';
+import 'package:provider/provider.dart';
 
 part 'ware.g.dart';
 
@@ -34,6 +38,36 @@ class Ware extends HiveObject {
   String? wareSerial = "";
   @HiveField(13)
   String? imagePath;
+  @HiveField(14)
+  double? discount;
+  @HiveField(15)
+  num? sale2;
+  @HiveField(16)
+  num? sale3;
+  @HiveField(17)
+  int? saleIndex;
+
+
+  num get saleConverted {
+    num selectedSale = saleIndex == 0
+        ? sale
+        : saleIndex == 1
+        ? (sale2 ?? 0)
+        : (sale3 ?? 0);
+    WareProvider wareProvider = Provider.of<WareProvider>(
+        GlobalTask.navigatorState.currentContext!,
+        listen: false);
+    if (wareProvider.currency != "تومان" &&
+        wareProvider.currenciesMap != null &&
+        wareProvider.replacedCurrency) {
+      double cValue = wareProvider
+              .currenciesMap![kCurrencyListMap[wareProvider.currency]] ??
+          0;
+      return selectedSale * cValue;
+    } else {
+      return selectedSale;
+    }
+  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -44,13 +78,16 @@ class Ware extends HiveObject {
       'description': description,
       'cost': cost,
       'sale': sale,
+      'sale2': sale2,
+      'sale3': sale3,
       'quantity': quantity,
       'date': date.toIso8601String(),
       'modifyDate': modifyDate!.toIso8601String(),
       'wareID': wareID,
       'isChecked': isChecked! ? 1 : 0,
       'color': color,
-      'imagePath': imagePath
+      'imagePath': imagePath,
+      'saleIndex': saleIndex
     };
   }
 
@@ -63,12 +100,15 @@ class Ware extends HiveObject {
       ..description = map['description'] ?? ""
       ..cost = map['cost'] ?? 0
       ..sale = map['sale'] ?? 0
+      ..sale2 = map['sale2']
+      ..sale3 = map['sale3']
       ..quantity = map['quantity'] ?? 0
       ..date = DateTime.parse(map['date'])
       ..modifyDate = DateTime.parse(map["modifyDate"])
       ..wareID = map['wareID'] ?? ""
       ..isChecked = map['isChecked'] == 1 ? true : false
       ..color = map['color']
+      ..saleIndex = map['saleIndex'] ?? 0
       ..imagePath = map['imagePath'];
     return ware;
   }
@@ -79,3 +119,4 @@ class Ware extends HiveObject {
 
 //run this code for create adaptor:
 //flutter packages pub run build_runner build --delete-conflicting-outputs
+//dart run build_runner build --delete-conflicting-outputs

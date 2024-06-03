@@ -25,6 +25,9 @@ class WareProvider extends ChangeNotifier {
   bool _showQuantity = false;
   bool get showQuantity => _showQuantity;
   String? backupDirectory;
+  Map? currenciesMap;
+  bool _replacedCurrency=false;
+  bool get replacedCurrency=>_replacedCurrency;
 
   //*****
   String shopName = "نام فروشگاه";
@@ -54,6 +57,8 @@ class WareProvider extends ChangeNotifier {
     _showQuantity = shop.showQuantity;
     _showCostPrice = shop.showCost;
     backupDirectory = shop.backupDirectory;
+    currenciesMap=shop.currenciesValue;
+    _replacedCurrency=shop.replacedCurrency ?? false;
   }
 
   void setUserLevel(int input) async {
@@ -85,9 +90,10 @@ class WareProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateSetting(bool cost, bool quantity) {
+  void updateSetting(bool cost, bool quantity,bool reCurrency) {
     _showQuantity = quantity;
     _showCostPrice = cost;
+    _replacedCurrency=reCurrency;
     notifyListeners();
   }
 

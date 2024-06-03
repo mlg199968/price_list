@@ -39,9 +39,11 @@ static Future<String?> createExcel(context,String? directory)async{
       sheet.setColumnWidth(4, 10);
       sheet.setColumnWidth(5, 15);
       sheet.setColumnWidth(6, 15);
-      sheet.setColumnWidth(7, 25);
-      sheet.setColumnWidth(8, 40);
-      sheet.setColumnWidth(9, 30);
+      sheet.setColumnWidth(7, 15);
+      sheet.setColumnWidth(8, 15);
+      sheet.setColumnWidth(9, 25);
+      sheet.setColumnWidth(10, 40);
+      sheet.setColumnWidth(11, 30);
       ///import data to cells
       for (int i = 0; i < wares.length; i++) {
         int index = i + 2;
@@ -76,14 +78,24 @@ static Future<String?> createExcel(context,String? directory)async{
         saleCell.cellStyle=CellStyle(
             numberFormat: NumFormat.defaultNumeric);
         saleCell.value = DoubleCellValue(ware.sale.toDouble());
+        ///sale2
+        Data sale2Cell = sheet.cell(CellIndex.indexByString('H$index'));
+        sale2Cell.cellStyle=CellStyle(
+            numberFormat: NumFormat.defaultNumeric);
+        sale2Cell.value =ware.sale2==null?null: DoubleCellValue(ware.sale2!.toDouble());
+        ///sale3
+        Data sale3Cell = sheet.cell(CellIndex.indexByString('I$index'));
+        sale3Cell.cellStyle=CellStyle(
+            numberFormat: NumFormat.defaultNumeric);
+        sale3Cell.value = ware.sale3==null?null:DoubleCellValue(ware.sale3!.toDouble());
         ///category
-        Data categoryCell = sheet.cell(CellIndex.indexByString('H$index'));
+        Data categoryCell = sheet.cell(CellIndex.indexByString('J$index'));
         categoryCell.value = TextCellValue(ware.groupName);
         ///description
-        Data descriptionCell = sheet.cell(CellIndex.indexByString('I$index'));
+        Data descriptionCell = sheet.cell(CellIndex.indexByString('K$index'));
         descriptionCell.value = TextCellValue(ware.description);
         ///id
-        Data idCell = sheet.cell(CellIndex.indexByString('J$index'));
+        Data idCell = sheet.cell(CellIndex.indexByString('L$index'));
         idCell.value = ware.wareID == null ? null : TextCellValue(ware.wareID!);
       }
 
@@ -115,11 +127,28 @@ static Future<String?> createExcel(context,String? directory)async{
         Excel excel = await Excel.decodeBytes(bytes);
         Sheet sheet = excel["Sheet1"];
         Ware ware = Ware();
-        print(sheet.maxRows);
         for (int i = 0; i < sheet.maxRows-1; i++) {
           int index = i + 2;
           ware = Ware();
-
+          //cell data to number function
+          num cellToNumber(Data cell){
+            if(cell.value == null){
+              return 0;
+            }
+            else if(cell.value.runtimeType==IntCellValue) {
+              return (cell.value as IntCellValue).value;
+            }
+            else if(cell.value.runtimeType==DoubleCellValue){
+              return (cell.value as DoubleCellValue).value;
+            }
+            else if(cell.value.runtimeType==TextCellValue){
+              return stringToDouble((cell.value as TextCellValue).value);
+            }
+            else{
+              showSnackBar(context, " خطا در ردیف $index  ${ware.wareName}",type: SnackType.error);
+              return 0;
+            }
+          }
           ///ware name
           Data nameCell = sheet.cell(CellIndex.indexByString('B$index'));
           ware.wareName =
@@ -132,81 +161,40 @@ static Future<String?> createExcel(context,String? directory)async{
 
           ///quantity
           Data quantityCell = sheet.cell(CellIndex.indexByString('D$index'));
-          if(quantityCell.value == null){
-            ware.quantity =0;
-          }
-          else if(quantityCell.value.runtimeType==IntCellValue) {
-            ware.quantity =(quantityCell.value as IntCellValue).value;
-          }
-          else if(quantityCell.value.runtimeType==DoubleCellValue) {
-            ware.quantity =(quantityCell.value as DoubleCellValue).value;
-          }
-          else if(quantityCell.value.runtimeType==TextCellValue) {
-            ware.quantity =stringToDouble((quantityCell.value as TextCellValue).value);
-          }
-          else{
-            showSnackBar(context, "سلول تعداد منطقی نیست ${ware.wareName}",type: SnackType.error);
-            break;
-          }
-
+            ware.quantity =cellToNumber(quantityCell);
           ///unit
           Data unitCell = sheet.cell(CellIndex.indexByString('E$index'));
           ware.unit =
               unitCell.value == null ? "عدد" : (unitCell.value as TextCellValue).value;
-
           ///cost
           Data costCell = sheet.cell(CellIndex.indexByString('F$index'));
-          if(costCell.value == null){
-            ware.cost =0;
-          }
-          else if(costCell.value.runtimeType==IntCellValue) {
-            ware.cost =(costCell.value as IntCellValue).value;
-          }
-          else if(costCell.value.runtimeType==DoubleCellValue){
-            ware.cost = (costCell.value as DoubleCellValue).value;
-          }
-          else if(costCell.value.runtimeType==TextCellValue){
-            ware.cost = stringToDouble((costCell.value as TextCellValue).value);
-          }
-          else{
-            showSnackBar(context, "قیمت خرید منطقی نیست ${ware.wareName}",type: SnackType.error);
-            break;
-          }
+            ware.cost =cellToNumber(costCell);
           ///sale
           Data saleCell = sheet.cell(CellIndex.indexByString('G$index'));
-          if(saleCell.value == null){
-            ware.sale =0;
-          }
-          else if(saleCell.value.runtimeType==IntCellValue) {
-            ware.sale =(saleCell.value as IntCellValue).value;
-          }
-          else if(saleCell.value.runtimeType==DoubleCellValue){
-            ware.sale = (saleCell.value as DoubleCellValue).value;
-          }
-          else if(saleCell.value.runtimeType==TextCellValue){
-            ware.sale = stringToDouble((saleCell.value as TextCellValue).value);
-          }
-          else{
-            showSnackBar(context, "قیمت فروش منطقی نیست ${ware.wareName}",type: SnackType.error);
-            break;
-          }
+            ware.sale =cellToNumber(saleCell);
+          ///sale2
+          Data sale2Cell = sheet.cell(CellIndex.indexByString('H$index'));
+            ware.sale2 =cellToNumber(sale2Cell);
+          ///sale3
+          Data sale3Cell = sheet.cell(CellIndex.indexByString('I$index'));
+            ware.sale3 =cellToNumber(sale3Cell);
 
           ///category
           Data categoryCell =
-              sheet.cell(CellIndex.indexByString('H$index'));
+              sheet.cell(CellIndex.indexByString('J$index'));
           ware.groupName = categoryCell.value == null
               ? "نامشخص"
               : (categoryCell.value as TextCellValue).value;
 
           ///description
           Data descriptionCell =
-              sheet.cell(CellIndex.indexByString('I$index'));
+              sheet.cell(CellIndex.indexByString('K$index'));
           ware.description = descriptionCell.value == null
               ? ""
               : (descriptionCell.value as TextCellValue).value;
 
           ///id
-          Data idCell = sheet.cell(CellIndex.indexByString('J$index'));
+          Data idCell = sheet.cell(CellIndex.indexByString('L$index'));
           ware.wareID =
               idCell.value == null ? Uuid().v1() : (idCell.value as TextCellValue).value;
 

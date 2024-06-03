@@ -10,7 +10,7 @@ class BackgroundClipper extends StatelessWidget {
     required this.child,
      this.color=Colors.blue,
      this.height=80,
-    this.borderRadius=10
+    this.borderRadius=5
 
   });
   final Widget child;

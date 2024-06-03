@@ -71,6 +71,7 @@ class _WareListScreenState extends State<WareListScreen> {
         key: scaffoldKey,
         floatingActionButton: CustomFloatActionButton(
           // label: "افزودن کالا",
+          bgColor: Colors.indigo,
             onPressed: () async {
           Navigator.pushNamed(context, AddWareScreen.id);
         }),
@@ -346,8 +347,7 @@ class _ListPartState extends State<ListPart> {
                             child: SizedBox(
                               width: 400,
                               child:selectedWare==null? null: InfoPanelDesktop(
-                                  context: context,
-                                  wareInfo: selectedWare!,
+                                  ware: selectedWare!,
                                   onReload:(){
                                     selectedWare=null;
                                     setState(() {});}),
@@ -380,8 +380,7 @@ class _ListPartState extends State<ListPart> {
                                                 !isMobile?null:showDialog(
                                                     context: context,
                                                     builder: (context) => InfoPanel(
-                                                        context: context,
-                                                        wareInfo: ware));
+                                                        ware: ware));
                                               }
                                             }
                                             else {
@@ -408,10 +407,10 @@ class _ListPartState extends State<ListPart> {
                                                 : "",
                                             topTrailingLabel:
                                             wareProvider.showQuantity ? "موجودی:" : "",
-                                            trailing: addSeparator(ware.sale),
+                                            trailing:addSeparator(ware.saleConverted),
                                             trailingLabel: "فروش:",
                                             middle: wareProvider.showCostPrice
-                                                ? addSeparator(ware.cost)
+                                                ?addSeparator(ware.cost)
                                                 : null,
                                             middleLabel:
                                             wareProvider.showCostPrice ? "خرید:" : null,

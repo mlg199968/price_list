@@ -215,7 +215,7 @@ class PdfWareListApi {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   pw.Text(
-                    addSeparator(item.sale),
+                    addSeparator(item.saleConverted),
                     style: TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 14 * scale),
                   ),
@@ -264,7 +264,7 @@ class PdfWareListApi {
         if(show["cost"]!)
          addSeparator(item.cost),
         if(show["sale"]!)
-        addSeparator(item.sale),
+        addSeparator(item.saleConverted),
         if(show["des"]!)
           item.description,
       ].reversed.toList();
@@ -338,7 +338,7 @@ class PdfWareListApi {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       pw.Text(
-                        addSeparator(item.sale).toPersianDigit(),
+                        addSeparator(item.saleConverted),
                         style: TextStyle(
                           fontSize: 14 * scale,
                           fontWeight: FontWeight.bold,
@@ -424,7 +424,7 @@ class PdfWareListApi {
                             child:
                                 Row(mainAxisSize: MainAxisSize.min, children: [
                               Text(
-                                addSeparator(item.sale).toPersianDigit(),
+                                addSeparator(item.saleConverted),
                                 style: TextStyle(
                                   color: PdfColors.white,
                                   fontSize: 13 * scale,
@@ -478,7 +478,7 @@ class PdfWareListApi {
         item.wareName.toPersianDigit(),
         //'${item.quantity}'.toPersianDigit(),
         // addSeparator(item.cost),
-        addSeparator(item.sale),
+        addSeparator(item.saleConverted),
       ].reversed.toList();
     }).toList();
 

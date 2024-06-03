@@ -6,7 +6,7 @@ class CText extends StatelessWidget {
     this.text, {
     super.key,
     this.fontSize = 12,
-    this.color = Colors.black87,
+    this.color,
     this.maxLine,
     this.textDirection = TextDirection.ltr,
     this.textAlign,
@@ -16,7 +16,7 @@ class CText extends StatelessWidget {
   final double fontSize;
   final double minFontSize;
   final int? maxLine;
-  final Color color;
+  final Color? color;
   final TextDirection textDirection;
   final TextAlign? textAlign;
 

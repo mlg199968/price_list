@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart' show CupertinoCheckbox;
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
+import 'package:price_list/components/check_button.dart';
 import 'package:price_list/components/counter_textfield.dart';
 import 'package:price_list/components/custom_dialog.dart';
 import 'package:price_list/components/custom_button.dart';
@@ -86,16 +86,13 @@ class _PrintPanelState extends State<PrintPanel> {
   @override
   Widget build(BuildContext context) {
     ///custom check box model
-    Widget cCheckBox(String label,bool isCheck,Function onChange){
-      return Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CText(label,fontSize: 11,color: Colors.black45,),
-          CupertinoCheckbox(value: isCheck,
-              onChanged: (val){
-            onChange(val);
-              setState(() {});}),
-        ],
+    Widget cCheckBox(String label,bool isCheck,Function(bool val) onChange){
+      return Padding(
+        padding: const EdgeInsets.all(2.0),
+        child: CheckButton(label: label, value: isCheck, onChange:(val) {
+          onChange(val!);
+          setState(() {});
+        }),
       );
     }
     ///
@@ -230,6 +227,7 @@ class _PrintPanelState extends State<PrintPanel> {
                   ],
                 ),
                 const Gap(30),
+                ///print font
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -248,6 +246,7 @@ class _PrintPanelState extends State<PrintPanel> {
                     ),
                   ],
                 ),
+                ///sort
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -264,6 +263,7 @@ class _PrintPanelState extends State<PrintPanel> {
                     ),
                   ],
                 ),
+                const Gap(10),
                 ///text scale
                 Row(
                   children: [
@@ -279,7 +279,7 @@ class _PrintPanelState extends State<PrintPanel> {
                           step: .1,
                           minNum: .5,
                           maxNum: 3,
-                          borderRadius: 40,
+                          borderRadius: 10,
                         ),
                       ),
                     ),

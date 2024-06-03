@@ -29,6 +29,8 @@ class CustomTextField extends StatelessWidget {
     this.obscure = false,
     this.prefixIcon,
     this.symbol,
+    this.currency,
+    this.decimalDigits,
   }) : super(key: key);
 
   final String? label;
@@ -43,19 +45,19 @@ class CustomTextField extends StatelessWidget {
   final IconData? prefixIcon;
   final FocusNode? focus;
   final TextFormatter textFormat;
-  // ignore: prefer_typing_uninitialized_variables
   final Function(String val)? onChange;
-  // ignore: prefer_typing_uninitialized_variables
   final bool validate;
   final Function(String? val)? extraValidate;
   final String? symbol;
+  final String? currency;
   final bool enable;
   final bool obscure;
+  final int? decimalDigits;
 
 
   @override
   Widget build(BuildContext context) {
-    String currency=Provider.of<WareProvider>(context,listen: false).currency;
+    String curr=currency ?? Provider.of<WareProvider>(context,listen: false).currency;
     bool isPressed = false;
     return SizedBox(
       height: height,
@@ -89,8 +91,8 @@ class CustomTextField extends StatelessWidget {
                   formatter.CurrencyTextInputFormatter(
                     customPattern: symbol == null ? null : " $symbol ",
                     symbol: "",
-                    decimalDigits: 0,
-                  )
+                    decimalDigits:decimalDigits ?? 0,
+                  ),
                 ]
               : null,
 
@@ -119,7 +121,7 @@ class CustomTextField extends StatelessWidget {
             hoverColor: Colors.white70,
             label:label==null?null: Text(
               textFormat == TextFormatter.price?
-              "${label!} ($currency)":label!,
+              "${label!} ($curr)":label!,
               style: const TextStyle(color: Colors.black54,fontSize: 14),
               maxLines: 1,
               overflow: TextOverflow.fade,

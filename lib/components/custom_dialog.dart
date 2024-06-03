@@ -15,7 +15,7 @@ class CustomDialog extends StatelessWidget {
     this.textDirection = TextDirection.rtl,
     this.opacity = .9,
     this.image,
-    this.borderRadius = 20,
+    this.borderRadius = 10,
     this.vip =false,
     this.contentPadding,
     this.topTrail, this.actions,

@@ -54,7 +54,10 @@ class WareTools {
     }
     return list;
   }
+double currencyCheck(String currency){
 
+    return 0;
+}
   ///group exist condition
   ///check if all ware with same group name are exist in the selected wares
   static bool groupExist(

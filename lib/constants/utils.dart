@@ -121,15 +121,26 @@ Divider customDivider({required BuildContext context, Color? color}) {
 
 ///convert string to double
 double stringToDouble(String text) {
-  String englishText = text.toEnglishDigit();
+  if(text!="") {
+    String englishText = text.toEnglishDigit();
 
-  return double.parse(englishText.replaceAll(RegExp(r'[^0-9.-]'), ''))
-      .toDouble();
+    return double.parse(englishText.replaceAll(RegExp(r'[^0-9.-]'), ''))
+        .toDouble();
+  }
+  else{
+    return 0;
+  }
 }
 
 ///add separator for show price number and persian number
-String addSeparator(num number) {
-  return intl.NumberFormat('###,###,###,###').format(number).toPersianDigit();
+String addSeparator(num number, {bool decimals = false}) {
+  final numberFormatter =intl.NumberFormat('#,##0.00');
+  String formattedNumber = numberFormatter.format(number);
+  if (!decimals) {
+    formattedNumber = formattedNumber.split('.').first;
+  }
+  return formattedNumber.toPersianDigit();
+  // return intl.NumberFormat('###,###,###,###').format(number).toPersianDigit();
 }
 
 /// for launch urls

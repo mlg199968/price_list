@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
-
-
-const String kAppName="price-list";
+const String kAppName = "price-list";
 const String uri = 'http://192.168.1.3:3000';
 const String hostUrl = "https://mlggrand.ir/db";
 
@@ -67,7 +65,22 @@ const List<String> kSortList = [
   'حروف الفبا',
   'موجودی کالا',
 ];
-const List<String> kCurrencyList = ["ریال", "تومان", "دلار", "لیر", "درهم"];
+const List<String> kCurrencyList = [
+  "ریال",
+  "تومان",
+  "دلار",
+  "لیر",
+  "درهم",
+];
+const Map kCurrencyListMap = {
+  "ریال":"IRR",
+  "تومان":"IRT",
+  "دلار":"USD",
+  "لیر":"TRY",
+  "درهم":"AED",
+  "یوان":"CNY",
+  "یورو":"EUR",
+};
 const List<String> kFonts = [
   'Shabnam',
   'Sahel',
@@ -79,15 +92,15 @@ const List<String> kFonts = [
   'Titr'
 ];
 const List<String> kPdfFonts = [
-  'sahel',
   'mitra',
+  'sahel',
   'koodak',
   'roya',
   'terafik',
   'elham',
   'titr'
 ];
-const List kPrintTypeList = ['کاستوم','ساده', 'اتیکت','کاتالوگ'];
+const List kPrintTypeList = ['کاستوم', 'ساده', 'اتیکت', 'کاتالوگ'];
 
 const kSpaceBetween = 20.0;
 
@@ -95,8 +108,9 @@ final kBoxDecoration = BoxDecoration(
     color: Colors.white,
     borderRadius: BorderRadius.circular(5),
     border: Border.all(color: Colors.blue));
-const BoxShadow kShadow= BoxShadow(
-    blurRadius: 5, offset: Offset(1, 2), color: Colors.black54);
+const BoxShadow kShadow =
+    BoxShadow(blurRadius: 5, offset: Offset(1, 2), color: Colors.black54);
+
 ///Text styles
 const kHeaderStyle = TextStyle(
   fontWeight: FontWeight.bold,
@@ -140,4 +154,3 @@ final kButtonStyle = TextButtonThemeData(
     foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
   ),
 );
-

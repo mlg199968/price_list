@@ -32,13 +32,15 @@ class ShopAdapter extends TypeAdapter<Shop> {
       ..fontFamily = fields[12] as String?
       ..userLevel = fields[13] as int
       ..backupDirectory = fields[14] as String?
-      ..pdfFont = fields[15] as String?;
+      ..pdfFont = fields[15] as String?
+      ..currenciesValue = (fields[16] as Map?)?.cast<dynamic, dynamic>()
+      ..replacedCurrency = fields[17] as bool?;
   }
 
   @override
   void write(BinaryWriter writer, Shop obj) {
     writer
-      ..writeByte(16)
+      ..writeByte(18)
       ..writeByte(0)
       ..write(obj.shopName)
       ..writeByte(1)
@@ -70,7 +72,11 @@ class ShopAdapter extends TypeAdapter<Shop> {
       ..writeByte(14)
       ..write(obj.backupDirectory)
       ..writeByte(15)
-      ..write(obj.pdfFont);
+      ..write(obj.pdfFont)
+      ..writeByte(16)
+      ..write(obj.currenciesValue)
+      ..writeByte(17)
+      ..write(obj.replacedCurrency);
   }
 
   @override

@@ -1,6 +1,7 @@
 
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:price_list/constants/error_handler.dart';
 import 'package:price_list/model/shop.dart';
 import 'package:price_list/providers/ware_provider.dart';
@@ -8,6 +9,7 @@ import 'package:price_list/services/hive_boxes.dart';
 import 'package:provider/provider.dart';
 
 class GlobalTask {
+  static final GlobalKey<NavigatorState> navigatorState = GlobalKey<NavigatorState>();
   ///start up data
   Future<void> getStartUpData(context) async {
     try {

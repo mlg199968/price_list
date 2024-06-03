@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:price_list/constants/consts_class.dart';
+import 'package:price_list/constants/global_task.dart';
 import 'package:price_list/model/bug.dart';
 import 'package:price_list/model/notice.dart';
 import 'package:price_list/model/shop.dart';
@@ -52,6 +53,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
 
     return MaterialApp(
+      navigatorKey: GlobalTask.navigatorState,
       scrollBehavior: MyCustomScrollBehavior(),
       theme: ThemeData(
           fontFamily:context.watch<WareProvider>().fontFamily,

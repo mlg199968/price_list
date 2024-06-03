@@ -16,6 +16,7 @@ import 'package:price_list/constants/permission_handler.dart';
 import 'package:price_list/screens/bug_screen/bug_list_screen.dart';
 import 'package:price_list/screens/setting/backup/backup_tools.dart';
 import 'package:price_list/screens/setting/backup/excel_tools.dart';
+import 'package:price_list/screens/setting/currency_screen/currency_screen.dart';
 import 'package:price_list/screens/side_bar/sidebar_panel.dart';
 import 'package:price_list/providers/ware_provider.dart';
 import 'package:price_list/services/hive_boxes.dart';
@@ -48,11 +49,8 @@ class _SettingScreenState extends State<SettingScreen> {
 
   void storeInfoShop() {
     Shop dbShop=HiveBoxes.getShopInfo().values.first.copyWith(
-      showCost: showCostPrice,
-      showQuantity: showQuantity,
       fontFamily: selectedFont,
       pdfFont: selectedPdfFont,
-      currency: selectedCurrency,
       backupDirectory: backupDirectory,
     );
     provider.getData(dbShop);
@@ -61,26 +59,17 @@ class _SettingScreenState extends State<SettingScreen> {
 
   void getData()async {
     prefs = await SharedPreferences.getInstance();
-    showCostPrice=provider.showCostPrice;
-    showQuantity=provider.showQuantity;
     selectedFont=provider.fontFamily;
     selectedPdfFont=provider.pdfFont;
-    selectedCurrency=provider.currency;
     backupDirectory=provider.backupDirectory;
   setState(() {});
   }
 
   @override
   void initState() {
-    //selectedValue = kCurrencyList[0];
+    provider = Provider.of<WareProvider>(context, listen: false);
     getData();
     super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    provider = Provider.of<WareProvider>(context, listen: false);
-    super.didChangeDependencies();
   }
 
   @override
@@ -260,33 +249,12 @@ class _SettingScreenState extends State<SettingScreen> {
                             ),
                             const Gap(30),
                             ///currency unit
-                            DropListItem(
-                                title: "واحد ارز",
-                                selectedValue: selectedCurrency,
-                                listItem: kCurrencyList,
-                                onChange: (val) {
-                                  selectedCurrency = val;
-                                  setState(() {});
+                            ButtonTile(
+                                label: "تنظیمات ارز",
+                                buttonLabel: "تنظیمات ارز",
+                                onPress: () {
+                                  Navigator.pushNamed(context, CurrencyScreen.id).then((value) {setState(() {});});
                                 }),
-                            SwitchItem(
-                              title: "نمایش قیمت خرید",
-                              value: showCostPrice,
-                              onChange: (val) {
-                                showCostPrice=val;
-                                provider.updateSetting(val, showQuantity);
-                                setState(() {});
-                              },
-                            ),
-                            SwitchItem(
-                              title: "نمایش موجودی",
-                              value: showQuantity,
-                              onChange: (val) {
-                                showQuantity=val;
-                                provider.updateSetting(showCostPrice, val);
-                                setState(() {});
-                              },
-                            ),
-
                             ///change font family entire app
                             DropListItem(
                               title: "نوع فونت نمایشی",
@@ -493,7 +461,9 @@ class InputItem extends StatelessWidget {
                 label: inputLabel,
                 controller: controller,
                 width: width,
-                textFormat: TextFormatter.number,
+                height: 35,
+                textFormat: TextFormatter.price,
+                currency: "تومان",
                 onChange: onChange)
           ],
         ),

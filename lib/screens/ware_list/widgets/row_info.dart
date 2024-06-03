@@ -5,7 +5,7 @@ import 'package:price_list/components/custom_text.dart';
 class InfoPanelRow extends StatelessWidget {
   const InfoPanelRow({super.key, required this.infoList, required this.title});
 
-  final String infoList;
+  final String? infoList;
   final String title;
 
   @override
@@ -30,7 +30,7 @@ class InfoPanelRow extends StatelessWidget {
           Expanded(
             flex: 1,
             child: SelectableText(
-              infoList.toPersianDigit(),
+              (infoList ?? "").toPersianDigit(),
               textAlign: TextAlign.left,
               minLines: 1,
               maxLines: 7,

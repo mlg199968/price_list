@@ -45,6 +45,7 @@ class CustomTile extends StatelessWidget {
     return Directionality(
         textDirection: TextDirection.rtl,
         child: Card(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
           surfaceTintColor:surfaceColor ?? Colors.white,
           margin: selected ? const EdgeInsets.only(right: 20) : null,
           child: BackgroundClipper(

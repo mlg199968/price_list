@@ -30,13 +30,17 @@ class WareAdapter extends TypeAdapter<Ware> {
       ..color = fields[10] as String?
       ..modifyDate = fields[11] as DateTime?
       ..wareSerial = fields[12] as String?
-      ..imagePath = fields[13] as String?;
+      ..imagePath = fields[13] as String?
+      ..discount = fields[14] as double?
+      ..sale2 = fields[15] as num?
+      ..sale3 = fields[16] as num?
+      ..saleIndex = fields[17] as int?;
   }
 
   @override
   void write(BinaryWriter writer, Ware obj) {
     writer
-      ..writeByte(14)
+      ..writeByte(18)
       ..writeByte(0)
       ..write(obj.wareName)
       ..writeByte(1)
@@ -64,7 +68,15 @@ class WareAdapter extends TypeAdapter<Ware> {
       ..writeByte(12)
       ..write(obj.wareSerial)
       ..writeByte(13)
-      ..write(obj.imagePath);
+      ..write(obj.imagePath)
+      ..writeByte(14)
+      ..write(obj.discount)
+      ..writeByte(15)
+      ..write(obj.sale2)
+      ..writeByte(16)
+      ..write(obj.sale3)
+      ..writeByte(17)
+      ..write(obj.saleIndex);
   }
 
   @override

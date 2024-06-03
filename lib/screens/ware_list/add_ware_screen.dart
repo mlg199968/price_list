@@ -11,6 +11,7 @@ import 'package:price_list/components/ware_suggestion_textfield.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/screens/ware_list/services/barcode_scanner.dart';
 import '../../components/custom_text.dart';
+import '../../components/price_textfield.dart';
 import '../../constants/consts_class.dart';
 import 'package:price_list/constants/enums.dart';
 import 'package:price_list/constants/error_handler.dart';
@@ -39,6 +40,8 @@ class _AddWareScreenState extends State<AddWareScreen> {
   TextEditingController wareSerialController = TextEditingController();
   TextEditingController costPriceController = TextEditingController();
   TextEditingController salePriceController = TextEditingController();
+  TextEditingController sale2PriceController = TextEditingController();
+  TextEditingController sale3PriceController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
 
@@ -47,6 +50,10 @@ class _AddWareScreenState extends State<AddWareScreen> {
   late List<Ware> wareList;
   bool repeatName = false;
   bool repeatSerial = false;
+
+  int _saleIndex = 0;
+
+
   void saveWare({String? id}) async {
     Ware wareHive = Ware()
       ..wareName = wareNameController.text
@@ -54,12 +61,11 @@ class _AddWareScreenState extends State<AddWareScreen> {
       ..unit = unitItem
       ..groupName =
           Provider.of<WareProvider>(context, listen: false).selectedGroup
-      ..cost = costPriceController.text.isEmpty
-          ? 0
-          : stringToDouble(costPriceController.text)
-      ..sale = salePriceController.text.isEmpty
-          ? 0
-          : stringToDouble(salePriceController.text)
+      ..cost = stringToDouble(costPriceController.text)
+      ..sale = stringToDouble(salePriceController.text)
+      ..sale2 = stringToDouble(sale2PriceController.text)
+      ..sale3 = stringToDouble(sale3PriceController.text)
+      ..saleIndex=_saleIndex
       ..quantity = quantityController.text.isEmpty
           ? 1000
           : stringToDouble(quantityController.text)
@@ -87,6 +93,13 @@ class _AddWareScreenState extends State<AddWareScreen> {
       wareSerialController.text = widget.oldWare!.wareSerial!;
       costPriceController.text = addSeparator(widget.oldWare!.cost);
       salePriceController.text = addSeparator(widget.oldWare!.sale);
+      sale2PriceController.text = widget.oldWare!.sale2 != null
+          ? addSeparator(widget.oldWare!.sale2!)
+          : "";
+      sale3PriceController.text = widget.oldWare!.sale3 != null
+          ? addSeparator(widget.oldWare!.sale3!)
+          : "";
+      _saleIndex=widget.oldWare!.saleIndex ?? 0;
       quantityController.text = widget.oldWare!.quantity.toString();
       descriptionController.text = widget.oldWare!.description;
       Provider.of<WareProvider>(context, listen: false).selectedGroup =
@@ -119,9 +132,9 @@ class _AddWareScreenState extends State<AddWareScreen> {
     descriptionController.dispose();
     super.dispose();
   }
-
-  void updateUINotifier(value) {
-    Provider.of<WareProvider>(context, listen: false).selectedGroup = value;
+  ///change Radio button function
+  void _handleRadioChange(int? value) {
+    _saleIndex = value ?? 0;
     setState(() {});
   }
 
@@ -133,7 +146,7 @@ class _AddWareScreenState extends State<AddWareScreen> {
         floatingActionButtonLocation:
             isMobileSize ? null : FloatingActionButtonLocation.centerFloat,
         floatingActionButton: CustomFloatActionButton(
-          iconSize: 35,
+            iconSize: 35,
             label: widget.oldWare != null ? "ذخیره تغییرات" : "افزودن به لیست",
             icon: Icons.save,
             onPressed: () {
@@ -173,7 +186,8 @@ class _AddWareScreenState extends State<AddWareScreen> {
               margin: isMobileSize
                   ? EdgeInsets.all(5).copyWith(top: 60)
                   : EdgeInsetsDirectional.symmetric(
-                      horizontal: 10, vertical: 30).copyWith(top: 60),
+                          horizontal: 10, vertical: 30)
+                      .copyWith(top: 60),
               alignment: Alignment.topCenter,
               decoration: BoxDecoration(
                 gradient: kBlackWhiteGradiant,
@@ -186,13 +200,13 @@ class _AddWareScreenState extends State<AddWareScreen> {
                     borderRadius: BorderRadius.circular(20),
                     child: Stack(
                       children: [
-                        ///top rounded part
+                        ///image holder behind
                         Container(
                           margin: EdgeInsets.only(top: 150),
                           height: 100,
                           decoration: BoxDecoration(
-                              gradient: kMainGradiant,
-                              ),
+                            gradient: kMainGradiant,
+                          ),
                         ),
 
                         ///
@@ -200,186 +214,214 @@ class _AddWareScreenState extends State<AddWareScreen> {
                           padding: const EdgeInsets.all(20).copyWith(top: 100),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children:[
-                                ///photo part
-                                AspectRatio(
-                                  aspectRatio: 16 / 9,
-                                  child: Container(
-                                    height: 150,
-                                    margin: const EdgeInsets.all(5),
-                                    child: ItemImageHolder(
-                                      imagePath: imagePath,
-                                      onSet: (path) {
-                                        imagePath = path;
+                            children: [
+                              ///photo part
+                              AspectRatio(
+                                aspectRatio: 16 / 9,
+                                child: Container(
+                                  height: 150,
+                                  margin: const EdgeInsets.all(5),
+                                  child: ItemImageHolder(
+                                    imagePath: imagePath,
+                                    onSet: (path) {
+                                      imagePath = path;
+                                      setState(() {});
+                                    },
+                                  ),
+                                ),
+                              ),
+                              const Gap(20),
+
+                              ///select group dropdown list and add group
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  ActionButton(
+                                      height: 30,
+                                      label: "افزودن گروه",
+                                      borderRadius: 5,
+                                      icon: Icons.category,
+                                      onPress: () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                CreateGroupPanel());
+                                      }),
+                                  DropListModel(
+                                    selectedValue: wareProvider.selectedGroup,
+                                    listItem: wareProvider.groupList,
+                                    onChanged: (value) {
+                                      wareProvider.updateSelectedGroup(value);
+                                    },
+                                  ),
+                                ],
+                              ),
+                              const Gap(20),
+
+                              ///ware name textfield
+                              WareSuggestionTextField(
+                                label: "نام کالا",
+                                maxLength: 50,
+                                //focus: wareNameFocus,
+                                controller: wareNameController,
+                                onSuggestionSelected: (val) {
+                                  wareNameController.text = val.wareName;
+                                  unitItem = val.unit;
+                                  repeatName = wareList
+                                      .map((e) => e.wareName)
+                                      .contains(val.wareName);
+                                  setState(() {});
+                                },
+                                onChange: (val) {
+                                  print(val);
+                                  repeatName = (widget.oldWare != null &&
+                                              widget.oldWare!.wareName ==
+                                                  val) ||
+                                          val == ""
+                                      ? false
+                                      : wareList
+                                          .map((e) => e.wareName)
+                                          .contains(val);
+                                  setState(() {});
+                                },
+                              ),
+                              if (repeatName)
+                                Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: CText(
+                                    "کالایی با این نام قبلا ثبت شده است",
+                                    color: Colors.red,
+                                    fontSize: 10,
+                                    textDirection: TextDirection.rtl,
+                                  ),
+                                ),
+                              const Gap(20),
+
+                              ///serial
+                              CustomTextField(
+                                label: "شماره سریال کالا",
+                                maxLength: 25,
+                                controller: wareSerialController,
+                                onChange: (val) {
+                                  print(val);
+                                  repeatSerial = (widget.oldWare != null &&
+                                              widget.oldWare!.wareSerial ==
+                                                  val) ||
+                                          val == ""
+                                      ? false
+                                      : wareList
+                                          .map((e) => e.wareSerial)
+                                          .contains(val);
+                                  setState(() {});
+                                },
+                                suffixIcon: Platform.isAndroid || Platform.isIOS
+                                    ? CustomIconButton(
+                                        icon: Icons.qr_code_scanner_rounded,
+                                        iconSize: 25,
+                                        onPress: () {
+                                          Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          BarcodeScannerScreen()))
+                                              .then((value) {
+                                            wareSerialController.text = value;
+                                            setState(() {});
+                                          });
+                                        },
+                                      )
+                                    : null,
+                              ),
+                              if (repeatSerial)
+                                Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: CText(
+                                    "کالایی با این شماره سریال قبلا ثبت شده است",
+                                    color: Colors.red,
+                                    fontSize: 10,
+                                    textDirection: TextDirection.rtl,
+                                  ),
+                                ),
+                              const Gap(20),
+
+                              ///unit dropdown list selection
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Flexible(
+                                    child: DropListModel(
+                                      selectedValue: unitItem,
+                                      listItem: kUnitList,
+                                      onChanged: (val) {
+                                        unitItem = val;
                                         setState(() {});
                                       },
                                     ),
                                   ),
-                                ),
-                                const Gap(20),
-                                ///select group dropdown list and add group
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    ActionButton(
-                                        height: 30,
-                                        label: "افزودن گروه",
-                                        borderRadius: 5,
-                                        icon: Icons.category,
-                                        onPress: () {
-                                          showDialog(
-                                              context: context,
-                                              builder: (context) =>
-                                                  CreateGroupPanel());
-                                        }),
-                                    DropListModel(
-                                      selectedValue: wareProvider.selectedGroup,
-                                      listItem: wareProvider.groupList,
-                                      onChanged: (value) {
-                                        wareProvider.updateSelectedGroup(value);
-                                      },
-                                    ),
-                                  ],
-                                ),
-                                const Gap(20),
-                                ///ware name textfield
-                                WareSuggestionTextField(
-                                  label: "نام کالا",
-                                  maxLength: 50,
-                                  //focus: wareNameFocus,
-                                  controller: wareNameController,
-                                  onSuggestionSelected: (val) {
-                                    wareNameController.text = val.wareName;
-                                    unitItem = val.unit;
-                                    repeatName = wareList
-                                        .map((e) => e.wareName)
-                                        .contains(val.wareName);
-                                    setState(() {});
-                                  },
-                                  onChange: (val) {
-                                    print(val);
-                                    repeatName = (widget.oldWare != null &&
-                                                widget.oldWare!.wareName ==
-                                                    val) ||
-                                            val == ""
-                                        ? false
-                                        : wareList
-                                            .map((e) => e.wareName)
-                                            .contains(val);
-                                    setState(() {});
-                                  },
-                                ),
-                                if (repeatName)
-                                  Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: CText(
-                                      "کالایی با این نام قبلا ثبت شده است",
-                                      color: Colors.red,
-                                      fontSize: 10,
-                                      textDirection: TextDirection.rtl,
-                                    ),
+                                  const SizedBox(
+                                    width: kSpaceBetween,
                                   ),
-
-                                const Gap(20),
-                                CustomTextField(
-                                  label: "شماره سریال کالا",
-                                  maxLength: 25,
-                                  controller: wareSerialController,
-                                  onChange: (val) {
-                                    print(val);
-                                    repeatSerial = (widget.oldWare != null &&
-                                                widget.oldWare!.wareSerial ==
-                                                    val) ||
-                                            val == ""
-                                        ? false
-                                        : wareList
-                                            .map((e) => e.wareSerial)
-                                            .contains(val);
-                                    setState(() {});
-                                  },
-                                  suffixIcon: Platform.isAndroid ||
-                                          Platform.isIOS
-                                      ? CustomIconButton(
-                                          icon: Icons.qr_code_scanner_rounded,
-                                          iconSize: 25,
-                                          onPress: () {
-                                            Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            BarcodeScannerScreen()))
-                                                .then((value) {
-                                              wareSerialController.text = value;
-                                              setState(() {});
-                                            });
-                                          },
-                                        )
-                                      : null,
-                                ),
-                                if (repeatSerial)
-                                  Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: CText(
-                                      "کالایی با این شماره سریال قبلا ثبت شده است",
-                                      color: Colors.red,
-                                      fontSize: 10,
-                                      textDirection: TextDirection.rtl,
-                                    ),
+                                  CustomTextField(
+                                    label: "مقدار",
+                                    maxLength: 15,
+                                    controller: quantityController,
+                                    textFormat: TextFormatter.number,
                                   ),
-                                const Gap(20),
+                                ],
+                              ),
+                              const Gap(20),
+                              ///cost price
+                              PriceTextField(
+                                label: "قیمت خرید",
+                                controller: costPriceController,
+                                onChange: (val) {
+                                  setState(() {});
+                                },
+                              ),
+                              const Gap(20),
+                              ///sale textfield
+                              PriceTextField(
+                                label: "قیمت فروش",
+                                controller: salePriceController,
+                                onChange: (val) {
+                                  setState(() {});
+                                },
+                                prefixWidget: Radio(value: 0, groupValue: _saleIndex, onChanged: _handleRadioChange),
+                              ),
+                              const Gap(20),
+                              ///sale2 textfield
+                              PriceTextField(
+                                label: "قیمت فروش 2",
+                                controller: sale2PriceController,
+                                onChange: (val) {
+                                  setState(() {});
+                                },
+                                prefixWidget: Radio(value: 1, groupValue: _saleIndex, onChanged: _handleRadioChange),
+                              ),
+                              const Gap(20),
+                              ///sale3 textfield
+                              PriceTextField(
+                                label: "قیمت فروش 3",
+                                controller: sale3PriceController,
+                                onChange: (val) {
+                                  setState(() {});
+                                },
+                                prefixWidget: Radio(value: 2, groupValue: _saleIndex, onChanged: _handleRadioChange),
+                              ),
+                              const Gap(20),
 
-                                ///unit dropdown list selection
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Flexible(
-                                      child: DropListModel(
-                                        selectedValue: unitItem,
-                                        listItem: kUnitList,
-                                        onChanged: (val) {
-                                          unitItem = val;
-                                          setState(() {});
-                                        },
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: kSpaceBetween,
-                                    ),
-                                    CustomTextField(
-                                      label: "مقدار",
-                                      maxLength: 15,
-                                      controller: quantityController,
-                                      textFormat: TextFormatter.number,
-                                    ),
-                                  ],
-                                ),
-                                const Gap(20),
-                                CustomTextField(
-                                  label: "قیمت خرید",
-                                  maxLength: 17,
-                                  controller: costPriceController,
-                                  textFormat: TextFormatter.price,
-                                ),
-                                const Gap(20),
-                                ///sale textfield
-                                CustomTextField(
-                                  label: "قیمت فروش",
-                                  maxLength: 17,
-                                  controller: salePriceController,
-                                  textFormat: TextFormatter.price,
-                                ),
-                                const Gap(20),
-                                ///description textfield
-                                CustomTextField(
-                                  label: "توضیحات",
-                                  maxLength: 200,
-                                  controller: descriptionController,
-                                  maxLine: 5,
-                                ),
-                              ],
-                            ),
+                              ///description textfield
+                              CustomTextField(
+                                label: "توضیحات",
+                                maxLength: 200,
+                                controller: descriptionController,
+                                maxLine: 5,
+                              ),
+                            ],
                           ),
+                        ),
                       ],
                     ),
                   ),
