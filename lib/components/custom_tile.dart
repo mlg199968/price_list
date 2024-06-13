@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:price_list/components/custom_bg_shape.dart';
 
+import '../model/ware.dart';
+
 class CustomTile extends StatelessWidget {
   const CustomTile({
     super.key,
@@ -19,9 +21,9 @@ class CustomTile extends StatelessWidget {
     this.middleLabel,
     this.trailingLabel,
     this.onLongPress,
-    this.selected = false, this.surfaceColor,
+    this.selected = false, this.surfaceColor, required this.ware,
   });
-
+  final Ware ware;
   final double height;
   final Color color;
   final Color? surfaceColor;

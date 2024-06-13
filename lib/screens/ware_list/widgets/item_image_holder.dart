@@ -11,6 +11,7 @@ import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/error_handler.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/constants/permission_handler.dart';
+import 'package:price_list/screens/photo_screen/photo_view_screen.dart';
 
 class ItemImageHolder extends StatefulWidget {
   const ItemImageHolder({super.key, this.imagePath, required this.onSet});
@@ -144,7 +145,7 @@ chooseImageFunction({ImageSource imageSource=ImageSource.gallery}) async {
           if (widget.imagePath != null && widget.imagePath != "" )
             Row(
               children: [
-                //delete button
+                ///delete button
                 IconButton(
                   onPressed: () {
                     File(widget.imagePath!).delete(recursive: true);
@@ -153,6 +154,18 @@ chooseImageFunction({ImageSource imageSource=ImageSource.gallery}) async {
                   icon:const Icon(
                     CupertinoIcons.trash_fill,
                     color: Colors.red,
+                    size: 25,
+                    shadows: [BoxShadow(blurRadius: 2,offset: Offset(2, 3),color: Colors.black45)],
+                  ),
+                ),
+               ///See pic button
+                IconButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, PhotoViewScreen.id,arguments:widget.imagePath );
+                  },
+                  icon:const Icon(
+                    CupertinoIcons.eye,
+                    color: Colors.orangeAccent,
                     size: 25,
                     shadows: [BoxShadow(blurRadius: 2,offset: Offset(2, 3),color: Colors.black45)],
                   ),

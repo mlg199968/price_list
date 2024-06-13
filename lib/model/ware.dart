@@ -48,7 +48,7 @@ class Ware extends HiveObject {
   int? saleIndex;
 
 
-  num get saleConverted {
+  num get selectedSale {
     num selectedSale = saleIndex == 0
         ? sale
         : saleIndex == 1
@@ -68,7 +68,13 @@ class Ware extends HiveObject {
       return selectedSale;
     }
   }
-
+  num get saleConverted {
+    if(discount!=null){
+      return selectedSale-(selectedSale*discount!/100);
+    }else{
+      return selectedSale;
+    }
+  }
   Map<String, dynamic> toMap() {
     return {
       'wareName': wareName,

@@ -23,8 +23,7 @@ import 'package:share_plus/share_plus.dart';
 
 class PrintPanel extends StatefulWidget {
   static const String id = "/WareActionPanel";
-  const PrintPanel(
-      {Key? key, required this.wares, required this.subGroup})
+  const PrintPanel({Key? key, required this.wares, required this.subGroup})
       : super(key: key);
   final List<Ware> wares;
   final String subGroup;
@@ -34,72 +33,84 @@ class PrintPanel extends StatefulWidget {
 }
 
 class _PrintPanelState extends State<PrintPanel> {
-  final TextEditingController textScaleController = TextEditingController(text: "1");
+  final TextEditingController textScaleController =
+      TextEditingController(text: "1");
   late String subGroup;
-   String pdfFont=kPdfFonts[0];
+  String pdfFont = kPdfFonts[0];
   double get textScale => stringToDouble(textScaleController.text);
   String printType = kPrintTypeList[0];
-  bool showHeader=true;
-  bool showFooter=true;
-  Map<String,bool> showMap={
-  "des":false,
-  "cost":false,
-  "sale":true,
-  "count":false,
-  "serial":false,
+  bool showHeader = true;
+  bool showFooter = true;
+  bool separateGroups = true;
+  Map<String, bool> showMap = {
+    "des": false,
+    "cost": false,
+    "sale": true,
+    "sale2": false,
+    "sale3": false,
+    "count": false,
+    "serial": false,
   };
   String sortItem = kSortList[0];
+
   /// pdf type file
   Future<File> pdfTypeFile() async {
-    List<Ware> filteredList = WareTools.filterList(
-        widget.wares, "", sortItem,subGroup);
-    final pdfWareListApi=PdfWareListApi(context, filteredList,showFooter: showFooter,showHeader: showHeader,pdfFont: pdfFont);
+    List<Ware> filteredList =
+        WareTools.filterList(widget.wares, "", sortItem, subGroup);
+    if (separateGroups) {
+      filteredList = WareTools.sortGroups(filteredList);
+    }
+
+    final pdfWareListApi = PdfWareListApi(context, filteredList,
+        scale: textScale,
+        show: showMap,
+        showFooter: showFooter,
+        showHeader: showHeader,
+        pdfFont: pdfFont);
     late File file;
     if (printType == "اتیکت") {
-      file = await pdfWareListApi
-          .generateTicketWareList(scale: textScale);
-    }
-    else if (printType == "کاستوم") {
-      file =await pdfWareListApi
-          .generateCustomWareList(scale: textScale,show: showMap);
-    }
-    else if (printType == "کاتالوگ") {
-      file = await pdfWareListApi
-          .generateCatalog(scale: textScale,show: showMap);
-    }
-    else {
-      file = await pdfWareListApi
-          .generateSimpleWareList(scale: textScale);
+      file = await pdfWareListApi.generateTicketWareList();
+    } else if (printType == "کاستوم") {
+      file = await pdfWareListApi.generateCustomWareList();
+    } else if (printType == "کاتالوگ") {
+      file = await pdfWareListApi.generateCatalog();
+    } else {
+      file = await pdfWareListApi.generateSimpleWareList();
     }
     print("***************object************");
     print(file.path);
     return file;
   }
+
   @override
   void initState() {
     subGroup = widget.subGroup;
-    pdfFont=HiveBoxes.getShopInfo().values.first.pdfFont ?? kPdfFonts[0];
+    pdfFont = HiveBoxes.getShopInfo().values.first.pdfFont ?? kPdfFonts[0];
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
     ///custom check box model
-    Widget cCheckBox(String label,bool isCheck,Function(bool val) onChange){
+    Widget cCheckBox(String label, bool isCheck, Function(bool val) onChange) {
       return Padding(
         padding: const EdgeInsets.all(2.0),
-        child: CheckButton(label: label, value: isCheck, onChange:(val) {
-          onChange(val!);
-          setState(() {});
-        }),
+        child: CheckButton(
+            label: label,
+            value: isCheck,
+            onChange: (val) {
+              onChange(val!);
+              setState(() {});
+            }),
       );
     }
+
     ///
     return CustomDialog(
-        vip:!Provider.of<WareProvider>(context, listen: false).isVip,
+        vip: !Provider.of<WareProvider>(context, listen: false).isVip,
         contentPadding: EdgeInsets.all(8),
-        height: 500,
+        opacity: .7,
+        height: 600,
         title: "",
         topTrail: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -124,6 +135,7 @@ class _PrintPanelState extends State<PrintPanel> {
             },
           ),
         ),
+
         ///buttons
         actions: [
           ///pdf print
@@ -133,15 +145,19 @@ class _PrintPanelState extends State<PrintPanel> {
                 height: 30,
                 text: "چاپ",
                 radius: 10,
-                icon: Icon(FontAwesomeIcons.filePdf,color:Colors.white,size: 18,),
+                icon: Icon(
+                  FontAwesomeIcons.filePdf,
+                  color: Colors.white,
+                  size: 18,
+                ),
                 color: Colors.red,
-
                 onPressed: () async {
-                  File file=await pdfTypeFile();
+                  File file = await pdfTypeFile();
                   PdfApi.openFile(file);
                 }),
           ),
           Gap(5),
+
           ///share button
           Flexible(
             child: CustomButton(
@@ -149,14 +165,16 @@ class _PrintPanelState extends State<PrintPanel> {
               height: 30,
               text: "اشتراک گذاری",
               radius: 10,
-              icon: Icon(Icons.share_rounded,color: Colors.white,),
-              onPressed: ()async{
-                File file=await pdfTypeFile();
+              icon: Icon(
+                Icons.share_rounded,
+                color: Colors.white,
+              ),
+              onPressed: () async {
+                File file = await pdfTypeFile();
                 await Share.shareXFiles([XFile(file.path)]);
               },
             ),
           ),
-
         ],
         child: Consumer<WareProvider>(builder: (context, wareProvider, child) {
           return SingleChildScrollView(
@@ -164,26 +182,27 @@ class _PrintPanelState extends State<PrintPanel> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ///dropDown list for Group Select
-                if(subGroup!="selected")
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text("انتخاب گروه کالا"),
-                    const Gap(10),
-                    Flexible(
-                      child: DropListModel(
-                        selectedValue: subGroup,
-                        height: 40,
-                        listItem: ["همه", ...wareProvider.groupList],
-                        onChanged: (val) {
-                          subGroup = val;
-                          setState(() {});
-                        },
+                if (subGroup != "selected")
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text("انتخاب گروه کالا"),
+                      const Gap(10),
+                      Flexible(
+                        child: DropListModel(
+                          selectedValue: subGroup,
+                          height: 40,
+                          listItem: ["همه", ...wareProvider.groupList],
+                          onChanged: (val) {
+                            subGroup = val;
+                            setState(() {});
+                          },
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
                 Gap(10),
+
                 ///print type
                 Row(
                   children: [
@@ -206,27 +225,51 @@ class _PrintPanelState extends State<PrintPanel> {
                 ),
                 Wrap(
                   children: [
-                    cCheckBox("نمایش عنوان",showHeader,(val)=>showHeader=val),
-                    cCheckBox("نمایش پاورقی",showFooter,(val)=>showFooter=val),
+                    cCheckBox(
+                        "نمایش عنوان", showHeader, (val) => showHeader = val),
+                    cCheckBox(
+                        "نمایش پاورقی", showFooter, (val) => showFooter = val),
                   ],
                 ),
                 const Divider(),
+
+                ///ticket print type check boxes
+                if (printType == kPrintTypeList[2])
+                  cCheckBox("سریال", showMap["serial"]!,
+                          (val) => showMap["serial"] = val),
                 ///Catalog print type check boxes
-                if(printType==kPrintTypeList[3])
-                cCheckBox("توضیحات",showMap["des"]!,(val)=>showMap["des"]=val),
+                if (printType == kPrintTypeList[3])
+                  Wrap(
+                    children: [
+                      cCheckBox("توضیحات", showMap["des"]!,
+                          (val) => showMap["des"] = val),
+                      cCheckBox("قیمت فروش", showMap["sale"]!,
+                              (val) => showMap["sale"] = val),
+                    ],
+                  ),
                 ///custom print type check boxes
-                if(printType==kPrintTypeList[0])
-                Wrap(
-                  direction: Axis.horizontal,
-                  children: [
-                    cCheckBox("قیمت خرید",showMap["cost"]!,(val)=>showMap["cost"]=val),
-                    cCheckBox("قیمت فروش",showMap["sale"]!,(val)=>showMap["sale"]=val),
-                    cCheckBox("تعداد",showMap["count"]!,(val)=>showMap["count"]=val),
-                    cCheckBox("توضیحات",showMap["des"]!,(val)=>showMap["des"]=val),
-                    cCheckBox("سریال",showMap["serial"]!,(val)=>showMap["serial"]=val),
-                  ],
-                ),
+                if (printType == kPrintTypeList[0])
+                  Wrap(
+                    direction: Axis.horizontal,
+                    children: [
+                      cCheckBox("قیمت خرید", showMap["cost"]!,
+                          (val) => showMap["cost"] = val),
+                      cCheckBox("قیمت فروش", showMap["sale"]!,
+                          (val) => showMap["sale"] = val),
+                      cCheckBox("قیمت فروش2", showMap["sale2"]!,
+                          (val) => showMap["sale2"] = val),
+                      cCheckBox("قیمت فروش3", showMap["sale3"]!,
+                          (val) => showMap["sale3"] = val),
+                      cCheckBox("تعداد", showMap["count"]!,
+                          (val) => showMap["count"] = val),
+                      cCheckBox("توضیحات", showMap["des"]!,
+                          (val) => showMap["des"] = val),
+                      cCheckBox("سریال", showMap["serial"]!,
+                          (val) => showMap["serial"] = val),
+                    ],
+                  ),
                 const Gap(30),
+
                 ///print font
                 Row(
                   mainAxisSize: MainAxisSize.min,
@@ -246,6 +289,7 @@ class _PrintPanelState extends State<PrintPanel> {
                     ),
                   ],
                 ),
+
                 ///sort
                 Row(
                   mainAxisSize: MainAxisSize.min,
@@ -263,7 +307,15 @@ class _PrintPanelState extends State<PrintPanel> {
                     ),
                   ],
                 ),
+                CheckButton(
+                    label: "نمایش دسته ای",
+                    value: separateGroups,
+                    onChange: (val) {
+                      separateGroups = val!;
+                      setState(() {});
+                    }),
                 const Gap(10),
+
                 ///text scale
                 Row(
                   children: [

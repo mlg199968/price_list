@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:price_list/model/ware.dart';
+import 'package:price_list/screens/photo_screen/photo_view_screen.dart';
 import 'package:price_list/screens/setting/currency_screen/currency_screen.dart';
 import 'package:price_list/screens/ware_list/add_ware_screen.dart';
 import 'package:price_list/screens/purchase_screen/bazaar_purchase_screen.dart';
@@ -13,11 +14,19 @@ import 'package:price_list/screens/setting/setting_screen.dart';
 
 Route generateRoute(RouteSettings routeSettings) {
   switch (routeSettings.name) {
+
     case AddWareScreen.id:
       Ware? wareHive = routeSettings.arguments as Ware?;
       return MaterialPageRoute(
           builder: (_) => AddWareScreen(
                 oldWare: wareHive,
+              ));
+
+    case PhotoViewScreen.id:
+      String path = routeSettings.arguments as String;
+      return MaterialPageRoute(
+          builder: (_) => PhotoViewScreen(
+                imagePath: path,
               ));
 
     case WareListScreen.id:

@@ -1,5 +1,8 @@
+import 'package:price_list/constants/global_task.dart';
 import 'package:price_list/model/ware.dart';
+import 'package:price_list/providers/ware_provider.dart';
 import 'package:price_list/services/hive_boxes.dart';
+import 'package:provider/provider.dart';
 
 class WareTools {
   /// search and sort the ware List
@@ -31,7 +34,9 @@ class WareTools {
     switch (sort) {
       case "حروف الفبا":
         list.sort((a, b) {
-          return a.wareName.compareTo(b.wareName);
+          String a1=a.wareName.toLowerCase().replaceAll(" ", "");
+          String b1=b.wareName.toLowerCase().replaceAll(" ", "");
+          return a1.compareTo(b1);
         });
         break;
       case "موجودی کالا":
@@ -57,6 +62,19 @@ class WareTools {
 double currencyCheck(String currency){
 
     return 0;
+}
+///sort ware list with group sort
+static List<Ware> sortGroups(List<Ware> wareList){
+    List<Ware> sortedList=[];
+    List groupList=Provider.of<WareProvider>(GlobalTask.navigatorState.currentContext!,listen: false).groupList;
+    for(String group in groupList){
+      for(Ware ware in wareList){
+        if(ware.groupName==group){
+          sortedList.add(ware);
+        }
+      }
+    }
+    return sortedList;
 }
   ///group exist condition
   ///check if all ware with same group name are exist in the selected wares

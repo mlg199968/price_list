@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:price_list/components/action_button.dart';
+import 'package:price_list/components/counter_textfield.dart';
 import 'package:price_list/components/custom_float_action_button.dart';
 import 'package:price_list/components/custom_icon_button.dart';
 import 'package:price_list/components/custom_textfield.dart';
@@ -44,6 +45,7 @@ class _AddWareScreenState extends State<AddWareScreen> {
   TextEditingController sale3PriceController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+  TextEditingController discountController = TextEditingController();
 
   String unitItem = kUnitList[0];
   String? imagePath;
@@ -65,6 +67,7 @@ class _AddWareScreenState extends State<AddWareScreen> {
       ..sale = stringToDouble(salePriceController.text)
       ..sale2 = stringToDouble(sale2PriceController.text)
       ..sale3 = stringToDouble(sale3PriceController.text)
+      ..discount = stringToDouble(discountController.text)
       ..saleIndex=_saleIndex
       ..quantity = quantityController.text.isEmpty
           ? 1000
@@ -81,8 +84,6 @@ class _AddWareScreenState extends State<AddWareScreen> {
       wareHive.imagePath =
           await saveImage(imagePath, wareHive.wareID!, newPath);
     }
-
-    //Debuger.maxWare(wareHive, 50);
     HiveBoxes.getWares().put(wareHive.wareID, wareHive);
     showSnackBar(context, "کالا با موفقیت ذخیره شد", type: SnackType.success);
   }
@@ -98,6 +99,9 @@ class _AddWareScreenState extends State<AddWareScreen> {
           : "";
       sale3PriceController.text = widget.oldWare!.sale3 != null
           ? addSeparator(widget.oldWare!.sale3!)
+          : "";
+      discountController.text= widget.oldWare!.discount != null
+          ? addSeparator(widget.oldWare!.discount!)
           : "";
       _saleIndex=widget.oldWare!.saleIndex ?? 0;
       quantityController.text = widget.oldWare!.quantity.toString();
@@ -128,8 +132,11 @@ class _AddWareScreenState extends State<AddWareScreen> {
     wareSerialController.dispose();
     costPriceController.dispose();
     salePriceController.dispose();
+    sale2PriceController.dispose();
+    sale3PriceController.dispose();
     quantityController.dispose();
     descriptionController.dispose();
+    discountController.dispose();
     super.dispose();
   }
   ///change Radio button function
@@ -140,6 +147,16 @@ class _AddWareScreenState extends State<AddWareScreen> {
 
   @override
   Widget build(BuildContext context) {
+    String selectedPrice=_saleIndex==0
+        ?salePriceController.text
+        :(
+        _saleIndex==1
+        ?sale2PriceController.text
+        :sale3PriceController.text
+    );
+    String finalPrice=selectedPrice==""
+        ?"0"
+        :addSeparator(stringToDouble(selectedPrice)-(stringToDouble(selectedPrice)*stringToDouble(discountController.text)/100));
     final bool isMobileSize = screenType(context) == ScreenType.mobile;
     return HideKeyboard(
       child: Scaffold(
@@ -360,14 +377,11 @@ class _AddWareScreenState extends State<AddWareScreen> {
                                       },
                                     ),
                                   ),
-                                  const SizedBox(
-                                    width: kSpaceBetween,
-                                  ),
-                                  CustomTextField(
+                                  const Gap(20),
+                                  CounterTextfield(
                                     label: "مقدار",
-                                    maxLength: 15,
+                                    maxNum: 99999999,
                                     controller: quantityController,
-                                    textFormat: TextFormatter.number,
                                   ),
                                 ],
                               ),
@@ -390,7 +404,7 @@ class _AddWareScreenState extends State<AddWareScreen> {
                                 },
                                 prefixWidget: Radio(value: 0, groupValue: _saleIndex, onChanged: _handleRadioChange),
                               ),
-                              const Gap(20),
+                              const Gap(10),
                               ///sale2 textfield
                               PriceTextField(
                                 label: "قیمت فروش 2",
@@ -400,7 +414,7 @@ class _AddWareScreenState extends State<AddWareScreen> {
                                 },
                                 prefixWidget: Radio(value: 1, groupValue: _saleIndex, onChanged: _handleRadioChange),
                               ),
-                              const Gap(20),
+                              const Gap(10),
                               ///sale3 textfield
                               PriceTextField(
                                 label: "قیمت فروش 3",
@@ -411,7 +425,35 @@ class _AddWareScreenState extends State<AddWareScreen> {
                                 prefixWidget: Radio(value: 2, groupValue: _saleIndex, onChanged: _handleRadioChange),
                               ),
                               const Gap(20),
-
+                              ///unit dropdown list selection
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  CounterTextfield(
+                                    label: "درصد %",
+                                    maxNum: 100,
+                                    controller: discountController,
+                                    onChange: (val){setState(() {});},
+                                  ),
+                                  const Gap(20),
+                                  Flexible(
+                                    child: CText("درصد تخفیف"),
+                                  ),
+                                ],
+                              ),
+                              Container(
+                                margin: EdgeInsets.symmetric(vertical: 10),
+                                padding: EdgeInsets.symmetric(vertical: 10),
+                                decoration: BoxDecoration(gradient: kMainGradiant),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    CText(finalPrice,color: Colors.white,fontSize: 15,),
+                                    CText("قیمت فروش نهایی: ",color: Colors.white54,textDirection: TextDirection.rtl,),
+                                  ],
+                                ),
+                              ),
                               ///description textfield
                               CustomTextField(
                                 label: "توضیحات",

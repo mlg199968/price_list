@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:gap/gap.dart';
 import 'package:price_list/components/action_button.dart';
 import 'package:price_list/components/check_button.dart';
@@ -20,7 +20,6 @@ import 'package:provider/provider.dart';
 
 import 'change_group_panel.dart';
 
-
 class WareActionsPanel extends StatefulWidget {
   static const String id = "/WareActionPanel";
   const WareActionsPanel(
@@ -34,15 +33,20 @@ class WareActionsPanel extends StatefulWidget {
 }
 
 class _WareActionsPanelState extends State<WareActionsPanel> {
-  final TextEditingController percentController = TextEditingController(text: "0");
-  final TextEditingController fixAmountController = TextEditingController(text: "0");
-  final TextEditingController coefficientController = TextEditingController(text: "1");
+  final TextEditingController percentController =
+      TextEditingController(text: "0");
+  final TextEditingController fixAmountController =
+      TextEditingController(text: "0");
+  final TextEditingController discountController = TextEditingController();
+  final TextEditingController coefficientController =
+      TextEditingController(text: "1");
   late String subGroup;
   bool isNegative = false;
   bool changeCost = false;
   bool changeSale = true;
   bool changeSale2 = false;
   bool changeSale3 = false;
+  bool changeDiscount = false;
 
   final List<String> saleIndexes = [
     "1",
@@ -50,7 +54,8 @@ class _WareActionsPanelState extends State<WareActionsPanel> {
     "3",
   ];
   String saleIndex = "1";
-///save button function
+
+  ///save button function
   void saveButtonFunction() {
     for (Ware ware in widget.wares) {
       double fixPrice = fixAmountController.text == ""
@@ -63,27 +68,33 @@ class _WareActionsPanelState extends State<WareActionsPanel> {
           ? 1
           : stringToDouble(coefficientController.text);
       //calculate function
-      num calculateFunc(num? price,bool isChange,{bool negative=false}){
-        if(isChange && price!=null) {
+      num calculateFunc(num? price, bool isChange, {bool negative = false}) {
+        if (isChange && price != null) {
           if (negative) {
             return (price - fixPrice - (price * percent / 100)) * coefficient;
           } else {
             return (price + fixPrice + (price * percent / 100)) * coefficient;
           }
-        }
-        else{
+        } else {
           return price ?? 0;
         }
       }
-      //
-      if (ware.groupName == subGroup || subGroup == "همه" || subGroup == "selected") {
-          ware.sale = calculateFunc(ware.sale, changeSale,negative: isNegative);
-          ware.sale2 = calculateFunc(ware.sale2, changeSale2,negative: isNegative);
-          ware.sale3 = calculateFunc(ware.sale3, changeSale3,negative: isNegative);
-          ware.cost = calculateFunc(ware.cost, changeCost,negative: isNegative);
 
-          ware.saleIndex=int.parse(saleIndex) -1;
-          ware.modifyDate=DateTime.now();
+      //
+      if (ware.groupName == subGroup ||
+          subGroup == "همه" ||
+          subGroup == "selected") {
+        ware.sale = calculateFunc(ware.sale, changeSale, negative: isNegative);
+        ware.sale2 =
+            calculateFunc(ware.sale2, changeSale2, negative: isNegative);
+        ware.sale3 =
+            calculateFunc(ware.sale3, changeSale3, negative: isNegative);
+        ware.cost = calculateFunc(ware.cost, changeCost, negative: isNegative);
+        if (changeDiscount && discountController.text.isNotEmpty) {
+          ware.discount = stringToDouble(discountController.text);
+        }
+        ware.saleIndex = int.parse(saleIndex) - 1;
+        ware.modifyDate = DateTime.now();
         HiveBoxes.getWares().put(ware.wareID, ware);
       }
     }
@@ -136,9 +147,12 @@ class _WareActionsPanelState extends State<WareActionsPanel> {
         actions: [
           ///save button
           CustomButton(
-            width: 100,
+              width: 100,
               height: 30,
-              icon: Icon(Icons.save_alt,color: Colors.white,),
+              icon: Icon(
+                Icons.save_alt,
+                color: Colors.white,
+              ),
               text: "ثبت",
               radius: 10,
               onPressed: () {
@@ -146,7 +160,7 @@ class _WareActionsPanelState extends State<WareActionsPanel> {
                   context: context,
                   builder: (context) => CustomAlert(
                     title: "آیا از ثبت تغییرات مطمئن هستید؟",
-                    onYes: (){
+                    onYes: () {
                       saveButtonFunction();
                       Navigator.pop(context);
                     },
@@ -161,28 +175,27 @@ class _WareActionsPanelState extends State<WareActionsPanel> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ///dropDown list for Group Select
-                if(subGroup!="selected")
-                Row(
-                  children: [
-                    const Text("انتخاب گروه کالا"),
-                    const SizedBox(
-                      width: 10,
-                    ),
-
-
-                    Flexible(
-                      child: DropListModel(
-                        selectedValue: subGroup,
-                        height: 40,
-                        listItem:["همه", ...wareProvider.groupList],
-                        onChanged: (val) {
-                          subGroup = val;
-                          setState(() {});
-                        },
+                if (subGroup != "selected")
+                  Row(
+                    children: [
+                      const Text("انتخاب گروه کالا"),
+                      const SizedBox(
+                        width: 10,
                       ),
-                    ),
-                  ],
-                ),
+                      Flexible(
+                        child: DropListModel(
+                          selectedValue: subGroup,
+                          height: 40,
+                          listItem: ["همه", ...wareProvider.groupList],
+                          onChanged: (val) {
+                            subGroup = val;
+                            setState(() {});
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+
                 ///
                 Wrap(
                   spacing: 3,
@@ -190,34 +203,34 @@ class _WareActionsPanelState extends State<WareActionsPanel> {
                     CheckButton(
                         label: "قیمت فروش 1",
                         value: changeSale,
-                        onChange: (val){
-                          changeSale=val!;
+                        onChange: (val) {
+                          changeSale = val!;
                           setState(() {});
                         }),
                     CheckButton(
                         label: "قیمت خرید",
                         value: changeCost,
-                        onChange: (val){
-                          changeCost=val!;
+                        onChange: (val) {
+                          changeCost = val!;
                           setState(() {});
                         }),
                     CheckButton(
                         label: "قیمت فروش 2",
                         value: changeSale2,
-                        onChange: (val){
-                          changeSale2=val!;
+                        onChange: (val) {
+                          changeSale2 = val!;
                           setState(() {});
                         }),
                     CheckButton(
                         label: "قیمت فروش 3",
                         value: changeSale3,
-                        onChange: (val){
-                          changeSale3=val!;
+                        onChange: (val) {
+                          changeSale3 = val!;
                           setState(() {});
                         }),
-
                   ],
                 ),
+
                 ///negative values switch button
                 Row(
                   children: [
@@ -285,26 +298,56 @@ class _WareActionsPanelState extends State<WareActionsPanel> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CText("قیمت فروش",color: Colors.black54,),
-                    CustomToggleButton(labelList: saleIndexes, selected: saleIndex, onPress: (index){
-                      saleIndex=saleIndexes[index];
-                      setState(() {});
-                    }),
+                    CText(
+                      "قیمت فروش",
+                      color: Colors.black54,
+                    ),
+                    CustomToggleButton(
+                        labelList: saleIndexes,
+                        selected: saleIndex,
+                        onPress: (index) {
+                          saleIndex = saleIndexes[index];
+                          setState(() {});
+                        }),
+                  ],
+                ),
+                Gap(20),
+                Flexible(child: CText("تغییر درصد تخفیف هر کالا")),
+                Gap(6),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Switch(
+                        value: changeDiscount,
+                        onChanged: (val) {
+                          changeDiscount = !changeDiscount;
+                          setState(() {});
+                        }),
+                    CounterTextfield(
+                      enable: changeDiscount,
+                      label: "درصد %",
+                      controller: discountController,
+                      minNum: 0,
+                      maxNum: 100,
+                      width: 150,
+                    ),
                   ],
                 ),
                 Gap(10),
-                if(subGroup!="همه")
-                ActionButton(
-                  icon: Icons.account_tree_rounded,
-                  label: "تغییر نام گروه",
-                  onPress: (){
-                    showDialog(
-                        context: context,
-                        builder: (context) => GroupManagePanel(wares:widget.wares)).then((value) {
-                      setState(() {});
-                    });
-                  },
-                ),
+                if (subGroup != "همه")
+                  ActionButton(
+                    icon: Icons.account_tree_rounded,
+                    label: "تغییر نام گروه",
+                    onPress: () {
+                      showDialog(
+                              context: context,
+                              builder: (context) =>
+                                  GroupManagePanel(wares: widget.wares))
+                          .then((value) {
+                        setState(() {});
+                      });
+                    },
+                  ),
               ],
             ),
           );

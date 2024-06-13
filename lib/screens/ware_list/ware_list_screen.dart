@@ -319,14 +319,13 @@ class _ListPartState extends State<ListPart> {
   @override
   Widget build(BuildContext context) {
     bool isMobile=screenType(context)==ScreenType.mobile;
-    return WillPopScope(
+
+    return PopScope(
       //if action bottom bar is shown,on will pop first close the action bar then on the second press close the screen
-      onWillPop: selectedItems.isEmpty
-          ? null
-          : () async {
+      canPop:selectedItems.isEmpty ,
+      onPopInvoked:(didPop) async {
               selectedItems.clear();
               setState(() {});
-              return false;
             },
       child: Consumer<WareProvider>(builder: (context, wareProvider, child) {
         return Expanded(
@@ -393,6 +392,7 @@ class _ListPartState extends State<ListPart> {
                                             }
                                           },
                                           child:  CustomTile(
+                                            ware: ware,
                                             selected: selectedItems.map((e) => e.wareID).contains(ware.wareID),
                                             height: 50,
                                             color: selectedWare?.wareID==widget.wareList[index].wareID?kSecondaryColor:kMainColor,
