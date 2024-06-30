@@ -16,7 +16,7 @@ import 'package:price_list/components/custom_float_action_button.dart';
 import 'package:price_list/components/custom_icon_button.dart';
 import 'package:price_list/components/custom_search_bar.dart';
 import 'package:price_list/components/custom_text.dart';
-import 'package:price_list/components/custom_tile.dart';
+import 'package:price_list/screens/ware_list/widgets/ware_tile.dart';
 import 'package:price_list/components/empty_holder.dart';
 import 'package:price_list/components/hide_keyboard.dart';
 import 'package:price_list/constants/constants.dart';
@@ -397,23 +397,8 @@ class _ListPartState extends State<ListPart> {
                                             height: 50,
                                             color: selectedWare?.wareID==widget.wareList[index].wareID?kSecondaryColor:kMainColor,
                                             surfaceColor: selectedWare?.wareID==widget.wareList[index].wareID?kSecondaryColor:null,
-                                            leadingIcon: CupertinoIcons.cube_box_fill,
-                                            subTitle: ware.groupName,
                                             type: "${index+1}".toPersianDigit(),
-                                            title: ware.wareName,
-                                            topTrailing: wareProvider.showQuantity
-                                                ? ("${ware.quantity}  ".toPersianDigit() +
-                                                ware.unit)
-                                                : "",
-                                            topTrailingLabel:
-                                            wareProvider.showQuantity ? "موجودی:" : "",
-                                            trailing:addSeparator(ware.saleConverted),
-                                            trailingLabel: "فروش:",
-                                            middle: wareProvider.showCostPrice
-                                                ?addSeparator(ware.cost)
-                                                : null,
-                                            middleLabel:
-                                            wareProvider.showCostPrice ? "خرید:" : null,
+
                                           ),
                                         );
                                     }),

@@ -1,25 +1,21 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:price_list/components/custom_bg_shape.dart';
+import 'package:price_list/providers/ware_provider.dart';
+import 'package:provider/provider.dart';
 
-import '../model/ware.dart';
+import '../../../constants/utils.dart';
+import '../../../model/ware.dart';
 
 class CustomTile extends StatelessWidget {
   const CustomTile({
     super.key,
     this.height = 60,
     this.color = Colors.deepPurpleAccent,
-    this.subTitle,
-    required this.title,
-    required this.topTrailing,
-    required this.trailing,
-    this.leadingIcon,
-    this.topTrailingLabel,
     this.onTap,
     this.type,
     this.enable = true,
-    this.middle,
-    this.middleLabel,
-    this.trailingLabel,
     this.onLongPress,
     this.selected = false, this.surfaceColor, required this.ware,
   });
@@ -27,50 +23,50 @@ class CustomTile extends StatelessWidget {
   final double height;
   final Color color;
   final Color? surfaceColor;
-  final String? subTitle;
-  final String title;
-  final String topTrailing;
-  final String? topTrailingLabel;
-  final String trailing;
   final String? type;
-  final IconData? leadingIcon;
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
-  final String? middle;
-  final String? middleLabel;
-  final String? trailingLabel;
   final bool enable;
   final bool selected;
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-        textDirection: TextDirection.rtl,
-        child: Card(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-          surfaceTintColor:surfaceColor ?? Colors.white,
-          margin: selected ? const EdgeInsets.only(right: 20) : null,
-          child: BackgroundClipper(
-            color: selected ?Colors.blue:color,
-            height: height,
-            child: MyListTile(
-              selected: selected,
-              onTap: onTap ?? () {},
-              onLongPress: onLongPress,
-              enable: enable,
-              title: title,
-              leadingIcon: leadingIcon,
-              type: type,
-              subTitle: subTitle,
-              topTrailingLabel: topTrailingLabel,
-              topTrailing: topTrailing,
-              trailing: trailing,
-              trailingLabel: trailingLabel,
-              middle: middle,
-              middleLabel: middleLabel,
-            ),
-          ),
-        ));
+    return Consumer<WareProvider>(builder: (context, wareProvider, child) {
+        return Directionality(
+            textDirection: TextDirection.rtl,
+            child: Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+              surfaceTintColor:surfaceColor ?? Colors.white,
+              margin: selected ? const EdgeInsets.only(right: 20) : null,
+              child: BackgroundClipper(
+                color: selected ?Colors.blue:color,
+                height: height,
+                child: MyListTile(
+                  discount: ware.discount,
+                  selected: selected,
+                  onTap: onTap ?? () {},
+                  onLongPress: onLongPress,
+                  enable: enable,
+                  title: ware.wareName,
+                  leadingIcon: CupertinoIcons.cube_box_fill,
+                  type: type,
+                  subTitle: ware.groupName,
+                  topTrailingLabel: wareProvider.showQuantity ? "موجودی:" : "",
+                  topTrailing: wareProvider.showQuantity
+                      ? ("${ware.quantity}  ".toPersianDigit() +
+                      ware.unit)
+                      : "",
+                  trailing: addSeparator(ware.saleConverted),
+                  trailingLabel: "فروش:",
+                  middle: wareProvider.showCostPrice
+                      ?addSeparator(ware.cost)
+                      : null,
+                  middleLabel: wareProvider.showCostPrice ? "خرید:" : null,
+                ),
+              ),
+            ));
+      }
+    );
   }
 }
 
@@ -90,7 +86,7 @@ class MyListTile extends StatelessWidget {
     this.middleLabel,
     this.trailingLabel,
     this.onLongPress,
-    required this.selected,
+    required this.selected, this.discount,
   });
 
   final bool enable;
@@ -107,6 +103,7 @@ class MyListTile extends StatelessWidget {
   final String? middleLabel;
   final VoidCallback onTap;
   final VoidCallback? onLongPress;
+  final double? discount;
 
   @override
   Widget build(BuildContext context) {
@@ -186,19 +183,37 @@ class MyListTile extends StatelessWidget {
                   ],
                 ),
               ),
-              RichText(
-                text: TextSpan(
-                  text: trailingLabel ?? "",
-                  style:  TextStyle(color: selected ? Colors.blue :Colors.black54, fontSize: 11),
-                  children: [
-                    TextSpan(
-                        text: trailing,
-                        style:  TextStyle(
-                            color: selected ? Colors.blue :Colors.black,
-                            fontSize: 14,
-                            fontFamily: Theme.of(context).textTheme.bodyMedium!.fontFamily)),
-                  ],
-                ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if(discount!=null && discount!>0)
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 2),
+                      margin: EdgeInsets.symmetric(horizontal: 2),
+                      decoration: BoxDecoration(
+                          color: Colors.red,borderRadius: BorderRadius.circular(5)
+                      ),
+                      child: Text(
+                          "%$discount".toPersianDigit(),
+                          style:  TextStyle(
+                              color:Colors.white,
+                              fontSize: 8,)),
+                    ),
+                  RichText(
+                    text: TextSpan(
+                      text: trailingLabel ?? "",
+                      style:  TextStyle(color: selected ? Colors.blue :Colors.black54, fontSize: 11),
+                      children: [
+                        TextSpan(
+                            text: trailing,
+                            style:  TextStyle(
+                                color: selected ? Colors.blue :Colors.black,
+                                fontSize: 14,
+                                fontFamily: Theme.of(context).textTheme.bodyMedium!.fontFamily)),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

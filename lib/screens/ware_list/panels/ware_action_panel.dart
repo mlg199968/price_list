@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:gap/gap.dart';
 import 'package:price_list/components/action_button.dart';
 import 'package:price_list/components/check_button.dart';

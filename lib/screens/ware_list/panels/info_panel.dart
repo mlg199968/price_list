@@ -28,6 +28,7 @@ class InfoPanel extends StatelessWidget {
     "قیمت فروش": addSeparator(ware.sale),
     "قیمت فروش 2": addSeparator(ware.sale2 ?? 0),
     "قیمت فروش 3": addSeparator(ware.sale3 ?? 0),
+    "تخفیف": "${ware.discount ?? 0} %".toPersianDigit(),
     "مقدار": "${ware.quantity} ${ware.unit} ",
     "توضیحات:": ware.description,
     "تاریخ ثبت:": ware.date.toPersianDateStr(),

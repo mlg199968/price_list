@@ -250,7 +250,7 @@ class PdfWareListApi {
       return [
         "${wareList.indexOf(item) + 1}".toPersianDigit(),
         item.wareName.toPersianDigit(),
-        if (show["serial"]!) item.description,
+        if (show["serial"]!) item.wareSerial,
         if (show["count"]!) '${item.quantity}'.toPersianDigit(),
         if (show["cost"]!) addSeparator(item.cost),
         if (show["sale"]!) addSeparator(item.sale),
