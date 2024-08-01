@@ -9,7 +9,7 @@ import 'package:price_list/model/ware.dart';
 import 'package:price_list/router.dart';
 import 'package:price_list/providers/ware_provider.dart';
 import 'package:provider/provider.dart';
-import 'screens/splash_screen/load_screen.dart';
+import 'screens/splash_screen/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -63,14 +63,14 @@ class _MyAppState extends State<MyApp> {
           scaffoldBackgroundColor: const Color(0XFFf5f5f5)),
       debugShowCheckedModeBanner: false,
       onGenerateRoute: (setting) => generateRoute(setting),
-      home: LoadScreen(),
-      //initialRoute:LoadScreen.id, //LoadScreen.id,
+      home: SplashScreen(),
+      //initialRoute:SplashScreen.id, //SplashScreen.id,
 
       // routes: {
       //   PriceScreen.id: (context) => PriceScreen(),
       //   AddProductScreen.id: (context) => AddProductScreen(),
       //   SettingScreen.id: (context) => const SettingScreen(),
-      //   LoadScreen.id: (context) => const LoadScreen(),
+      //   SplashScreen.id: (context) => const SplashScreen(),
       // },
     );
   }

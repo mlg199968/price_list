@@ -11,15 +11,15 @@ import 'package:price_list/screens/ware_list/ware_list_screen.dart';
 
 
 
-class LoadScreen extends StatefulWidget {
+class SplashScreen extends StatefulWidget {
   static String id = 'loadingScreen';
-  const LoadScreen({Key? key}) : super(key: key);
+  const SplashScreen({Key? key}) : super(key: key);
 
   @override
-  State<LoadScreen> createState() => _LoadScreenState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _LoadScreenState extends State<LoadScreen> {
+class _SplashScreenState extends State<SplashScreen> {
 
 
   @override

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart'
     as formatter;
+import 'package:flutter/services.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/providers/ware_provider.dart';
 
@@ -87,12 +88,12 @@ class CustomTextField extends StatelessWidget {
               ? const TextInputType.numberWithOptions(decimal: true)
               : null,
           inputFormatters: textFormat == TextFormatter.price
-              ? [
-                  formatter.CurrencyTextInputFormatter(
+              ? <TextInputFormatter>[
+                  formatter.CurrencyTextInputFormatter.currency(
                     customPattern: symbol == null ? null : " $symbol ",
                     symbol: "",
                     decimalDigits:decimalDigits ?? 0,
-                  ),
+                   ),
                 ]
               : null,
 

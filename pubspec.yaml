@@ -16,7 +16,7 @@ dependencies:
 
 
   cupertino_icons: ^1.0.2
-  currency_text_input_formatter: ^2.1.7
+#  currency_text_input_formatter: ^2.1.7
   easy_mask: ^2.0.1
   provider: ^6.0.3
   dropdown_button2: ^2.3.9
@@ -56,17 +56,19 @@ dependencies:
   share_plus: ^7.2.2
   excel: ^4.0.2
   mobile_scanner: ^4.0.1
-  flutter_poolakey: ^2.2.0
-#  myket_iap: ^1.1.5
+#  flutter_poolakey: ^2.2.0
+  myket_iap: ^1.1.5
   image_picker: ^1.0.7
   flutter_typeahead: ^4.3.1
   photo_view: ^0.15.0
+  currency_text_input_formatter: ^2.2.3
 
 
 
 
 
-
+dependency_overrides:
+  intl: ^0.19.0
 
 
 
