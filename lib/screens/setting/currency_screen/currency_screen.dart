@@ -6,10 +6,11 @@ import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/model/shop.dart';
 import 'package:price_list/screens/setting/setting_screen.dart';
-import 'package:price_list/providers/ware_provider.dart';
 import 'package:price_list/services/hive_boxes.dart';
 
 import 'package:provider/provider.dart';
+
+import '../../../providers/user_provider.dart';
 
 class CurrencyScreen extends StatefulWidget {
   static const String id = "/CurrencyScreen";
@@ -26,7 +27,7 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
   final aedController = TextEditingController();
   final cnyController = TextEditingController();
   final eurController = TextEditingController();
-  late WareProvider provider;
+  late UserProvider provider;
   bool showCostPrice = false;
   bool showQuantity = false;
   String selectedCurrency = kCurrencyList[0];
@@ -66,7 +67,7 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
 
   @override
   void initState() {
-    provider = Provider.of<WareProvider>(context, listen: false);
+    provider = Provider.of<UserProvider>(context, listen: false);
     getData();
     super.initState();
   }
@@ -81,7 +82,7 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
   @override
   Widget build(BuildContext context) {
     return HideKeyboard(
-      child: Consumer<WareProvider>(builder: (context, wareProvider, child) {
+      child: Consumer<UserProvider>(builder: (context, userProvider, child) {
         return Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.transparent,

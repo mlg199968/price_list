@@ -34,13 +34,19 @@ class ShopAdapter extends TypeAdapter<Shop> {
       ..backupDirectory = fields[14] as String?
       ..pdfFont = fields[15] as String?
       ..currenciesValue = (fields[16] as Map?)?.cast<dynamic, dynamic>()
-      ..replacedCurrency = fields[17] as bool?;
+      ..replacedCurrency = fields[17] as bool?
+      ..activeUser = fields[18] as User?
+      ..appType = fields[19] as String?
+      ..subscription = fields[20] as Subscription?
+      ..descriptionList = (fields[21] as List?)
+          ?.map((dynamic e) => (e as Map).cast<dynamic, dynamic>())
+          .toList();
   }
 
   @override
   void write(BinaryWriter writer, Shop obj) {
     writer
-      ..writeByte(18)
+      ..writeByte(22)
       ..writeByte(0)
       ..write(obj.shopName)
       ..writeByte(1)
@@ -76,7 +82,15 @@ class ShopAdapter extends TypeAdapter<Shop> {
       ..writeByte(16)
       ..write(obj.currenciesValue)
       ..writeByte(17)
-      ..write(obj.replacedCurrency);
+      ..write(obj.replacedCurrency)
+      ..writeByte(18)
+      ..write(obj.activeUser)
+      ..writeByte(19)
+      ..write(obj.appType)
+      ..writeByte(20)
+      ..write(obj.subscription)
+      ..writeByte(21)
+      ..write(obj.descriptionList);
   }
 
   @override

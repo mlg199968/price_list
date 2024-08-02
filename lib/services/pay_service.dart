@@ -10,15 +10,16 @@ import 'package:price_list/constants/error_handler.dart';
 import 'package:price_list/constants/private.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/screens/ware_list/ware_list_screen.dart';
-import 'package:price_list/providers/ware_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
+
+import '../providers/user_provider.dart';
 
 class PayService {
 
   static String basicAuth =
       'Basic ' + base64.encode(
-          utf8.encode('${Private.licenseApiKey}:${Private.licenseApiPass}'));
+          utf8.encode('${PrivateKeys.licenseApiKey}:${PrivateKeys.licenseApiPass}'));
 
 ///
   static checkLicense(BuildContext context, String license) async {
@@ -27,13 +28,13 @@ class PayService {
     }
     try {
       http.Response res = await http.get(
-        Uri.parse("${Private.licenseApiAddress}/activate/$license"),
+        Uri.parse("${PrivateKeys.licenseApiAddress}/activate/$license"),
         headers: <String, String>{'authorization': basicAuth},
       ).timeout(Duration(seconds: 10));
 
       Map result = jsonDecode(res.body);
       if (res.statusCode == 200 && result["data"]["timesActivated"]!=null) {
-          Provider.of<WareProvider>(context, listen: false).setVip(true);
+          Provider.of<UserProvider>(context, listen: false).setUserLevel(1);
            Navigator.pushNamedAndRemoveUntil(context, WareListScreen.id,(route)=>false);
           showSnackBar(
               context, "لایسنس با موفقیت اعمال شد", type: SnackType.success);
@@ -55,7 +56,7 @@ static connectToBazaar(BuildContext context) async {
 
   try {
 //   bool connectionState=await FlutterPoolakey.connect(
-//     Private.rsaKey,
+//     PrivateKeys.rsaKey,
 //     onDisconnected: () {
 //       showSnackBar(context, "خطا در ارتباط با بازار");
 //       print("bazaar not connected");
@@ -86,7 +87,7 @@ static connectToMyket(BuildContext context)async{
       print(purchaseResult.mMessage);
       print(purchaseResult.mResponse);
       if(purchaseResult.mMessage.toLowerCase().contains("success")){
-        Provider.of<WareProvider>(context,listen: false).setVip(true);
+        Provider.of<UserProvider>(context,listen: false).setUserLevel(1);
         Navigator.pushNamedAndRemoveUntil(context, WareListScreen.id,(route)=>false);
         showSnackBar(context, "برنامه با موفقیت فعال شد!",type: SnackType.success,dialogMode: true);
       }

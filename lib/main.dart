@@ -6,9 +6,14 @@ import 'package:price_list/model/bug.dart';
 import 'package:price_list/model/notice.dart';
 import 'package:price_list/model/shop.dart';
 import 'package:price_list/model/ware.dart';
+import 'package:price_list/providers/user_provider.dart';
 import 'package:price_list/router.dart';
 import 'package:price_list/providers/ware_provider.dart';
 import 'package:provider/provider.dart';
+import 'model/device.dart';
+import 'model/plan.dart';
+import 'model/subscription.dart';
+import 'model/user.dart';
 import 'screens/splash_screen/splash_screen.dart';
 
 void main() async {
@@ -19,6 +24,10 @@ void main() async {
   Hive.registerAdapter(ShopAdapter());
   Hive.registerAdapter(NoticeAdapter());
   Hive.registerAdapter(BugAdapter());
+  Hive.registerAdapter(SubscriptionAdapter());
+  Hive.registerAdapter(UserAdapter());
+  Hive.registerAdapter(DeviceAdapter());
+  Hive.registerAdapter(PlanAdapter());
   //create box for store data
   await Hive.openBox<Ware>("ware_db",path:await Address.hiveDirectory());
   await Hive.openBox<Shop>("shop_db",path:await Address.hiveDirectory());
@@ -28,6 +37,7 @@ void main() async {
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (context) => WareProvider()),
+      ChangeNotifierProvider(create: (context) => UserProvider()),
     ],
     child: const MyApp(),
 
@@ -42,7 +52,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   getFont(){
-    Provider.of<WareProvider>(context, listen: false).getFontFromHive();
+    Provider.of<UserProvider>(context, listen: false).setFontFromHive();
   }
   @override
   void initState() {
@@ -56,7 +66,7 @@ class _MyAppState extends State<MyApp> {
       navigatorKey: GlobalTask.navigatorState,
       scrollBehavior: MyCustomScrollBehavior(),
       theme: ThemeData(
-          fontFamily:context.watch<WareProvider>().fontFamily,
+          fontFamily:context.watch<UserProvider>().fontFamily,
           appBarTheme: AppBarTheme(
             backgroundColor: Colors.indigo,
               foregroundColor: Colors.white),

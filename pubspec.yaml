@@ -4,7 +4,7 @@ description: Price List project
 publish_to: 'none'
 
 
-version: 4.4.4+22
+version: 4.5.0+22
 
 environment:
   sdk: '>=2.18.0-271.4.beta <3.0.0'
@@ -62,10 +62,13 @@ dependencies:
   flutter_typeahead: ^4.3.1
   photo_view: ^0.15.0
   currency_text_input_formatter: ^2.2.3
-
-
-
-
+  ntp: ^2.0.0
+  network_info_plus: ^4.1.0
+  device_info_plus: ^9.1.1
+  zarinpal: ^1.0.5
+  flutter_timer_countdown: ^1.0.7
+  connectivity_plus: ^5.0.2
+  carousel_slider: ^4.2.1
 
 dependency_overrides:
   intl: ^0.19.0

@@ -3,9 +3,10 @@ import 'package:currency_text_input_formatter/currency_text_input_formatter.dart
     as formatter;
 import 'package:flutter/services.dart';
 import 'package:price_list/constants/constants.dart';
-import 'package:price_list/providers/ware_provider.dart';
 
 import 'package:provider/provider.dart';
+
+import '../providers/user_provider.dart';
 
 enum TextFormatter { price, normal, number }
 
@@ -58,7 +59,7 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String curr=currency ?? Provider.of<WareProvider>(context,listen: false).currency;
+    String curr=currency ?? Provider.of<UserProvider>(context,listen: false).currency;
     bool isPressed = false;
     return SizedBox(
       height: height,

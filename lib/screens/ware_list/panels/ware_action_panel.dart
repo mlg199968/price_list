@@ -17,6 +17,7 @@ import 'package:price_list/screens/setting/backup/backup_tools.dart';
 import 'package:price_list/services/hive_boxes.dart';
 import 'package:provider/provider.dart';
 
+import '../../../providers/user_provider.dart';
 import 'change_group_panel.dart';
 
 class WareActionsPanel extends StatefulWidget {
@@ -117,7 +118,7 @@ class _WareActionsPanelState extends State<WareActionsPanel> {
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
-        vip: !Provider.of<WareProvider>(context, listen: false).isVip,
+        vip: !Provider.of<UserProvider>(context, listen: false).isVip,
         height: 500,
         title: "افزایش یا کاهش گروهی قیمت ها ",
         topTrail: Padding(
@@ -135,7 +136,7 @@ class _WareActionsPanelState extends State<WareActionsPanel> {
             radius: 20,
             onPressed: () async {
               String? backupDirectory =
-                  Provider.of<WareProvider>(context, listen: false)
+                  Provider.of<UserProvider>(context, listen: false)
                       .backupDirectory;
               await BackupTools.createBackup(context,
                   directory: backupDirectory);

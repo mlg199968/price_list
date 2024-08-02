@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:blurrycontainer/blurrycontainer.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:gap/gap.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,9 @@ import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/enums.dart';
 import 'package:price_list/screens/purchase_screen/bazaar_purchase_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../model/device.dart';
+import 'global_task.dart';
 
 
 /// find out Screen size and return it
@@ -29,7 +33,7 @@ ScreenType screenType(BuildContext context){
 }
 
 ///Show snake bar in active context
-void showSnackBar(BuildContext context, String title,
+void showSnackBar(BuildContext? context, String title,
     {SnackType type=SnackType.normal,double? height,bool dialogMode=false}) {
   Color? color;
   switch(type){
@@ -48,7 +52,7 @@ void showSnackBar(BuildContext context, String title,
 
   }
   if(!dialogMode) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context ?? GlobalTask.navigatorState.currentContext!).showSnackBar(SnackBar(
         showCloseIcon: true,
         width: 350,
         elevation: 0,
@@ -78,31 +82,31 @@ void showSnackBar(BuildContext context, String title,
   }
   else {
     showDialog(
-        context: context,
+        context: context ?? GlobalTask.navigatorState.currentContext!,
         builder: (context) => Dialog(
           child: Container(
             width: 300,
-                height: 200,
-                padding: EdgeInsets.all(10),
+            height: 200,
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+                gradient: kMainGradiant,
+                borderRadius: BorderRadius.circular(10)),
+            child: Container(
+                margin: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                    gradient: kMainGradiant,
-                    borderRadius: BorderRadius.circular(10)),
-                child: Container(
-                  margin: EdgeInsets.all(10),
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.orangeAccent)),
-                    child: Column(
-                      children: [
-                        Align(
-                            alignment: Alignment.centerRight,
-                            child: CrownIcon(size: 40,)),
-                        Gap(10),
-                        CText(title,color: Colors.white,),
-                      ],
-                    )),
-              ),
+                    border: Border.all(color: Colors.orangeAccent)),
+                child: Column(
+                  children: [
+                    const Align(
+                        alignment: Alignment.centerRight,
+                        child: CrownIcon(size: 40,)),
+                    const Gap(10),
+                    CText(title,color: Colors.white,),
+                  ],
+                )),
+          ),
         ));
   }
 }
@@ -165,7 +169,36 @@ Future<String?> chooseDirectory() async {
 }
 
 
+///
+Future<Device> getDeviceInfo() async {
+  DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
 
+  if (Platform.isAndroid) {
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    Device device =
+    Device(platform: 'Android',brand: androidInfo.brand,id: androidInfo.id,name: androidInfo.device);
+    return device;
+  }
+
+  else if (Platform.isWindows) {
+    WindowsDeviceInfo windowsInfo = await deviceInfo.windowsInfo;
+    Device windowsDevice = Device(platform: 'Windows',
+        name:windowsInfo.computerName, brand:windowsInfo.productName,id: windowsInfo.deviceId);
+    return windowsDevice;
+  }
+
+  else if (Platform.isIOS) {
+    IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+    Device iosDevice =
+    Device(platform: 'ios', brand:iosInfo.model,name: iosInfo.name,id: iosInfo.localizedModel);
+    return iosDevice;
+  }
+  else {
+    Device elseDevice =
+    Device(platform: Platform.operatingSystem, brand:Platform.version,name: Platform.localeName,id: Platform.operatingSystemVersion);
+    return elseDevice;
+  }
+}
 
 /// condition for pick image from device storage
 Future<File?> pickFile(String imageName) async {

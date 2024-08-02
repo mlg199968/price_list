@@ -12,7 +12,7 @@ import 'package:price_list/screens/ware_list/ware_list_screen.dart';
 
 
 class SplashScreen extends StatefulWidget {
-  static String id = 'loadingScreen';
+  static const String id = 'loadingScreen';
   const SplashScreen({Key? key}) : super(key: key);
 
   @override
@@ -24,17 +24,17 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void didChangeDependencies() async{
-    await GlobalTask().getStartUpData(context);
+    // await GlobalTask().getInitData(context);
     super.didChangeDependencies();
   }
   @override
   Widget build(BuildContext context) {
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) async {
       Timer(const Duration(milliseconds: 900), () async{
-       // await GlobalTask().getStartUpData(context);
-
-        Navigator.of(context).pushNamedAndRemoveUntil(
-            WareListScreen.id,(context)=>false);
+        BuildContext currentContext=GlobalTask.navigatorState.currentContext!;
+        await GlobalTask().getInitData(currentContext);
+        Navigator.of(currentContext).pushNamedAndRemoveUntil(
+            WareListScreen.id,(currentContext)=>false);
       });
     });
     return Scaffold(

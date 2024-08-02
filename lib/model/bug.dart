@@ -17,7 +17,8 @@ class Bug extends HiveObject{
   late DateTime bugDate;
   @HiveField(5)
   late String bugId;
-
+  @HiveField(6)
+  String? stacktrace;
 
 }
 

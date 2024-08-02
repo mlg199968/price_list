@@ -10,7 +10,7 @@ class CText extends StatelessWidget {
     this.maxLine,
     this.textDirection = TextDirection.ltr,
     this.textAlign,
-    this.minFontSize = 9,
+    this.minFontSize = 9, this.shadow,
   });
   final String? text;
   final double fontSize;
@@ -19,12 +19,16 @@ class CText extends StatelessWidget {
   final Color? color;
   final TextDirection textDirection;
   final TextAlign? textAlign;
+  final BoxShadow? shadow;
 
   @override
   Widget build(BuildContext context) {
     return AutoSizeText(
       text ?? "",
-      style: TextStyle(color: color),
+      style: TextStyle(
+        color: color,
+        shadows:shadow==null?null: [shadow!],
+      ),
       overflow: TextOverflow.fade,
       maxLines: maxLine,
       textDirection: textDirection,

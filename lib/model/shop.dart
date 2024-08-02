@@ -1,4 +1,7 @@
 import 'package:hive/hive.dart';
+import 'package:price_list/model/subscription.dart';
+
+import 'user.dart';
 
 part 'shop.g.dart';
 
@@ -40,6 +43,14 @@ class Shop extends HiveObject {
   Map? currenciesValue;
   @HiveField(17)
   bool? replacedCurrency;
+  @HiveField(18)
+  User? activeUser;
+  @HiveField(19)
+  String? appType;
+  @HiveField(20)
+  Subscription? subscription;
+  @HiveField(21)
+  List<Map>? descriptionList=[];
 
   Shop copyWith({
     String? shopName,
@@ -60,6 +71,10 @@ class Shop extends HiveObject {
     Map? currenciesValue,
     int? userLevel,
     bool? replacedCurrency,
+    User? activeUser,
+    String? appType,
+    Subscription? subscription,
+    List<Map>? descriptionList,
   }) {
     Shop shop=Shop()
       ..shopName= shopName ?? this.shopName
@@ -79,7 +94,11 @@ class Shop extends HiveObject {
       ..userLevel= userLevel ?? this.userLevel
       ..currenciesValue=currenciesValue ?? this.currenciesValue
       ..backupDirectory= backupDirectory ?? this.backupDirectory
-      ..replacedCurrency= replacedCurrency ?? this.replacedCurrency;
+      ..replacedCurrency= replacedCurrency ?? this.replacedCurrency
+      ..appType= appType ?? this.appType
+      ..subscription= subscription ?? this.subscription
+      ..descriptionList= descriptionList ?? this.descriptionList
+      ..activeUser= activeUser ?? this.activeUser;
     return shop;
   }
 

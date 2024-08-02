@@ -18,14 +18,13 @@ import 'package:price_list/screens/setting/backup/backup_tools.dart';
 import 'package:price_list/screens/setting/backup/excel_tools.dart';
 import 'package:price_list/screens/setting/currency_screen/currency_screen.dart';
 import 'package:price_list/screens/side_bar/sidebar_panel.dart';
-import 'package:price_list/providers/ware_provider.dart';
 import 'package:price_list/services/hive_boxes.dart';
-
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../components/custom_alert.dart';
+import '../../providers/user_provider.dart';
 
 class SettingScreen extends StatefulWidget {
   static const String id = "/SettingScreen";
@@ -39,7 +38,7 @@ class SettingScreen extends StatefulWidget {
 class _SettingScreenState extends State<SettingScreen> {
   late final SharedPreferences prefs;
   late String selectedValue;
-  late WareProvider provider;
+  late UserProvider provider;
   bool showCostPrice = false;
   bool showQuantity = false;
   String selectedCurrency=kCurrencyList[0];
@@ -67,7 +66,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
   @override
   void initState() {
-    provider = Provider.of<WareProvider>(context, listen: false);
+    provider = Provider.of<UserProvider>(context, listen: false);
     getData();
     super.initState();
   }
@@ -81,8 +80,8 @@ class _SettingScreenState extends State<SettingScreen> {
   @override
   Widget build(BuildContext context) {
     return HideKeyboard(
-      child: Consumer<WareProvider>(
-        builder: (context,wareProvider,child) {
+      child: Consumer<UserProvider>(
+        builder: (context,userProvider,child) {
           return Scaffold(
             appBar: AppBar(
               backgroundColor: Colors.transparent,
@@ -263,7 +262,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               dropWidth: 120,
                               onChange: (val) {
                                 selectedFont = val;
-                                wareProvider.getFontFamily(val);
+                                userProvider.setFontFamily(val);
                                 setState(() {});
                               },
                             ),
@@ -315,7 +314,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     ),
                   ),
 ///*********************** show purchase part if not purchased **************************************
-                  if(!wareProvider.isVip)
+                  if(!userProvider.isVip)
                       BlurryContainer(
                     padding: EdgeInsets.all(10),
                         color: Colors.black87.withOpacity(.7),

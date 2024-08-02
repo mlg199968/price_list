@@ -3,8 +3,9 @@ import 'dart:convert';
 import 'package:hive/hive.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/global_task.dart';
-import 'package:price_list/providers/ware_provider.dart';
 import 'package:provider/provider.dart';
+
+import '../providers/user_provider.dart';
 
 part 'ware.g.dart';
 
@@ -54,7 +55,7 @@ class Ware extends HiveObject {
         : saleIndex == 1
         ? (sale2 ?? 0)
         : (sale3 ?? 0);
-    WareProvider wareProvider = Provider.of<WareProvider>(
+    UserProvider wareProvider = Provider.of<UserProvider>(
         GlobalTask.navigatorState.currentContext!,
         listen: false);
     if (wareProvider.currency != "تومان" &&

@@ -14,8 +14,8 @@ class NoticeDetailPanel extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: NotificationDialog(
-        contentPadding: EdgeInsets.all(0),
-
+        height: 500,
+        contentPadding: const EdgeInsets.all(0),
         borderRadius: 18,
         opacity: 1,
         image: notice.image,
@@ -28,7 +28,7 @@ class NoticeDetailPanel extends StatelessWidget {
                 height: 40,
                 width: 300,
                 text: notice.linkTitle ?? "",
-                icon: Icon(CupertinoIcons.link,color: Colors.white,size: 20,),
+                icon: const Icon(CupertinoIcons.link,color: Colors.white,size: 20,),
                 radius: 10,
                 color: Colors.red,
                 onPressed: () {
@@ -38,35 +38,26 @@ class NoticeDetailPanel extends StatelessWidget {
             ),
           ),
         ]:null,
-        child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(10),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  children: [
-                    Text(
-                      notice.title,
-                      style: const TextStyle(fontSize: 16),
-                      maxLines: 4,
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      notice.content ?? "",
-                      style: const TextStyle(
-                          fontSize: 12, color: Colors.black54),
-                      maxLines: 200,
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                  ],
-                ),
+              Text(
+                notice.title,
+                style: const TextStyle(fontSize: 16),
+                maxLines: 4,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Text(
+                notice.content ?? "",
+                style: const TextStyle(
+                    fontSize: 12, color: Colors.black54),
+                maxLines: 200,
+              ),
+              const SizedBox(
+                height: 20,
               ),
             ],
           ),

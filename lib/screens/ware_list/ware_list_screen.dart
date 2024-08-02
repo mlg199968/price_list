@@ -2,14 +2,11 @@ import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:lottie/lottie.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
-import 'package:price_list/components/action_button.dart';
 import 'package:price_list/components/check_button.dart';
 import 'package:price_list/components/custom_alert.dart';
 import 'package:price_list/components/custom_float_action_button.dart';
@@ -22,7 +19,6 @@ import 'package:price_list/components/hide_keyboard.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/enums.dart';
 import 'package:price_list/constants/utils.dart';
-import 'package:price_list/screens/notice_screen/notice_screen.dart';
 import 'package:price_list/screens/notice_screen/services/notice_tools.dart';
 import 'package:price_list/screens/side_bar/sidebar_panel.dart';
 import 'package:price_list/screens/ware_list/panels/print_panel.dart';
@@ -36,6 +32,9 @@ import 'package:price_list/screens/ware_list/services/ware_tools.dart';
 import 'package:price_list/providers/ware_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../providers/user_provider.dart';
+import '../notice_screen/widgets/notice_carousel.dart';
 
 class WareListScreen extends StatefulWidget {
   static const String id = "/wareListScreen";
@@ -128,7 +127,7 @@ class _WareListScreenState extends State<WareListScreen> {
                     crossAxisAlignment: CrossAxisAlignment.baseline,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      if(Provider.of<WareProvider>(context, listen: false).isVip)
+                      if(Provider.of<UserProvider>(context, listen: false).isVip)
                       const Icon(
                         FontAwesomeIcons.crown,
                         color: Colors.orangeAccent,
@@ -139,39 +138,46 @@ class _WareListScreenState extends State<WareListScreen> {
                   ),
                 ),
                 bottom: PreferredSize (
-                  preferredSize: Size.fromHeight(35),
-                  child: Directionality(
-                    textDirection: TextDirection.rtl,
-                    child: Container(
-                      alignment: Alignment.center,
-                      height: 35,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Padding(
-                          padding: const EdgeInsets.all(0),
-                          child: Row(
-                            children: [
-                              "همه",
-                              ...context.watch<WareProvider>().groupList
-                            ].map((group) {
-                              return LabelTile(
-                                activeColor: Colors.teal,
-                                disableColor: Colors.blueGrey,
-                                elevation: 0,
-                                disable: selectedDropListGroup != group,
-                                fontSize: 11,
-                                label: group,
-                                onTap: () {
-                                  selectedDropListGroup = group;
-                                  setState(() {});
-                                },
-                              );
+                  preferredSize:(NoticeTools.checkNewNotifications())? Size.fromHeight(100):Size.fromHeight(35),
+                  child: Column(
+                    children: [
+                      ///Notification Alert,if new notification exist this part will be shown
+                      if(NoticeTools.checkNewNotifications())
+                      const NoticeCarousel(),
+                      Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: Container(
+                          alignment: Alignment.center,
+                          height: 35,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Padding(
+                              padding: const EdgeInsets.all(0),
+                              child: Row(
+                                children: [
+                                  "همه",
+                                  ...context.watch<WareProvider>().groupList
+                                ].map((group) {
+                                  return LabelTile(
+                                    activeColor: Colors.teal,
+                                    disableColor: Colors.blueGrey,
+                                    elevation: 0,
+                                    disable: selectedDropListGroup != group,
+                                    fontSize: 11,
+                                    label: group,
+                                    onTap: () {
+                                      selectedDropListGroup = group;
+                                      setState(() {});
+                                    },
+                                  );
 
-                            }).toList(),
+                                }).toList(),
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
                 flexibleSpace: Container(
@@ -197,52 +203,6 @@ class _WareListScreenState extends State<WareListScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                 child: Column(
                   children: <Widget>[
-                    ///Notification Alert,if new notification exist this part will be shown
-                    AnimatedSize(
-                      curve: Curves.easeInOutExpo,
-                      duration: Duration(milliseconds: 400),
-                      child: (!NoticeTools.checkNewNotifications() ||
-                              !showAlertNotice)
-                          ? SizedBox()
-                          : Container(
-                              alignment: Alignment.center,
-                              height: 50,
-                              decoration: BoxDecoration(color: Colors.red),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                children: [
-                                  ActionButton(
-                                    label: "مشاهده",
-                                    icon: Icons.remove_red_eye_outlined,
-                                    height: 30,
-                                    onPress: () {
-                                      Navigator.pushNamed(
-                                              context, NoticeScreen.id)
-                                          .then((value) {
-                                        setState(() {});
-                                      });
-                                    },
-                                  ),
-                                  CText(
-                                    "اطلاع رسانی جدید!",
-                                    color: Colors.white,
-                                    textDirection: TextDirection.rtl,
-                                  )
-                                      .animate()
-                                      .fade(duration: Duration(seconds: 1)),
-                                  Lottie.asset(
-                                      "assets/animations/notification.json"),
-                                  IconButton(
-                                    color: Colors.white60,
-                                      onPressed: () {
-                                        showAlertNotice = false;
-                                        setState(() {});
-                                      },
-                                      icon: Icon(Icons.close_rounded))
-                                ],
-                              ),
-                            ),
-                    ),
                     ///search bar
                     Container(
                       alignment: Alignment.center,

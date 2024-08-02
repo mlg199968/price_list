@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:price_list/model/ware.dart';
 import 'package:price_list/screens/photo_screen/photo_view_screen.dart';
+import 'package:price_list/screens/purchase_screen/authority_screen.dart';
+import 'package:price_list/screens/purchase_screen/plan_screen.dart';
+import 'package:price_list/screens/purchase_screen/subscription_screen.dart';
 import 'package:price_list/screens/setting/currency_screen/currency_screen.dart';
+import 'package:price_list/screens/splash_screen/splash_screen.dart';
 import 'package:price_list/screens/ware_list/add_ware_screen.dart';
 import 'package:price_list/screens/purchase_screen/bazaar_purchase_screen.dart';
 import 'package:price_list/screens/bug_screen/bug_list_screen.dart';
@@ -39,6 +43,9 @@ Route generateRoute(RouteSettings routeSettings) {
     case SettingScreen.id:
       return MaterialPageRoute(builder: (_) => SettingScreen());
 
+    case SplashScreen.id:
+      return MaterialPageRoute(builder: (_) => SplashScreen());
+
     case WareActionsPanel.id:
       return MaterialPageRoute(
           builder: (_) => WareActionsPanel(wares: [], subGroup: "subGroup"));
@@ -62,6 +69,22 @@ Route generateRoute(RouteSettings routeSettings) {
     case ShopInfoScreen.id:
          return MaterialPageRoute(builder: (_) => ShopInfoScreen());
 
+  ///purchase screen
+    case PlanScreen.id:
+      Map? args = routeSettings.arguments as Map?;
+      return MaterialPageRoute(
+          builder: (_) => PlanScreen(
+            phone: args?["phone"],
+            subsId: args?["subsId"],
+            oldSubs: args?["oldSubs"],
+          ));
+
+    case AuthorityScreen.id:
+      return MaterialPageRoute(builder: (_) => const AuthorityScreen());
+
+    case SubscriptionScreen.id:
+      return MaterialPageRoute(builder: (_) => const SubscriptionScreen());
+      ///default
     default:
       return MaterialPageRoute(
           builder: (_) => const Scaffold(

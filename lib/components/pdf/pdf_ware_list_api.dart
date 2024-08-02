@@ -8,8 +8,9 @@ import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:price_list/components/pdf/pdf_api.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/model/ware.dart';
-import 'package:price_list/providers/ware_provider.dart';
 import 'package:provider/provider.dart';
+
+import '../../providers/user_provider.dart';
 
 class PdfWareListApi {
   const PdfWareListApi(
@@ -28,8 +29,8 @@ class PdfWareListApi {
   final double scale;
   final String pdfFont;
   final Map<String, bool> show;
-  WareProvider get shopData =>
-      Provider.of<WareProvider>(context, listen: false);
+  UserProvider get shopData =>
+      Provider.of<UserProvider>(context, listen: false);
   String get currency =>
       shopData.replacedCurrency ? "تومان" : shopData.currency;
 

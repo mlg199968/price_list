@@ -21,6 +21,8 @@ import 'package:price_list/services/hive_boxes.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../providers/user_provider.dart';
+
 class PrintPanel extends StatefulWidget {
   static const String id = "/WareActionPanel";
   const PrintPanel({Key? key, required this.wares, required this.subGroup})
@@ -107,7 +109,7 @@ class _PrintPanelState extends State<PrintPanel> {
 
     ///
     return CustomDialog(
-        vip: !Provider.of<WareProvider>(context, listen: false).isVip,
+        vip: !Provider.of<UserProvider>(context, listen: false).isVip,
         contentPadding: EdgeInsets.all(8),
         opacity: .7,
         height: 600,
@@ -127,7 +129,7 @@ class _PrintPanelState extends State<PrintPanel> {
             radius: 20,
             onPressed: () async {
               String? backupDirectory =
-                  Provider.of<WareProvider>(context, listen: false)
+                  Provider.of<UserProvider>(context, listen: false)
                       .backupDirectory;
               await BackupTools.createBackup(context,
                   directory: backupDirectory);

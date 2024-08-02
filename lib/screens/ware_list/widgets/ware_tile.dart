@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:price_list/components/custom_bg_shape.dart';
-import 'package:price_list/providers/ware_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../../../constants/utils.dart';
 import '../../../model/ware.dart';
+import '../../../providers/user_provider.dart';
 
 class CustomTile extends StatelessWidget {
   const CustomTile({
@@ -31,7 +31,7 @@ class CustomTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<WareProvider>(builder: (context, wareProvider, child) {
+    return Consumer<UserProvider>(builder: (context, userProvider, child) {
         return Directionality(
             textDirection: TextDirection.rtl,
             child: Card(
@@ -51,17 +51,17 @@ class CustomTile extends StatelessWidget {
                   leadingIcon: CupertinoIcons.cube_box_fill,
                   type: type,
                   subTitle: ware.groupName,
-                  topTrailingLabel: wareProvider.showQuantity ? "موجودی:" : "",
-                  topTrailing: wareProvider.showQuantity
+                  topTrailingLabel: userProvider.showQuantity ? "موجودی:" : "",
+                  topTrailing: userProvider.showQuantity
                       ? ("${ware.quantity}  ".toPersianDigit() +
                       ware.unit)
                       : "",
                   trailing: addSeparator(ware.saleConverted),
                   trailingLabel: "فروش:",
-                  middle: wareProvider.showCostPrice
+                  middle: userProvider.showCostPrice
                       ?addSeparator(ware.cost)
                       : null,
-                  middleLabel: wareProvider.showCostPrice ? "خرید:" : null,
+                  middleLabel: userProvider.showCostPrice ? "خرید:" : null,
                 ),
               ),
             ));

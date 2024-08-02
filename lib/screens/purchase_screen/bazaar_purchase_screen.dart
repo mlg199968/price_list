@@ -28,7 +28,7 @@ class _BazaarPurchaseScreenState extends State<BazaarPurchaseScreen> {
   getMyketStartUpData()async{
     if (Platform.isAndroid) {
       var iabResult = await MyketIAP.init(
-          rsaKey: Private.rsaKeyMyket, enableDebugLogging: true);
+          rsaKey: PrivateKeys.rsaKeyMyket, enableDebugLogging: true);
       print("myket starter checker");
       print(iabResult?.toJson());
       if(iabResult==null || !iabResult.isSuccess()){

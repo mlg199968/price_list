@@ -8,18 +8,18 @@ class NoticeTools {
   static readNotifications(context,{int timeout=10}) async {
     try {
       List<Notice?>? onlineNotices =
-          await BackendServices().readNotice(context,timeout: timeout);
+      await BackendServices().readNotice(context,timeout: timeout );
       List<Notice> hiveNotices = HiveBoxes.getNotice().values.toList();
       if (onlineNotices != null && onlineNotices.isNotEmpty) {
         ///check if server Notice has not being cache in the hive ,then we added to the hive
         for (var onNotice in onlineNotices) {
           if (hiveNotices.isNotEmpty) {
             bool exist = false;
-            hiveNotices.forEach((hiveNotice) {
+            for (var hiveNotice in hiveNotices) {
               if(hiveNotice.noticeId == onNotice!.noticeId){
                 exist=true;
-              };
-            });
+              }
+            }
             if (!exist) {
               HiveBoxes.getNotice().put(onNotice!.noticeId, onNotice);
             }
@@ -32,11 +32,11 @@ class NoticeTools {
         ///delete notice form hive if notice was deleted from server
         for (var hvNotice in hiveNotices) {
           bool isExist = false;
-          onlineNotices.forEach((onNotice) {
+          for (var onNotice in onlineNotices) {
             if (hvNotice.noticeId == onNotice!.noticeId) {
               isExist = true;
             }
-          });
+          }
           if (!isExist) {
             hvNotice.delete();
           }
@@ -50,7 +50,7 @@ class NoticeTools {
           title: "NoticeTools-readNotifications error", showSnackbar: true);
     }
   }
-
+  ///
   static bool checkNewNotifications(){
     List<bool> seeList=HiveBoxes.getNotice().values.map((e) => e.seen).toList();
     if(seeList.contains(false)){

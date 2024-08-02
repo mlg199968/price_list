@@ -8,9 +8,10 @@ import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/enums.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/model/shop.dart';
-import 'package:price_list/providers/ware_provider.dart';
 import 'package:price_list/services/hive_boxes.dart';
 import 'package:provider/provider.dart';
+
+import '../../providers/user_provider.dart';
 
 class ShopInfoScreen extends StatefulWidget {
   static const String id = "/ShopInfoScreen";
@@ -55,7 +56,7 @@ void storeInfoShop(){
       ..stampImage=stampImage==null?null:stampImage!.path
       ..logoImage=logoImage==null?null:logoImage!.path;
   }
-  Provider.of<WareProvider>(context,listen: false).getData(shop);
+  Provider.of<UserProvider>(context,listen: false).getData(shop);
        HiveBoxes.getShopInfo().put(0,shop);
 }
 
