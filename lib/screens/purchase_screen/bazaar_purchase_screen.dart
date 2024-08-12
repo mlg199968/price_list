@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:myket_iap/myket_iap.dart';
+// import 'package:myket_iap/myket_iap.dart';
 import 'package:price_list/components/custom_button.dart';
 import 'package:price_list/constants/constants.dart';
 // import 'package:price_list/screens/purchase_screen/purchase_screen.dart';
@@ -26,15 +26,15 @@ class _BazaarPurchaseScreenState extends State<BazaarPurchaseScreen> {
   final licenseTextController = TextEditingController();
 //TODO:myket starter api
   getMyketStartUpData()async{
-    if (Platform.isAndroid) {
-      var iabResult = await MyketIAP.init(
-          rsaKey: PrivateKeys.rsaKeyMyket, enableDebugLogging: true);
-      print("myket starter checker");
-      print(iabResult?.toJson());
-      if(iabResult==null || !iabResult.isSuccess()){
-        ErrorHandler.errorManger(context, iabResult,title:"مشکل برقراری ارتباط با برنامه مایکت",showSnackbar: true);
-      }
-    }
+    // if (Platform.isAndroid) {
+    //   var iabResult = await MyketIAP.init(
+    //       rsaKey: PrivateKeys.rsaKeyMyket, enableDebugLogging: true);
+    //   print("myket starter checker");
+    //   print(iabResult?.toJson());
+    //   if(iabResult==null || !iabResult.isSuccess()){
+    //     ErrorHandler.errorManger(context, iabResult,title:"مشکل برقراری ارتباط با برنامه مایکت",showSnackbar: true);
+    //   }
+    // }
   }
 @override
   void initState() {
@@ -91,9 +91,9 @@ class _BazaarPurchaseScreenState extends State<BazaarPurchaseScreen> {
                     ),
 
                     //TODO: bazaar purchase button
-                   // BazaarButton(),
+                   BazaarButton(),
                     //TODO: myket purchase button
-                    MyketButton(),
+                    // MyketButton(),
                     //TODO:license payment
                     ///alternative way for payment
                     //    Divider(height: 40,),

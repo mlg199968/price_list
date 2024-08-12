@@ -13,6 +13,7 @@ import 'package:price_list/components/custom_float_action_button.dart';
 import 'package:price_list/components/custom_icon_button.dart';
 import 'package:price_list/components/custom_search_bar.dart';
 import 'package:price_list/components/custom_text.dart';
+import 'package:price_list/screens/purchase_screen/widgets/subscription_timer.dart';
 import 'package:price_list/screens/ware_list/widgets/ware_tile.dart';
 import 'package:price_list/components/empty_holder.dart';
 import 'package:price_list/components/hide_keyboard.dart';
@@ -60,6 +61,7 @@ class _WareListScreenState extends State<WareListScreen> {
   @override
   void initState() {
     Provider.of<WareProvider>(context, listen: false).loadGroupList();
+    Provider.of<UserProvider>(context, listen: false).deviceAuthority;
     super.initState();
   }
 
@@ -295,7 +297,13 @@ class _ListPartState extends State<ListPart> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: CText("${widget.wareList.length}".toPersianDigit(),color: Colors.white70,),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        SubscriptionDeadLine(endDate: Provider.of<UserProvider>(context,listen: false).subscription?.endDate,showDays: false,),
+                        CText("تعداد کالا :${widget.wareList.length}".toPersianDigit(),color: Colors.white70,textDirection: TextDirection.rtl,),
+                      ],
+                    ),
                   ),
                   Expanded(
                     child: Row(

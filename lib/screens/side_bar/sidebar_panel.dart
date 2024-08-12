@@ -94,6 +94,13 @@ class SideBarPanel extends StatelessWidget {
                         ]),
                         Column(
                           children: [
+                            ActionButton(
+                              label: "درگاه بازار",
+                              bgColor: Colors.green,
+                              onPress: (){
+                                Navigator.pushNamed(context, BazaarPurchaseScreen.id);
+                            },
+                            ),
                             ///purchase Button
                             PurchaseButton(),
                             const Gap(15),

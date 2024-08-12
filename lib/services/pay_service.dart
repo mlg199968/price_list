@@ -2,9 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:myket_iap/myket_iap.dart';
-import 'package:myket_iap/util/iab_result.dart';
-import 'package:myket_iap/util/purchase.dart';
+import 'package:flutter_poolakey/flutter_poolakey.dart';
+// import 'package:myket_iap/myket_iap.dart';
+// import 'package:myket_iap/util/iab_result.dart';
+// import 'package:myket_iap/util/purchase.dart';
 import 'package:price_list/constants/enums.dart';
 import 'package:price_list/constants/error_handler.dart';
 import 'package:price_list/constants/private.dart';
@@ -14,6 +15,7 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
 import '../providers/user_provider.dart';
+import '../providers/ware_provider.dart';
 
 class PayService {
 
@@ -53,23 +55,22 @@ class PayService {
 
 //TODO: bazaar connect function
 static connectToBazaar(BuildContext context) async {
-
   try {
-//   bool connectionState=await FlutterPoolakey.connect(
-//     PrivateKeys.rsaKey,
-//     onDisconnected: () {
-//       showSnackBar(context, "خطا در ارتباط با بازار");
-//       print("bazaar not connected");
-//     },
-//   );
-//   if(connectionState){
-//       PurchaseInfo purchaseInfo = await FlutterPoolakey.purchase('3');
-//       if(purchaseInfo.purchaseState==PurchaseState.PURCHASED){
-//         Provider.of<WareProvider>(context,listen: false).setVip(true);
-//         Navigator.pushNamedAndRemoveUntil(context, WareListScreen.id,(route)=>false);
-//         showSnackBar(context, "برنامه با موفقیت فعال شد",type: SnackType.success,dialogMode: true);
-//       }
-//   }
+  bool connectionState=await FlutterPoolakey.connect(
+    PrivateKeys.rsaKey,
+    onDisconnected: () {
+      showSnackBar(context, "خطا در ارتباط با بازار");
+      print("bazaar not connected");
+    },
+  );
+  if(connectionState){
+      PurchaseInfo purchaseInfo = await FlutterPoolakey.purchase('3');
+      if(purchaseInfo.purchaseState==PurchaseState.PURCHASED){
+        Provider.of<UserProvider>(context,listen: false).setUserLevel(1);
+        Navigator.pushNamedAndRemoveUntil(context, WareListScreen.id,(route)=>false);
+        showSnackBar(context, "برنامه با موفقیت فعال شد",type: SnackType.success,dialogMode: true);
+      }
+  }
   }catch(e){
     ErrorHandler.errorManger(context, e,title: "روند پرداخت در بازار با مشکل مواجه شده است",showSnackbar: true);
     print(e);
@@ -78,19 +79,19 @@ static connectToBazaar(BuildContext context) async {
 //TODO: myket connect function
 static connectToMyket(BuildContext context)async{
     try{
-      Map result = await MyketIAP.launchPurchaseFlow(sku: "1", payload:"payload");
-      IabResult purchaseResult = result[MyketIAP.RESULT];
-      Purchase purchase = result[MyketIAP.PURCHASE];
-      print("وضعیت خرید");
-      print(purchase.toJson());
-      print("وضعیت خرید از مایکت");
-      print(purchaseResult.mMessage);
-      print(purchaseResult.mResponse);
-      if(purchaseResult.mMessage.toLowerCase().contains("success")){
-        Provider.of<UserProvider>(context,listen: false).setUserLevel(1);
-        Navigator.pushNamedAndRemoveUntil(context, WareListScreen.id,(route)=>false);
-        showSnackBar(context, "برنامه با موفقیت فعال شد!",type: SnackType.success,dialogMode: true);
-      }
+      // Map result = await MyketIAP.launchPurchaseFlow(sku: "1", payload:"payload");
+      // IabResult purchaseResult = result[MyketIAP.RESULT];
+      // Purchase purchase = result[MyketIAP.PURCHASE];
+      // print("وضعیت خرید");
+      // print(purchase.toJson());
+      // print("وضعیت خرید از مایکت");
+      // print(purchaseResult.mMessage);
+      // print(purchaseResult.mResponse);
+      // if(purchaseResult.mMessage.toLowerCase().contains("success")){
+      //   Provider.of<UserProvider>(context,listen: false).setUserLevel(1);
+      //   Navigator.pushNamedAndRemoveUntil(context, WareListScreen.id,(route)=>false);
+      //   showSnackBar(context, "برنامه با موفقیت فعال شد!",type: SnackType.success,dialogMode: true);
+      // }
 
 
     }catch(e){

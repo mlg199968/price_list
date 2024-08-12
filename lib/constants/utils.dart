@@ -4,7 +4,8 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:gap/gap.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-// import 'package:image_compression_flutter/image_compression_flutter.dart';
+import 'package:image/image.dart' as img;
+import 'package:image_compression_flutter/image_compression_flutter.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:path_provider/path_provider.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
@@ -280,32 +281,32 @@ saveImage(String? path,String idName,String newPath)async{
 }
 
 reSizeImage(String iPath,{int width=600})async{
-  // await (img.Command()
-  // // Read a jpj image from a file.
-  //   ..decodeJpgFile(iPath)
-  // // Resize the image so its width is some number and height maintains aspect
-  // // ratio.
-  //   ..copyResize(width: width)
-  // // Save the image to a jpj file.
-  //   ..writeToFile(iPath))
-  // // Execute the image commands in an isolate thread
-  //     .executeThread();
-  // //******
-  // //compress image
-  // ImageFile input=ImageFile(filePath: iPath,rawBytes: File(iPath).readAsBytesSync()); // set the input image file
-  // Configuration config = const Configuration(
-  //   outputType: ImageOutputType.jpg,
-  //   // can only be true for Android and iOS while using ImageOutputType.jpg or ImageOutputType.pngÏ
-  //   useJpgPngNativeCompressor:false,//(Platform.isAndroid || Platform.isIOS) ? true : false,
-  //   // set quality between 0-100
-  //   quality: 25,
-  // );
-  // final param = ImageFileConfiguration(input: input, config: config);
-  // final output = await compressor.compress(param);
-  // debugPrint("Input size : ${input.sizeInBytes}");
-  // debugPrint("Output size : ${output.sizeInBytes}");
-  //
-  // if(input.sizeInBytes>100100){
-  //   await img.writeFile(iPath, output.rawBytes);
-  // }
+  await (img.Command()
+  // Read a jpj image from a file.
+    ..decodeJpgFile(iPath)
+  // Resize the image so its width is some number and height maintains aspect
+  // ratio.
+    ..copyResize(width: width)
+  // Save the image to a jpj file.
+    ..writeToFile(iPath))
+  // Execute the image commands in an isolate thread
+      .executeThread();
+  //******
+  //compress image
+  ImageFile input=ImageFile(filePath: iPath,rawBytes: File(iPath).readAsBytesSync()); // set the input image file
+  Configuration config = const Configuration(
+    outputType: ImageOutputType.jpg,
+    // can only be true for Android and iOS while using ImageOutputType.jpg or ImageOutputType.pngÏ
+    useJpgPngNativeCompressor:false,//(Platform.isAndroid || Platform.isIOS) ? true : false,
+    // set quality between 0-100
+    quality: 25,
+  );
+  final param = ImageFileConfiguration(input: input, config: config);
+  final output = await compressor.compress(param);
+  debugPrint("Input size : ${input.sizeInBytes}");
+  debugPrint("Output size : ${output.sizeInBytes}");
+
+  if(input.sizeInBytes>100100){
+    await img.writeFile(iPath, output.rawBytes);
+  }
 }

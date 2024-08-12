@@ -59,10 +59,6 @@ class WareTools {
     }
     return list;
   }
-double currencyCheck(String currency){
-
-    return 0;
-}
 ///sort ware list with group sort
 static List<Ware> sortGroups(List<Ware> wareList){
     List<Ware> sortedList=[];
