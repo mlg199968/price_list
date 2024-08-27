@@ -57,7 +57,6 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   void getData()async {
-    prefs = await SharedPreferences.getInstance();
     selectedFont=provider.fontFamily;
     selectedPdfFont=provider.pdfFont;
     backupDirectory=provider.backupDirectory;
@@ -66,7 +65,14 @@ class _SettingScreenState extends State<SettingScreen> {
 
   @override
   void initState() {
+    print("subscription");
+    print(Provider.of<UserProvider>(context, listen: false).subscription?.toMap());
+    print("isVip");
+    print(!Provider.of<UserProvider>(context, listen: false).isVip);
+    print("user level");
+    print(Provider.of<UserProvider>(context, listen: false).userLevel);
     provider = Provider.of<UserProvider>(context, listen: false);
+
     getData();
     super.initState();
   }

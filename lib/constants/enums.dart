@@ -11,6 +11,12 @@
   const SortItem(this.value);
   final String value;
 }
+  enum ListViewMode{
+  grid("شبکه ای"),
+  list("ردیفی");
+  const ListViewMode(this.value);
+  final String value;
+}
 
 ///message type for snackbar
   enum SnackType{

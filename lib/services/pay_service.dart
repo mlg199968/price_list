@@ -54,7 +54,7 @@ class PayService {
   }
 
 //TODO: bazaar connect function
-static connectToBazaar(BuildContext context) async {
+static connectToBazaar2(BuildContext context) async {
   try {
   bool connectionState=await FlutterPoolakey.connect(
     PrivateKeys.rsaKey,
@@ -74,6 +74,50 @@ static connectToBazaar(BuildContext context) async {
   }catch(e){
     ErrorHandler.errorManger(context, e,title: "روند پرداخت در بازار با مشکل مواجه شده است",showSnackbar: true);
     print(e);
+  }
+}
+//TODO: bazaar connect function
+static connectToBazaar(BuildContext context) async {
+  try {
+  bool connectionState=await FlutterPoolakey.connect(
+    PrivateKeys.rsaKey,
+    onDisconnected: () {
+      showSnackBar(context, "خطا در ارتباط با بازار");
+      print("bazaar not connected");
+    },
+  );
+  if(connectionState){
+      PurchaseInfo purchaseInfo = await FlutterPoolakey.subscribe('0');
+      if(purchaseInfo.purchaseState==PurchaseState.PURCHASED){
+        Provider.of<UserProvider>(context,listen: false).setUserLevel(1);
+        Navigator.pushNamedAndRemoveUntil(context, WareListScreen.id,(route)=>false);
+        showSnackBar(context, "برنامه با موفقیت فعال شد",type: SnackType.success,dialogMode: true);
+      }
+  }
+  }catch(e,stacktrace){
+    ErrorHandler.errorManger(context, e,stacktrace: stacktrace,title: "روند پرداخت در بازار با مشکل مواجه شده است",showSnackbar: true);
+  }
+}
+//TODO: bazaar connect function
+static fetchBazaarInfo(BuildContext context) async {
+  try {
+  bool connectionState=await FlutterPoolakey.connect(
+    PrivateKeys.rsaKey,
+    onDisconnected: () {
+      debugPrint("bazaar not connected");
+    },
+  );
+  if(connectionState){
+      PurchaseInfo? purchaseInfo = await FlutterPoolakey.querySubscribedProduct('0');
+      if((purchaseInfo==null || purchaseInfo.purchaseState!=PurchaseState.PURCHASED) && Provider.of<UserProvider>(context,listen: false).userLevel!=0){
+        Provider.of<UserProvider>(context,listen: false).setUserLevel(0);
+      }
+      else if(purchaseInfo?.purchaseState==PurchaseState.PURCHASED && Provider.of<UserProvider>(context,listen: false).userLevel==0){
+        Provider.of<UserProvider>(context,listen: false).setUserLevel(1);
+      }
+  }
+  }catch(e,stacktrace){
+    ErrorHandler.errorManger(context, e,stacktrace: stacktrace,title: "خواندن داده های  بازار با مشکل مواجه شده است");
   }
 }
 //TODO: myket connect function
@@ -103,46 +147,3 @@ static connectToMyket(BuildContext context)async{
 }
 
 
-// {success: true,
-// data: {
-//   errors: {
-//     lmfwc_rest_data_error: [License Key: 141 could not be found.]},
-// error_data: {
-//     lmfwc_rest_data_error: {status: 404}
-//   }
-// }
-// }
-
-
-// {
-// success: true,
-// data: {
-//       id: 1,
-//       orderId: null,
-//       productId: null,
-//       userId: 20,
-//       licenseKey: pl-123456,
-//       expiresAt: null,
-//       validFor: 120,
-//       source: 2,
-//       status: 3,
-//       timesActivated: 4,
-//       timesActivatedMax: 100,
-//       createdAt: 2023-09-10 07:59:45,
-//       createdBy: 1,
-//       updatedAt: 2024-01-15 05:19:15,
-//       updatedBy: 1,
-//       activationData: {
-//               id: 5,
-//               token: 7c23ef39f2e9f98e07b14387569374d80031566c,
-//               license_id: 1,
-//               label: null,
-//               source: 2,
-//               ip_address: 31.14.93.30,
-//               user_agent: Dart/3.2 (dart:io),
-//               meta_data: null,
-//               created_at: 2024-01-15 05:19:15,
-//               updated_at: null,
-//               deactivated_at: null}
-//             }
-//           }

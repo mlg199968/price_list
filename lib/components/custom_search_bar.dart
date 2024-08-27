@@ -32,8 +32,8 @@ class CustomSearchBar extends StatelessWidget {
         children: [
           DropListModel(
               icon: Icon(
-                Icons.sort,
-                size: 30,
+                Icons.sort_rounded,
+                size: 35,
                 color: iconColor,
                 shadows: [kShadow],
               ),

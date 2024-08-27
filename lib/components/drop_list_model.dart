@@ -42,12 +42,14 @@ class DropListModel extends StatelessWidget {
             dropdownStyleData: DropdownStyleData(
               width: width,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Colors.white.withOpacity(.85),
+                gradient:kBlackWhiteGradiant,
                 borderRadius: BorderRadius.circular(borderRadius),
                 //border: Border.all(color: kColorController)
               ),
-              scrollbarTheme:  ScrollbarThemeData(radius:Radius.circular(borderRadius), ),
-              padding: const EdgeInsets.all(0),
+              scrollbarTheme:  ScrollbarThemeData(radius:Radius.circular(borderRadius) ),
+              padding:  EdgeInsets.zero,
+              scrollPadding: EdgeInsets.zero
             ),
             buttonStyleData: ButtonStyleData(
               width: width,
@@ -57,12 +59,10 @@ class DropListModel extends StatelessWidget {
                 borderRadius: BorderRadius.circular(borderRadius),
                 //border: Border.all(color: kColorController)
               ), ),
-
-
-
+            menuItemStyleData: MenuItemStyleData(
+                padding: EdgeInsets.zero,
+            ),
             isExpanded: true,
-
-
             customButton:icon,
             isDense: true,
             alignment: Alignment.centerRight,
@@ -76,16 +76,18 @@ class DropListModel extends StatelessWidget {
               value: item,
               child: Container(
                 alignment: Alignment.centerRight,
-                color:icon!=null?(selectedValue==item?kMainColor:null):null,
                 padding: const EdgeInsets.only(right: 5),
-                width: width *.7,
+                margin: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  color:icon!=null?(selectedValue==item?kMainColor:null):null,
+                    borderRadius: BorderRadius.circular(borderRadius-3),
+                ),
                 child: Text(
                   item,
                   overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    color: Colors.blueGrey,
+                  maxLines: 4,
+                  style: TextStyle(
+                    color: icon!=null?(selectedValue==item?Colors.white70:null):null,
                   ),
                 ),
               ),

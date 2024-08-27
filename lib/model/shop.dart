@@ -51,6 +51,12 @@ class Shop extends HiveObject {
   Subscription? subscription;
   @HiveField(21)
   List<Map>? descriptionList=[];
+  @HiveField(22)
+  Map<String, bool>? conditions;
+  @HiveField(23)
+  String? listViewMode;
+
+
 
   Shop copyWith({
     String? shopName,
@@ -75,6 +81,8 @@ class Shop extends HiveObject {
     String? appType,
     Subscription? subscription,
     List<Map>? descriptionList,
+    Map<String, bool>? conditions,
+    String? listViewMode,
   }) {
     Shop shop=Shop()
       ..shopName= shopName ?? this.shopName
@@ -98,6 +106,8 @@ class Shop extends HiveObject {
       ..appType= appType ?? this.appType
       ..subscription= subscription ?? this.subscription
       ..descriptionList= descriptionList ?? this.descriptionList
+      ..conditions= conditions ?? this.conditions
+      ..listViewMode= listViewMode ?? this.listViewMode
       ..activeUser= activeUser ?? this.activeUser;
     return shop;
   }

@@ -245,7 +245,9 @@ class BackendServices {
       //we save the date of this fetch
       subs.fetchDate = startDate.add(Duration(milliseconds: offset));
       subs.startDate ??= startDate.add(Duration(milliseconds: offset));
-
+      if(subs.endDate!=null && subs.fetchDate!=null && subs.endDate!.isBefore(subs.fetchDate!)){
+        subs.level=0;
+      }
       BackendServices.createSubs(context, subs: subs).then((isCreated) {
         if (isCreated != null) {
           debugPrint("fetch date has been updated after fetch subscription");

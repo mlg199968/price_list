@@ -1,17 +1,21 @@
 
 
-import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_poolakey/flutter_poolakey.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // import 'package:myket_iap/myket_iap.dart';
 import 'package:price_list/components/custom_button.dart';
 import 'package:price_list/constants/constants.dart';
 // import 'package:price_list/screens/purchase_screen/purchase_screen.dart';
 import 'package:price_list/services/pay_service.dart';
+import 'package:provider/provider.dart';
 
-import '../../constants/error_handler.dart';
+import '../../constants/enums.dart';
 import '../../constants/private.dart';
+import '../../constants/utils.dart';
+import '../../providers/user_provider.dart';
+import '../ware_list/ware_list_screen.dart';
 
 class BazaarPurchaseScreen extends StatefulWidget {
   static const String id = "/bazaarPurchaseScreen";
@@ -36,9 +40,28 @@ class _BazaarPurchaseScreenState extends State<BazaarPurchaseScreen> {
     //   }
     // }
   }
+
+  getBazaarData()async{
+    bool connectionState=await FlutterPoolakey.connect(
+      PrivateKeys.rsaKey,
+      onDisconnected: () {
+        showSnackBar(context, "خطا در ارتباط با بازار");
+        print("bazaar not connected");
+      },
+    );
+    if(connectionState){
+      PurchaseInfo? purchaseInfo = await FlutterPoolakey.querySubscribedProduct('0');
+      print(purchaseInfo.toString());
+      if(false){
+        Provider.of<UserProvider>(context,listen: false).setUserLevel(1);
+        Navigator.pushNamedAndRemoveUntil(context, WareListScreen.id,(route)=>false);
+        showSnackBar(context, "برنامه با موفقیت فعال شد",type: SnackType.success,dialogMode: true);
+      }
+    }
+  }
 @override
   void initState() {
-
+    getBazaarData();
    getMyketStartUpData();
 
   super.initState();

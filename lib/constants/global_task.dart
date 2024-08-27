@@ -1,11 +1,13 @@
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:price_list/constants/error_handler.dart';
 import 'package:price_list/model/shop.dart';
 import 'package:price_list/services/hive_boxes.dart';
+import 'package:price_list/services/pay_service.dart';
 import 'package:provider/provider.dart';
 import '../providers/user_provider.dart';
 import '../screens/notice_screen/services/notice_tools.dart';
@@ -29,6 +31,10 @@ class GlobalTask {
       else{
         HiveBoxes.getShopInfo().add(shop);
       }
+      if(Platform.isAndroid) {
+        await PayService.fetchBazaarInfo(context);
+      }
+
       ///get app version
       final deviceInfo=await PackageInfo.fromPlatform();
       Provider.of<UserProvider>(context, listen: false).setAppVersion(deviceInfo.version);
@@ -44,7 +50,7 @@ class GlobalTask {
           BackendServices().fetchSubs(navigatorState.currentContext);
         }
         ///get notifications
-        runZonedGuarded(() => NoticeTools.readNotifications(navigatorState.currentContext,timeout: 5),(e,trace){});
+       NoticeTools.readNotifications(navigatorState.currentContext,timeout: 5);
 
     }catch(e,stacktrace){
       if(context.mounted)

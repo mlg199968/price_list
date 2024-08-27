@@ -79,8 +79,6 @@ class _PrintPanelState extends State<PrintPanel> {
     } else {
       file = await pdfWareListApi.generateSimpleWareList();
     }
-    print("***************object************");
-    print(file.path);
     return file;
   }
 

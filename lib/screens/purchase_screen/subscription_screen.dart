@@ -151,6 +151,7 @@ late UserProvider provider;
                                 title: "آیا از خروج از حساب اشتراکی مطمئن هستید؟",
                                 onYes: (){
                                   userProvider.setSubscription(null);
+                                  userProvider.setUserLevel(0);
                                   setState(() {});
                                   Navigator.pushNamedAndRemoveUntil(context, WareListScreen.id, (route) => false);
                                 },),

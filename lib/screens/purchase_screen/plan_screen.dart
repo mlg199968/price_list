@@ -77,10 +77,11 @@ class _PlanScreenState extends State<PlanScreen> {
 
       String? subsId = await BackendServices.createSubs(context, subs: subs);
       if (subsId!=null) {
+        print("subsId");
+        print(subsId);
+        subs.id=int.parse(subsId);
+
         if(plan.type=="free"){
-          print("subsId");
-          print(subsId);
-          subs.id=int.parse(subsId);
           subs.level=1;
           String? returnedId = await BackendServices.updateSubs(context, subs: subs);
           if(returnedId!=null){

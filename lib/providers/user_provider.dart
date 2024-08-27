@@ -13,18 +13,23 @@ class UserProvider extends ChangeNotifier {
   bool get isVip=>userLevel==1?true:false;
   int _userLevel = 0;
   // int get userLevel =>_userLevel;
-  int get userLevel =>_subscription!=null?_subscription!.userLevel: 0;
+  int get userLevel =>_subscription!=null?_subscription!.userLevel: _userLevel;
   Subscription? _subscription;
   Subscription? get subscription=>_subscription;
   ///check current device match with saved device ,for safety for cracks
   Future<bool> get deviceAuthority async{
-    Device currentDevice=await getDeviceInfo();
-    if(_subscription != null && _subscription!.device?.id==currentDevice.id){
+    if (_subscription != null){
+      Device currentDevice = await getDeviceInfo();
+      if (_subscription!.device?.id == currentDevice.id) {
+        return true;
+      } else {
+        _subscription?.level = 0;
+        _userLevel = 0;
+        return false;
+      }
+    }
+    else{
       return true;
-    }else{
-      _subscription?.level=0;
-      _userLevel=0;
-      return false;
     }
   }
   //ceil count is for how many item you can add to list
@@ -41,7 +46,7 @@ class UserProvider extends ChangeNotifier {
   String get appVersion=>_appVersion;
 
 
-  bool saveBackupOnExist=false;
+  bool saveBackupOnExit=false;
   //*****
   Shop sampleShop = Shop()
     ..shopName = "shopName"
@@ -77,7 +82,16 @@ class UserProvider extends ChangeNotifier {
   Map? currenciesMap;
   bool _replacedCurrency=false;
   bool get replacedCurrency=>_replacedCurrency;
+  Map<String, bool>? _conditions;
+  Map<String, bool>? get conditions=>conditions;
+  String _listViewMode=ListViewMode.list.name;
+  String get listViewMode => _listViewMode;
+  // set setListViewMode(String mode)=>_listViewMode=mode;
+  setListViewMode(String mode){
+    _listViewMode = mode;
+    notifyListeners();
 
+  }
 
   void getData(Shop shop) {
     shopName = shop.shopName;
@@ -98,6 +112,8 @@ class UserProvider extends ChangeNotifier {
     _backupDirectory = shop.backupDirectory;
     currenciesMap=shop.currenciesValue;
     _replacedCurrency=shop.replacedCurrency ?? false;
+    _conditions=shop.conditions;
+    _listViewMode=shop.listViewMode ?? ListViewMode.list.name;
 
     _user = shop.activeUser;
     _appType = shop.appType;
@@ -115,13 +131,13 @@ class UserProvider extends ChangeNotifier {
   }
 
   void setUserLevel(int input) async {
-    // SharedPreferences prefs= await SharedPreferences.getInstance();
-    // prefs.setInt("level",input);
+    _userLevel = input;
+    notifyListeners();
     Shop shop = HiveBoxes.getShopInfo().getAt(0)!;
     shop.userLevel = input;
     HiveBoxes.getShopInfo().putAt(0, shop);
-    _userLevel = input;
     notifyListeners();
+
   }
   ///set subscription
   void setSubscription(Subscription? subs){
