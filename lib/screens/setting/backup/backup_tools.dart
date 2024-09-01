@@ -19,7 +19,14 @@ import 'package:share_plus/share_plus.dart';
 
 
 class BackupTools {
+  BackupTools({this.quickBackup = false});
+  final bool quickBackup;
   static const String _outPutName = "data-file.mlg";
+  final String formattedDate =
+  intl.DateFormat('yyyyMMdd-kkmmss').format(DateTime.now());
+  String get zipFileName => quickBackup
+      ? "$kAppName$formattedDate-database.plmlg"
+      : "$kAppName$formattedDate-full.plmlg";
   ///
   static Future<String?> chooseDirectory() async {
     String? result = await FilePicker.platform
@@ -31,7 +38,7 @@ class BackupTools {
     }
   }
   ///
-  static Future<void> createBackup(BuildContext context,{String? directory,bool isSharing=false}) async{
+   Future<void> createBackup(BuildContext context,{String? directory,bool isSharing=false}) async{
     List<Ware> wares = HiveBoxes.getWares().values.toList();
    List wareListJson=wares.map((e) => e.toJson()).toList();
     try {
@@ -115,17 +122,17 @@ ErrorHandler.errorManger(context, e,title: "BackupTools restoreMlgFileBackup fun
     }
   }
 ///create zip backup
-  static createZipFile(String imagesDir, String json, context,{required String directory,bool isSharing=false}) async {
+   createZipFile(String imagesDir, String json, context,{required String directory,bool isSharing=false}) async {
     try {
-      String formattedDate =
-      intl.DateFormat('yyyyMMdd-kkmmss').format(DateTime.now());
         // Zip a directory to out.zip using the zipDirectory convenience method
         var encoder = ZipFileEncoder();
         // Manually create a zip of a directory and individual files.
-      final String path='$directory/$kAppName$formattedDate.plmlg';
+      final String path='$directory/$zipFileName';
         encoder.create(path);
+        if(quickBackup==false) {
         encoder.addDirectory(Directory(imagesDir));
-        File jsonFile = await _createJsonFile(json, directory);
+      }
+      File jsonFile = await _createJsonFile(json, directory);
         encoder.addFile(jsonFile);
         encoder.close();
         await jsonFile.delete(recursive: true);

@@ -41,12 +41,16 @@ class PlanScreen extends StatefulWidget {
 
 class _PlanScreenState extends State<PlanScreen> {
   final phoneNumberController = TextEditingController();
+  final couponController = TextEditingController();
   final emailController = TextEditingController();
   final userFullNameController = TextEditingController();
   final authCodeController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   late Future _getPlansFromHost;
  Plan? selectedPlan;
+ int? couponValue;
+ int? couponCount;
+ String couponMessage="";
 
   List<String> warningList=[
     "اگر شرایط پرداخت آنلاین را ندارید با پشتیبانی تماس بگیرید",
@@ -66,7 +70,7 @@ class _PlanScreenState extends State<PlanScreen> {
         ..phone = widget.phone
         ..name = widget.oldSubs?.name ?? userFullNameController.text
         ..level = 0
-        ..amount = plan.price.toInt()
+        ..amount = plan.price.toInt()-(couponValue ?? 0)
         ..device = device
         ..appName=kAppName
         ..fetchDate = DateTime.now()
@@ -101,10 +105,15 @@ class _PlanScreenState extends State<PlanScreen> {
         else {
           Provider.of<UserProvider>(context, listen: false)
               .setSubscription(subs);
+          if(couponValue!=null && couponCount!=null) {
+            await BackendServices()
+                .updateCoupon(couponController.text, couponCount! - 1);
+          }
           await ZarinpalApi.payment(context,
               amount: subs.amount!,
               planId: plan.id,
               subsId: subsId.toString(),
+              coupon: couponValue,
               phone: subs.phone);
           // await ZarinpalApi.tesPayment(
           //     context,
@@ -130,6 +139,18 @@ bool checkHasFreePlan(){
   }
   return false;
 }
+///check coupon code
+  couponFunction()async{
+    couponValue=0;
+    couponMessage="";
+  Map? data= await BackendServices().readCoupon(couponController.text,selectedPlan!.price.toInt());
+  couponMessage=data?["message"] ?? "";
+  if(data?["coupon"]!=null){
+    couponValue=int.parse(data!["coupon"]["amount"]);
+    couponCount=int.parse(data["coupon"]["count"]);
+  }
+  setState(() {});
+  }
   @override
   void initState() {
     _getPlansFromHost = BackendServices().readPlans();
@@ -208,6 +229,45 @@ bool checkHasFreePlan(){
                                },
                              ).toList(),
                              ),
+                            const Gap(20),
+                            ///coupon part
+                            if(selectedPlan!=null)
+                            Column(
+                              children: [
+                                /// coupon textfield
+                                CustomTextField(
+                                  width: 300,
+                                  controller:couponController ,
+                                  borderRadius: 10,
+                                  label: "کد تخفیف",
+                                  suffixIcon: DynamicButton(
+                                    borderRadius: 8,
+                                    bgColor: kMainColor,
+                                    label: "اعمال",
+                                    onPress: ()async{
+                                     await couponFunction();
+                                    },
+                                  ),
+                                ),
+                                CText(couponMessage,fontSize: 10,color: couponValue!=0?Colors.teal:Colors.red,),
+                                Container(
+                                  margin: EdgeInsets.all(15),
+                                  padding: EdgeInsets.symmetric(vertical: 10),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: kMainColor)
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      CText(addSeparator(selectedPlan!.price-(couponValue ?? 0)),fontSize: 19,color: kMainColor,),
+                                      CText("مبلغ نهایی: ",textDirection: TextDirection.rtl,fontSize: 10,color: Colors.black54,),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+
                             ///info and purchase part
                              Directionality(
                               textDirection: TextDirection.rtl,
@@ -215,7 +275,7 @@ bool checkHasFreePlan(){
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Gap(50),
+                                  const Gap(30),
 
                                   const Center(
                                       child: Text(
@@ -343,7 +403,7 @@ class PlanHolder extends StatelessWidget {
           Container(
             margin: const EdgeInsets.only(top: 8),
             width: 400,
-            height: 80,
+            height: 65,
             decoration: BoxDecoration(
                 gradient: kBlackWhiteGradiant,
               borderRadius: BorderRadius.circular(10),

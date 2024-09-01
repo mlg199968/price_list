@@ -94,13 +94,13 @@ class SideBarPanel extends StatelessWidget {
                         ]),
                         Column(
                           children: [
-                            ActionButton(
-                              label: "درگاه بازار",
-                              bgColor: Colors.green,
-                              onPress: (){
-                                Navigator.pushNamed(context, BazaarPurchaseScreen.id);
-                            },
-                            ),
+                            // ActionButton(
+                            //   label: "درگاه بازار",
+                            //   bgColor: Colors.green,
+                            //   onPress: (){
+                            //     Navigator.pushNamed(context, BazaarPurchaseScreen.id);
+                            // },
+                            // ),
                             ///purchase Button
                             PurchaseButton(),
                             const Gap(15),
@@ -239,11 +239,6 @@ class PurchaseButton extends StatelessWidget {
         builder: (context,userProvider,child) {
           return InkWell(
             onTap: () {
-              Shop shop = HiveBoxes.getShopInfo().getAt(0)!;
-              print("shop.subscription");
-              print(shop.subscription);
-              print("userProvider.subscription?.toMap()");
-              print(userProvider.subscription?.toMap());
               if(userProvider.subscription==null) {
                 Navigator.pushNamed(context, AuthorityScreen.id);
               }else{

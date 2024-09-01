@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:price_list/constants/error_handler.dart';
@@ -31,26 +32,27 @@ class GlobalTask {
       else{
         HiveBoxes.getShopInfo().add(shop);
       }
-      if(Platform.isAndroid) {
-        await PayService.fetchBazaarInfo(context);
-      }
+
 
       ///get app version
       final deviceInfo=await PackageInfo.fromPlatform();
       Provider.of<UserProvider>(context, listen: false).setAppVersion(deviceInfo.version);
       ///
-      // final connectivityResult = await (Connectivity().checkConnectivity());
-      // if (connectivityResult == ConnectivityResult.mobile ||
-      //     connectivityResult == ConnectivityResult.wifi ||
-      //     connectivityResult == ConnectivityResult.ethernet ||
-      //     connectivityResult == ConnectivityResult.vpn) {}
-
-        /// fetch subscription data
-        if(Provider.of<UserProvider>(context, listen: false).appType!=AppType.waiter.value) {
-          BackendServices().fetchSubs(navigatorState.currentContext);
+      final connectivityResult = await (Connectivity().checkConnectivity());
+      if (connectivityResult == ConnectivityResult.mobile ||
+          connectivityResult == ConnectivityResult.wifi ||
+          connectivityResult == ConnectivityResult.ethernet ||
+          connectivityResult == ConnectivityResult.vpn)
+      {
+        //TODO:bazaar fetch data
+        if(Platform.isAndroid) {
+          await PayService.fetchBazaarInfo(context);
         }
+        /// fetch subscription data
+          BackendServices().fetchSubs(context);
         ///get notifications
-       NoticeTools.readNotifications(navigatorState.currentContext,timeout: 5);
+        NoticeTools.readNotifications(context,timeout: 5);
+      }
 
     }catch(e,stacktrace){
       if(context.mounted)

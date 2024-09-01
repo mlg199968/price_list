@@ -1,5 +1,6 @@
 
 import 'package:blurrycontainer/blurrycontainer.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:price_list/constants/constants.dart';
 
@@ -98,7 +99,7 @@ class NotificationDialog extends StatelessWidget {
                                 ),
                                 child:(image == null || image == "")
                                     ? null
-                                    :  Image(image: NetworkImage(image!),fit: BoxFit.fitHeight),
+                                    :  Image(image: CachedNetworkImageProvider(image!),fit: BoxFit.fitHeight),
                               ),
                             ),
                             Directionality(

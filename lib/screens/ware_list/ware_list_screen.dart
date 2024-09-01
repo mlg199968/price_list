@@ -64,6 +64,7 @@ class _WareListScreenState extends State<WareListScreen> {
 
   @override
   void initState() {
+    print("object");
     Provider.of<WareProvider>(context, listen: false).loadGroupList();
     Provider.of<UserProvider>(context, listen: false).deviceAuthority;
     super.initState();
@@ -593,9 +594,10 @@ class _ListPartState extends State<ListPart> {
                                                     builder: (_) => CustomAlert(
                                                         title:
                                                             "آیا از حذف موارد انتخاب شده مطمئن هستید؟",
-                                                        onYes: () {
+                                                        onYes: () async{
                                                           for (Ware item
                                                               in selectedItems) {
+                                                            await deleteImageFile(item.imagePath);
                                                             item.delete();
                                                           }
                                                           showSnackBar(context,

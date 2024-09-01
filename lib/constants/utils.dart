@@ -13,6 +13,7 @@ import 'package:price_list/components/custom_text.dart';
 import 'package:price_list/components/shape/shape02.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/enums.dart';
+import 'package:price_list/constants/error_handler.dart';
 import 'package:price_list/screens/purchase_screen/bazaar_purchase_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -279,7 +280,7 @@ saveImage(String? path,String idName,String newPath)async{
   }
   return null;
 }
-
+///
 reSizeImage(String iPath,{int width=600})async{
   await (img.Command()
   // Read a jpj image from a file.
@@ -310,3 +311,37 @@ reSizeImage(String iPath,{int width=600})async{
     await img.writeFile(iPath, output.rawBytes);
   }
 }
+///
+Future<bool> deleteImageFile(String? path) async {
+  if(path!=null){
+    final file = File(path);
+    if (await file.exists()) {
+      try {
+        await file.delete();
+        print("File deleted successfully");
+        return true;
+      } catch (e, stacktrace) {
+        ErrorHandler.errorManger(null, e,
+            stacktrace: stacktrace, errorText: "خطا در حذف تصویر از حافظه");
+      }
+    }
+  }
+  return false;
+}
+
+///
+Future<bool> deleteDirectory(String path) async {
+  final directory = Directory(path);
+
+  if (await directory.exists()) {
+    try {
+      await directory.delete(recursive: true);
+      print("Directory deleted successfully");
+      return true;
+    } catch (e,stacktrace) {
+      ErrorHandler.errorManger(null, e,stacktrace: stacktrace,errorText: "خطا در حذف دایرکتوری از حافظه");
+    }
+  }
+  return false;
+}
+

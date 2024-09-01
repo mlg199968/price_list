@@ -54,7 +54,8 @@ class InfoPanel extends StatelessWidget {
                     context: context,
                     builder: (context) => CustomAlert(
                       title: "آیا از حذف کالا مورد نظر مطمئن هستید؟",
-                      onYes: (){
+                      onYes: ()async{
+                        await deleteImageFile(ware.imagePath);
                         ware.delete();
                         Navigator.pop(context,false);
                         Navigator.pop(context,false);
@@ -198,7 +199,8 @@ class InfoPanelDesktop extends StatelessWidget {
                         context: context,
                         builder: (context) => CustomAlert(
                           title: "آیا از حذف کالا مورد نظر مطمئن هستید؟",
-                          onYes: (){
+                          onYes: ()async{
+                            await deleteImageFile(ware.imagePath);
                             ware.delete();
                             Navigator.pop(context,false);
                             onReload();

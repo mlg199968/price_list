@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:price_list/components/custom_text.dart';
 import 'package:price_list/constants/constants.dart';
@@ -53,7 +54,7 @@ class NoticeTile extends StatelessWidget {
                         fit: BoxFit.cover,
                       )
                           : DecorationImage(
-                        image: NetworkImage(notice.image!),
+                        image: CachedNetworkImageProvider(notice.image!),
                         alignment: Alignment.centerRight,
                         fit: BoxFit.cover,
                       ),

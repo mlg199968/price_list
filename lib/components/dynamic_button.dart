@@ -20,7 +20,7 @@ class DynamicButton extends StatefulWidget{
     this.child,
     this.disable = false,
     this.labelStyle,
-    this.iconSize,
+    this.iconSize, this.borderColor,
   });
 
   final Widget? child;
@@ -40,6 +40,8 @@ class DynamicButton extends StatefulWidget{
   final bool loading;
   final bool disable;
   final TextStyle? labelStyle;
+  final Color? borderColor;
+
 
   @override
   State<DynamicButton> createState() => _DynamicButtonState();
@@ -66,7 +68,9 @@ class _DynamicButtonState extends State<DynamicButton> {
                       EdgeInsets.symmetric(
                           horizontal: widget.label == null ? 0 : 5,
                           vertical: 0)),
-                  backgroundColor: MaterialStateProperty.all(widget.bgColor)),
+                  backgroundColor: MaterialStateProperty.all(widget.bgColor),
+                side:widget.borderColor==null?null: MaterialStateProperty.all(BorderSide(color: widget.borderColor!)),
+              ),
               onPressed: widget.disable
                   ? () {}
                   : () async{

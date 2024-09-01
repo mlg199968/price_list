@@ -16,6 +16,7 @@ class ZarinpalApi {
       {required String phone,
       required String planId,
       required String subsId,
+      required int? coupon,
       required int amount}) async {
     Device device = await getDeviceInfo();
     PaymentRequest paymentRequest = PaymentRequest()
@@ -24,7 +25,7 @@ class ZarinpalApi {
       ..setDescription(device.toJson())
       ..setMerchantID(PrivateKeys.zarinpalId)
       ..setCallbackURL(
-          "https://mlggrand.ir/db/payment/payzarin.php?phone=$phone&amount=$amount&planId=$planId&subsId=$subsId&appName=$kAppName&deviceId=${device.toJson()}");
+          "https://mlggrand.ir/db/payment/payzarin.php?phone=$phone&amount=$amount&planId=$planId&subsId=$subsId&appName=$kAppName&deviceId=${device.toJson()}&coupon=$coupon");
 
     ZarinPal().startPayment(paymentRequest, (status, paymentGatewayUri) {
       try {

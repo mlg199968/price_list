@@ -21,12 +21,6 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
 
-
-  @override
-  void didChangeDependencies() async{
-    // await GlobalTask().getInitData(context);
-    super.didChangeDependencies();
-  }
   @override
   Widget build(BuildContext context) {
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) async {

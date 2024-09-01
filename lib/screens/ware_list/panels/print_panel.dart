@@ -129,7 +129,7 @@ class _PrintPanelState extends State<PrintPanel> {
               String? backupDirectory =
                   Provider.of<UserProvider>(context, listen: false)
                       .backupDirectory;
-              await BackupTools.createBackup(context,
+              await BackupTools(quickBackup: true).createBackup(context,
                   directory: backupDirectory);
               Navigator.pop(context);
             },

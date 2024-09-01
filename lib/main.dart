@@ -7,6 +7,7 @@ import 'package:price_list/model/notice.dart';
 import 'package:price_list/model/shop.dart';
 import 'package:price_list/model/ware.dart';
 import 'package:price_list/providers/user_provider.dart';
+import 'package:price_list/providers/value_provider.dart';
 import 'package:price_list/router.dart';
 import 'package:price_list/providers/ware_provider.dart';
 import 'package:provider/provider.dart';
@@ -38,6 +39,7 @@ void main() async {
     providers: [
       ChangeNotifierProvider(create: (context) => WareProvider()),
       ChangeNotifierProvider(create: (context) => UserProvider()),
+      ChangeNotifierProvider(create: (context) => ValueProvider()),
     ],
     child: const MyApp(),
 

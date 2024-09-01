@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
+import 'package:price_list/providers/value_provider.dart';
 import 'package:price_list/screens/purchase_screen/plan_screen.dart';
 import 'package:price_list/screens/purchase_screen/widgets/subscription_timer.dart';
 import 'package:price_list/screens/ware_list/ware_list_screen.dart';
@@ -27,6 +28,7 @@ class SubscriptionScreen extends StatefulWidget {
 
 class _SubscriptionScreenState extends State<SubscriptionScreen> {
 late UserProvider provider;
+bool removeDevice=false;
   @override
   void initState() {
     provider=Provider.of<UserProvider>(context,listen: false);
@@ -52,7 +54,7 @@ late UserProvider provider;
   }
   @override
   Widget build(BuildContext context) {
-    return Consumer<UserProvider>(builder: (context, userProvider, child) {
+    return Consumer2<UserProvider,ValueProvider>(builder: (context, userProvider,valProvider, child) {
       Subscription? subs = userProvider.subscription;
       return Scaffold(
         extendBodyBehindAppBar: true,
@@ -142,27 +144,45 @@ late UserProvider provider;
                       Wrap(
                         children: [
                           ActionButton(
-                            label: "خروج از حساب اشتراکی",
+                            label: "خروج از حساب",
                             icon: Icons.logout,
-                            borderRadius: 5,
-                            bgColor: Colors.redAccent,
+                            borderRadius: 30,
+                            bgColor: Colors.black54,
+                            iconColor: Colors.red,
+                            borderColor: Colors.red,
                             onPress: (){
-                              showDialog(context: context, builder: (_)=>CustomAlert(
+                              showDialog(context: context, builder: (context)=>CustomAlert(
                                 title: "آیا از خروج از حساب اشتراکی مطمئن هستید؟",
-                                onYes: (){
+                                onYes: ()async{
+                                  if(valProvider.cbRemoveDevice){
+                                   await BackendServices.removeDeviceFromServer(context, id: userProvider.subscription!.id.toString());
+                                  }
                                   userProvider.setSubscription(null);
                                   userProvider.setUserLevel(0);
                                   setState(() {});
                                   Navigator.pushNamedAndRemoveUntil(context, WareListScreen.id, (route) => false);
-                                },),
+                                },
+                                extraContent: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text("خروج جهت تغییر دستگاه",style: Theme.of(context).textTheme.bodySmall,),
+                                    Checkbox(
+                                        value: context.watch<ValueProvider>().cbRemoveDevice,
+                                        onChanged: (val){
+                                          valProvider.setCbRemoveDevice(val!);
+                                        }),
+                                  ],
+                                ),
+                              ),
                               );
                             },
                           ),
                           ActionButton(
                             label: "خرید اشتراک جدید",
                             icon: Icons.stars,
-                            borderRadius: 5,
-                            bgColor: Colors.deepPurple.withOpacity(.8),
+                            borderRadius: 30,
+                            bgColor: Colors.black54,
+                            borderColor:Colors.amberAccent ,
                             iconColor: Colors.amberAccent,
                             onPress: (){
                               Navigator.pushNamed(context, PlanScreen.id,arguments: {"phone": subs.phone,"subsId":subs.id,"oldSubs":subs});
@@ -265,9 +285,9 @@ class _PlanListPartState extends State<PlanListPart> {
                                 Icons.stars,
                                 color: Colors.amber,
                               ),
-                              title: CText("اشتراک ${plan.title}"),
+                              title: CText("اشتراک ${plan.title}",fontSize: 13,),
                               subtitle: CText(
-                                  "${plan.refId ?? ""} - ${plan.description ?? ""}"),
+                                  "${plan.refId ?? ""} - ${plan.description ?? ""}",fontSize: 11,color: Colors.blueGrey,),
                               trailing: Column(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,

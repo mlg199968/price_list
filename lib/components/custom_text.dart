@@ -5,19 +5,19 @@ class CText extends StatelessWidget {
   const CText(
     this.text, {
     super.key,
-    this.fontSize = 12,
+    this.fontSize,
     this.color,
     this.maxLine,
-    this.textDirection = TextDirection.ltr,
+    this.textDirection,
     this.textAlign,
     this.minFontSize = 9, this.shadow,
   });
   final String? text;
-  final double fontSize;
+  final double? fontSize;
   final double minFontSize;
   final int? maxLine;
   final Color? color;
-  final TextDirection textDirection;
+  final TextDirection? textDirection;
   final TextAlign? textAlign;
   final BoxShadow? shadow;
 
@@ -31,10 +31,10 @@ class CText extends StatelessWidget {
       ),
       overflow: TextOverflow.fade,
       maxLines: maxLine,
-      textDirection: textDirection,
+      textDirection:textDirection ?? Directionality.of(context),
       textAlign: textAlign,
       minFontSize: minFontSize,
-      maxFontSize: fontSize,
+      maxFontSize: fontSize ?? 12,
     );
   }
 }

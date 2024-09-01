@@ -7,6 +7,7 @@ class ActionButton extends StatelessWidget {
     this.onPress,
     this.icon,
     this.bgColor = kMainColor,
+    this.borderColor,
     this.label,
     this.height = 30,
     this.width,
@@ -27,6 +28,7 @@ class ActionButton extends StatelessWidget {
   final IconData? icon;
   final String? label;
   final Color bgColor;
+  final Color? borderColor;
   final Color? iconColor;
   final double height;
   final double? width;
@@ -57,7 +59,10 @@ class ActionButton extends StatelessWidget {
                   padding: MaterialStatePropertyAll(padding ??
                       EdgeInsets.symmetric(
                           horizontal: label == null ? 0 : 5, vertical: 0)),
-                  backgroundColor: MaterialStateProperty.all(bgColor)),
+                  backgroundColor: MaterialStateProperty.all(bgColor),
+                  side:borderColor==null?null: MaterialStateProperty.all(BorderSide(color: borderColor!)),
+              ),
+
               onPressed: disable ? () {} :onPress ,
               onLongPress: onLongPress,
               child: loading

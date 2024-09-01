@@ -16,24 +16,21 @@ import '../model/subscription.dart';
 import '../providers/user_provider.dart';
 import 'hive_boxes.dart';
 
-
 class BackendServices {
   ///create new subscription data in host
-  static Future<String?> createSubs(context, {required Subscription subs}) async {
+  static Future<String?> createSubs(context,
+      {required Subscription subs}) async {
     try {
       http.Response res = await http.post(
           Uri.parse("$hostUrl/user/create_subscription.php"),
           body: subs.toJson());
-      print(res.body);
       if (res.statusCode == 200) {
         var backData = jsonDecode(res.body);
         if (backData["success"] == true) {
-          showSnackBar(null, backData["message"] ?? "success",
-              type: SnackType.success);
+          debugPrint(backData["message"] ?? "success");
           return backData["id"].toString();
         } else {
-          showSnackBar(context, backData["message"] ?? "not success",
-              type: SnackType.warning);
+          debugPrint(backData["message"] ?? "not success");
           if (backData["error"] != null) {
             ErrorHandler.errorManger(
               null,
@@ -44,15 +41,16 @@ class BackendServices {
           return null;
         }
       }
-    } catch (e,stacktrace) {
+    } catch (e, stacktrace) {
       ErrorHandler.errorManger(null, e,
-          stacktrace: stacktrace,
-          title: "BackendServices createSubs error");
+          stacktrace: stacktrace, title: "BackendServices createSubs error");
     }
     return null;
   }
-  ///create new subscription data in host
-  static Future<String?> updateSubs(context, {required Subscription subs}) async {
+
+  ///update subscription data in host
+  static Future<String?> updateSubs(context,
+      {required Subscription subs}) async {
     try {
       http.Response res = await http.post(
           Uri.parse("$hostUrl/user/update_subscription.php"),
@@ -61,12 +59,10 @@ class BackendServices {
       if (res.statusCode == 200) {
         var backData = jsonDecode(res.body);
         if (backData["success"] == true) {
-          showSnackBar(context, backData["message"] ?? "success",
-              type: SnackType.success);
+          debugPrint(backData["message"] ?? "success",);
           return backData["id"].toString();
         } else {
-          showSnackBar(context, backData["message"] ?? "not success",
-              type: SnackType.warning);
+          debugPrint(backData["message"] ?? "not success");
           if (backData["error"] != null) {
             ErrorHandler.errorManger(
               null,
@@ -77,18 +73,47 @@ class BackendServices {
           return null;
         }
       }
-    } catch (e,stacktrace) {
+    } catch (e, stacktrace) {
       ErrorHandler.errorManger(context, e,
-          stacktrace: stacktrace,
-          title: "BackendServices updateSubs error");
+          stacktrace: stacktrace, title: "BackendServices updateSubs error");
+    }
+    return null;
+  }
+  ///update subscription data in host
+  static Future<String?> removeDeviceFromServer(context,
+      {required String id,}) async {
+    try {
+      http.Response res = await http.post(
+          Uri.parse("$hostUrl/user/remove_device.php"),
+          body: {"id":id,"fetch_date":DateTime.now().toIso8601String()});
+      print(res.body);
+      if (res.statusCode == 200) {
+        var backData = jsonDecode(res.body);
+        if (backData["success"] == true) {
+          debugPrint(backData["message"] ?? "success",);
+          return backData["id"].toString();
+        } else {
+          debugPrint(backData["message"] ?? "not success");
+          if (backData["error"] != null) {
+            ErrorHandler.errorManger(
+              null,
+              backData["error"],
+              title: backData["message"] ?? "backData success is false",
+            );
+          }
+          return null;
+        }
+      }
+    } catch (e, stacktrace) {
+      ErrorHandler.errorManger(context, e,
+          stacktrace: stacktrace, title: "BackendServices updateSubs error");
     }
     return null;
   }
 
   ///read subscription data from host
-  static Future<Map> readSubs(
-      context, String phone,{String? subsId}) async {
-    Map map={"success":false,"subs":null};
+  static Future<Map> readSubs(context, String phone, {String? subsId}) async {
+    Map map = {"success": false, "subs": null};
     try {
       Device device = await getDeviceInfo();
       http.Response res = await http
@@ -96,27 +121,25 @@ class BackendServices {
         "phone": phone,
         "device": device.toJson(),
         "appName": kAppName,
-        if(subsId!=null)
-          "subsId": subsId,
+        if (subsId != null) "subsId": subsId,
       });
-      print(res.body);
       if (res.statusCode == 200) {
         var backData = jsonDecode(res.body);
         if (backData["success"] == true) {
-          map["success"]=true;
-          map["subs"]=backData["subsData"]==null?null:Subscription().fromMap(backData["subsData"]);
+          map["success"] = true;
+          map["subs"] = backData["subsData"] == null
+              ? null
+              : Subscription().fromMap(backData["subsData"]);
           debugPrint("Subscription successfully being read!");
           return map;
-        }
-        else {
+        } else {
           showSnackBar(context, "has not being read", type: SnackType.error);
           return map;
         }
       }
-    } catch (e,stacktrace) {
+    } catch (e, stacktrace) {
       ErrorHandler.errorManger(context, e,
-          stacktrace: stacktrace,
-          title: "BackendServices-readSubs error");
+          stacktrace: stacktrace, title: "BackendServices-readSubs error");
     }
     return map;
   }
@@ -130,7 +153,8 @@ class BackendServices {
         body: {
           "app-name": appName,
           "platform": Platform.executable,
-          "version":Provider.of<UserProvider>(context, listen: false).appVersion,
+          "version":
+              Provider.of<UserProvider>(context, listen: false).appVersion,
         },
       ).timeout(Duration(seconds: timeout));
       if (res.statusCode == 200) {
@@ -148,11 +172,11 @@ class BackendServices {
           return null;
         }
       }
-    } catch (e,stacktrace) {
+    } catch (e, stacktrace) {
       ErrorHandler.errorManger(
         null,
         e,
-        stacktrace:stacktrace,
+        stacktrace: stacktrace,
         title: "BackendServices-readSubs error",
       );
     }
@@ -176,6 +200,7 @@ class BackendServices {
       }
     }
   }
+
   ///read purchase plan
   Future<List<Plan>?> readPlans() async {
     try {
@@ -185,25 +210,122 @@ class BackendServices {
       if (res.statusCode == 200) {
         var backData = jsonDecode(res.body);
         if (backData["success"] == true) {
-          List<Plan> planList = (backData["plans"] as List).map((e) =>
-              Plan().fromMap(e)).toList();
+          List<Plan> planList = (backData["plans"] as List)
+              .map((e) => Plan().fromMap(e))
+              .toList();
           return planList;
-        }else{
+        } else {
           ErrorHandler.errorManger(
             null,
             null,
-            errorText:backData["message"] ,
-            stacktrace:backData["error"],
+            errorText: backData["message"],
+            stacktrace: backData["error"],
             title: "BackendServices-readPlans error",
           );
         }
       }
-    }catch(e,stacktrace){
+    } catch (e, stacktrace) {
       ErrorHandler.errorManger(
         null,
         e,
-        stacktrace:stacktrace,
+        stacktrace: stacktrace,
         title: "BackendServices-readPlans error",
+      );
+    }
+    return null;
+  }
+
+  ///read coupon
+  Future<Map?> readCoupon(String code, int price) async {
+    try {
+      Device device = await getDeviceInfo();
+      final res = await http.post(Uri.parse("$hostUrl/payment/read_coupon.php"),
+          body: {
+            "appName": kAppName,
+            "platform": device.platform,
+            "code": code
+          });
+      if (res.statusCode == 200) {
+        var backData = jsonDecode(res.body);
+        if (backData["success"] == true) {
+          Map coupon = backData["coupon"];
+          int count = int.parse(coupon["count"]);
+          int? limitPrice = int.tryParse(coupon["limit"] ?? "a");
+          DateTime? endDate = DateTime.tryParse(coupon["end_date"] ?? "0");
+          if (count > 0 &&
+              (endDate == null || endDate.isAfter(DateTime.now()))) {
+            if (limitPrice == null || price > limitPrice) {
+              return {
+                "success": true,
+                "coupon": coupon,
+                "message": "کد تخفیف در دسترس است"
+              };
+            } else {
+              return {
+                "success": false,
+                "message":
+                    "این کد تخفیف برای خرید های بالا تر از ${addSeparator(limitPrice)} قابل دسترس است"
+              };
+            }
+          } else if (count <= 0 ||
+              (endDate != null && endDate.isBefore(DateTime.now()))) {
+            return {"success": false, "message": "کد تخفیف منقضی شده است"};
+          }
+        } else {
+          ErrorHandler.errorManger(
+            null,
+            null,
+            errorText: backData["message"],
+            stacktrace: backData["error"],
+            title: "BackendServices-readCoupon php error",
+          );
+          return {"success": false, "message": backData["message"]};
+        }
+      }
+    } catch (e, stacktrace) {
+      ErrorHandler.errorManger(
+        null,
+        e,
+        stacktrace: stacktrace,
+        title: "BackendServices-readCoupon error",
+      );
+    }
+    return null;
+  }
+
+  ///update coupon
+  Future<Map?> updateCoupon(String code, int? count) async {
+    try {
+      Device device = await getDeviceInfo();
+      final res = await http
+          .post(Uri.parse("$hostUrl/payment/update_coupon.php"), body: {
+        "appName": kAppName,
+        "platform": device.platform,
+        "code": code,
+        "count": count?.toString()
+      });
+      if (res.statusCode == 200) {
+        var backData = jsonDecode(res.body);
+        if (backData["success"] == true) {
+          String count = backData["count"];
+          return {"count": count, "message": ""};
+        } else {
+          ErrorHandler.errorManger(
+            null,
+            null,
+            errorText: backData["message"],
+            stacktrace: backData["error"],
+            title: "BackendServices-updateCoupon php error",
+          );
+          return {"message": backData["message"]};
+        }
+      }
+    } catch (e, stacktrace) {
+      ErrorHandler.errorManger(
+        null,
+        e,
+        stacktrace: stacktrace,
+        title: "BackendServices-readCoupon error",
       );
     }
     return null;
@@ -214,18 +336,18 @@ class BackendServices {
     try {
       Subscription? storedSubs = HiveBoxes.getShopInfo().getAt(0)?.subscription;
       if (storedSubs != null) {
-        Map readSubs =
-        await BackendServices.readSubs(context, storedSubs.phone,subsId: storedSubs.id.toString());
-        if (readSubs["success"]==true) {
+        Map readSubs = await BackendServices.readSubs(context, storedSubs.phone,
+            subsId: storedSubs.id.toString());
+        if (readSubs["success"] == true) {
           Provider.of<UserProvider>(context, listen: false)
             ..setSubscription(readSubs["subs"])
             ..setUserLevel(readSubs["subs"]?.level ?? 0);
-          if(readSubs["subs"]!=null) {
+          if (readSubs["subs"] != null) {
             await updateFetchDate(context, readSubs["subs"]);
           }
         }
       }
-    } catch (e,stacktrace) {
+    } catch (e, stacktrace) {
       ErrorHandler.errorManger(null, e,
           stacktrace: stacktrace,
           title: "BackendServices fetchSubs function error");
@@ -245,8 +367,15 @@ class BackendServices {
       //we save the date of this fetch
       subs.fetchDate = startDate.add(Duration(milliseconds: offset));
       subs.startDate ??= startDate.add(Duration(milliseconds: offset));
-      if(subs.endDate!=null && subs.fetchDate!=null && subs.endDate!.isBefore(subs.fetchDate!)){
-        subs.level=0;
+      if (subs.endDate != null &&
+          subs.fetchDate != null &&
+          subs.endDate!.isBefore(subs.fetchDate!)) {
+        subs.level = 0;
+      } else if (subs.level == 0 &&
+          subs.endDate != null &&
+          subs.fetchDate != null &&
+          subs.endDate!.isAfter(subs.fetchDate!)) {
+        subs.level = 1;
       }
       BackendServices.createSubs(context, subs: subs).then((isCreated) {
         if (isCreated != null) {
@@ -263,26 +392,27 @@ class BackendServices {
           title: "backendServices updateFetchDate error");
     }
   }
+
   ///get server time
   static Future<DateTime> getServerTime() async {
     try {
       final res = await http.get(Uri.parse("$hostUrl/time.php"));
       if (res.statusCode == 200) {
         var backData = jsonDecode(res.body);
-        if (backData["success"]==true) {
+        if (backData["success"] == true) {
           return DateTime.parse(backData["time"]);
-        }else{
+        } else {
           ErrorHandler.errorManger(null, backData["error"],
               title: "backendServices getServerTime  time.php error");
           return DateTime.now();
-
         }
-      }else{
+      } else {
         ErrorHandler.errorManger(null, res.statusCode,
-            title: "backendServices getServerTime connection to time.php error");
+            title:
+                "backendServices getServerTime connection to time.php error");
         return DateTime.now();
       }
-    } catch (e,stacktrace) {
+    } catch (e, stacktrace) {
       ErrorHandler.errorManger(null, e,
           route: stacktrace.toString(),
           title: "backendServices getServerTime error");
