@@ -64,6 +64,8 @@ const List<String> kSortList = [
   'تاریخ ثبت',
   'حروف الفبا',
   'موجودی کالا',
+  'ترتیب شخصی',
+  'قیمت',
 ];
 const List<String> kCurrencyList = [
   "ریال",

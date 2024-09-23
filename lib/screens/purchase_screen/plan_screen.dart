@@ -81,10 +81,8 @@ class _PlanScreenState extends State<PlanScreen> {
 
       String? subsId = await BackendServices.createSubs(context, subs: subs);
       if (subsId!=null) {
-        print("subsId");
-        print(subsId);
         subs.id=int.parse(subsId);
-
+        debugPrint("returned subsId is:$subsId");
         if(plan.type=="free"){
           subs.level=1;
           String? returnedId = await BackendServices.updateSubs(context, subs: subs);
@@ -362,7 +360,7 @@ bool checkHasFreePlan(){
   }
 }
 
-
+///
 class PlanHolder extends StatelessWidget {
   const PlanHolder({
     super.key,

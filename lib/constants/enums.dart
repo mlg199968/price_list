@@ -3,11 +3,10 @@
   enum SortItem{
   createdDate("تاریخ ثبت"),
   modifiedDate("تاریخ ویرایش"),
-  dueDate("تاریخ تسویه"),
   name("حروف الفبا"),
-  amount("موجودی"),
-  billNumber("شماره فاکتور"),
-  tableNumber("شماره میز");
+  custom("ترتیب شخصی"),
+  price("قیمت"),
+  amount("موجودی");
   const SortItem(this.value);
   final String value;
 }

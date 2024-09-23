@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:price_list/components/action_button.dart';
 import 'package:price_list/components/drop_list_model.dart';
 import 'package:price_list/constants/constants.dart';
+import 'package:price_list/constants/enums.dart';
+import 'package:price_list/screens/ware_list/services/ware_tools.dart';
+import 'package:price_list/screens/ware_list/sort_ware_screen.dart';
+import 'package:price_list/services/hive_boxes.dart';
+
+import '../model/ware.dart';
 
 class CustomSearchBar extends StatelessWidget {
   const CustomSearchBar(
@@ -12,7 +19,8 @@ class CustomSearchBar extends StatelessWidget {
       required this.sortList,
       required this.onSort,
       this.iconColor = Colors.white,
-      this.focusNode});
+      this.focusNode,
+      });
   final TextEditingController controller;
   final String hint;
   final Function onChange;
@@ -21,7 +29,6 @@ class CustomSearchBar extends StatelessWidget {
   final List sortList;
   final FocusNode? focusNode;
   final Color iconColor;
-
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -37,11 +44,28 @@ class CustomSearchBar extends StatelessWidget {
                 color: iconColor,
                 shadows: [kShadow],
               ),
+              width: 200,
               listItem: sortList,
               selectedValue: selectedSort,
+              valueSubWidget: SortItem.custom.value,
               onChanged: (val) {
                 onSort(val);
-              }),
+              },
+            subWidget: ActionButton(
+              label: "ویرایش",
+              height: 20,
+              borderRadius: 5,
+              padding: EdgeInsets.zero,
+              labelStyle: TextStyle(fontSize: 9,color: Colors.white),
+              bgColor: kSecondaryColor,
+              icon: Icons.settings,
+              iconSize: 10,
+              onPress: (){
+                List<Ware>? wareList=HiveBoxes.getWares().values.toList();
+                WareTools.filterList(wareList, "", SortItem.custom.value, "all");
+                  Navigator.pushNamed(context, SortWareScreen.id,arguments:wareList);
+              },),
+          ),
           Flexible(
             child: SizedBox(
               width: 400,

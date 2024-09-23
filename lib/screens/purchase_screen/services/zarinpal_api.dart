@@ -35,8 +35,9 @@ class ZarinpalApi {
         } else {
           showSnackBar(context, "error $status on the ZarinPalApi.payment ");
         }
-      } catch (e) {
+      } catch (e,stacktrace) {
         ErrorHandler.errorManger(context, e,
+            stacktrace: stacktrace,
             title: "ZarinpalApi payment error", showSnackbar: true);
       }
     });

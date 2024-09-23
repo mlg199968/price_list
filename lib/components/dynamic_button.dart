@@ -21,6 +21,7 @@ class DynamicButton extends StatefulWidget{
     this.disable = false,
     this.labelStyle,
     this.iconSize, this.borderColor,
+    this.image,
   });
 
   final Widget? child;
@@ -41,6 +42,7 @@ class DynamicButton extends StatefulWidget{
   final bool disable;
   final TextStyle? labelStyle;
   final Color? borderColor;
+  final String? image;
 
 
   @override
@@ -98,6 +100,7 @@ class _DynamicButtonState extends State<DynamicButton> {
                           textDirection: TextDirection.ltr,
                           child: widget.child!)
                       : Row(
+                textDirection: widget.direction,
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -115,7 +118,7 @@ class _DynamicButtonState extends State<DynamicButton> {
                             constraint.maxWidth < 100
                                 ? const SizedBox()
                                 : const SizedBox(
-                                    width: 3,
+                                    width: 5,
                                   ),
                             if (widget.icon != null)
                               Icon(
@@ -123,6 +126,11 @@ class _DynamicButtonState extends State<DynamicButton> {
                                 color: widget.iconColor ?? Colors.white,
                                 size: widget.iconSize ?? 17,
                               ),
+                            if(widget.image!=null)
+                            Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: Image(image: AssetImage(widget.image!)),
+                            ),
                           ],
                         ),
             ),

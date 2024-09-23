@@ -37,7 +37,7 @@ class BackupTools {
       return null;
     }
   }
-  ///
+  ///create backup
    Future<void> createBackup(BuildContext context,{String? directory,bool isSharing=false}) async{
     List<Ware> wares = HiveBoxes.getWares().values.toList();
    List wareListJson=wares.map((e) => e.toJson()).toList();
@@ -69,8 +69,12 @@ class BackupTools {
           showSnackBar(context, "فایل پشتیبان با موفقیت بارگیری شد !",type: SnackType.success);
 
 
-    }catch(e){
-ErrorHandler.errorManger(context, e,title: "BackupTools restoreMlgFileBackup function error",showSnackbar: true);
+    }catch(e,stacktrace){
+ErrorHandler.errorManger(
+    context,
+    e,
+    stacktrace: stacktrace,
+    title: "BackupTools restoreMlgFileBackup function error",showSnackbar: true);
     }
   }
 
@@ -116,8 +120,11 @@ ErrorHandler.errorManger(context, e,title: "BackupTools restoreMlgFileBackup fun
         }
         updateImagePath();
       }
-    } catch (e) {
-      ErrorHandler.errorManger(context, e,
+    } catch (e,stacktrace) {
+      ErrorHandler.errorManger(
+          context,
+          e,
+          stacktrace: stacktrace,
           title: "BackupTools - readZipFile error", showSnackbar: true);
     }
   }
@@ -169,8 +176,11 @@ ErrorHandler.errorManger(context, e,title: "BackupTools restoreMlgFileBackup fun
       Provider.of<WareProvider>(context,listen: false).loadGroupList();
       showSnackBar(context, "فایل پشتیبان با موفقیت بارگیری شد !",
           type: SnackType.success);
-    } catch (e) {
-      ErrorHandler.errorManger(context, e,
+    } catch (e,stacktrace) {
+      ErrorHandler.errorManger(
+          context,
+          e,
+          stacktrace: stacktrace,
           title: "BackupTools - restoreJsonData error", showSnackbar: true);
     }
   }

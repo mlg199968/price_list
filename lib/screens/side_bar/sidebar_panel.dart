@@ -15,12 +15,9 @@ import 'package:price_list/screens/notice_screen/services/notice_tools.dart';
 import 'package:price_list/screens/setting/setting_screen.dart';
 import 'package:price_list/screens/shop_info_screen/shop_info_screen.dart';
 import 'package:provider/provider.dart';
-
-import '../../model/shop.dart';
 import '../../providers/user_provider.dart';
-import '../../services/hive_boxes.dart';
-import '../purchase_screen/authority_screen.dart';
-import '../purchase_screen/subscription_screen.dart';
+import '../purchase_screen/bazaar_subscription_screen.dart';
+
 
 class SideBarPanel extends StatelessWidget {
   const SideBarPanel({super.key});
@@ -94,13 +91,6 @@ class SideBarPanel extends StatelessWidget {
                         ]),
                         Column(
                           children: [
-                            // ActionButton(
-                            //   label: "درگاه بازار",
-                            //   bgColor: Colors.green,
-                            //   onPress: (){
-                            //     Navigator.pushNamed(context, BazaarPurchaseScreen.id);
-                            // },
-                            // ),
                             ///purchase Button
                             PurchaseButton(),
                             const Gap(15),
@@ -239,10 +229,16 @@ class PurchaseButton extends StatelessWidget {
         builder: (context,userProvider,child) {
           return InkWell(
             onTap: () {
-              if(userProvider.subscription==null) {
-                Navigator.pushNamed(context, AuthorityScreen.id);
-              }else{
-                Navigator.pushNamed(context, SubscriptionScreen.id);
+              //TODO: main purchases
+              // if(userProvider.subscription==null) {
+              //   Navigator.pushNamed(context, AuthorityScreen.id);
+              // }else{
+              //   Navigator.pushNamed(context, SubscriptionScreen.id);
+              // }
+              //TODO: bazaar purchases
+              if(Platform.isAndroid) {
+                Navigator.pushNamed(context, BazaarSubscriptionScreen.id);
+                // Navigator.pushNamed(context, BazaarPurchaseScreen.id);
               }
             },
             child: Container(
@@ -260,12 +256,12 @@ class PurchaseButton extends StatelessWidget {
               child:  Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  CText(userProvider.subscription==null?"خرید اشتراک":"وضعیت اشتراک",
+                  CText((userProvider.subscription==null && userProvider.userLevel==0)?"خرید اشتراک":"وضعیت اشتراک",
                     color: Colors.white,
                   ),
                   const Gap(8),
                   Icon(
-                    userProvider.subscription!=null?Icons.person_4 :Icons.stars,
+                    (userProvider.subscription==null && userProvider.userLevel==0)?Icons.stars:Icons.person_4,
                     color: Colors.yellowAccent,
                   ),
                 ],
@@ -286,7 +282,9 @@ class PurchaseButton2 extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
+        //TODO: main purchase way options
         // Navigator.pushNamed(context, PurchaseScreen.id);
+        //TODO: bazaar purchase button
         Navigator.pushNamed(context, BazaarPurchaseScreen.id);
       },
       child: Container(

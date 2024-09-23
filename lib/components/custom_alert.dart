@@ -1,4 +1,3 @@
-import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:price_list/components/action_button.dart';

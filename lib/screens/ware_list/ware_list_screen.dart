@@ -2,7 +2,6 @@ import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
@@ -119,7 +118,7 @@ class _WareListScreenState extends State<WareListScreen> {
                       onTap: () {
                         scaffoldKey.currentState!.openDrawer();
                       },
-                      child: Image.asset('assets/images/logo.png')),
+                      child: Icon(Icons.menu_rounded,size: 30,)),
                 ),
                 title: Container(
                   padding: const EdgeInsets.only(right: 5),
@@ -235,6 +234,7 @@ class _WareListScreenState extends State<WareListScreen> {
                               },
                             ),
                           ),
+                          ///list view mode
                           DropListModel(
                               icon: Icon(
                                 Icons.grid_view_rounded,

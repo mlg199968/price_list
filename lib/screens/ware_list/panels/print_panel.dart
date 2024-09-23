@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
+import 'package:price_list/components/action_button.dart';
 import 'package:price_list/components/check_button.dart';
 import 'package:price_list/components/counter_textfield.dart';
 import 'package:price_list/components/custom_dialog.dart';
@@ -17,6 +18,7 @@ import 'package:price_list/model/ware.dart';
 import 'package:price_list/providers/ware_provider.dart';
 import 'package:price_list/screens/setting/backup/backup_tools.dart';
 import 'package:price_list/screens/ware_list/services/ware_tools.dart';
+import 'package:price_list/screens/ware_list/sort_ware_screen.dart';
 import 'package:price_list/services/hive_boxes.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -305,6 +307,12 @@ class _PrintPanelState extends State<PrintPanel> {
                             setState(() {});
                           }),
                     ),
+                    ActionButton(
+                      label: "ترتیب بندی",
+                      onPress: (){
+                        Navigator.pushNamed(context, SortWareScreen.id,arguments: widget.wares);
+                      },
+                    )
                   ],
                 ),
                 CheckButton(

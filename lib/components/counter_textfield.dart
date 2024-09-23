@@ -9,11 +9,14 @@ class CounterTextfield extends StatelessWidget {
     this.symbol,
     this.onChange,
     this.decimal = true,
+    this.enable = true,
     this.label,
     this.borderRadius = 20,
+    this.focus,
     this.step = 1,
     this.minNum = 0,
-    this.maxNum = 1000000, this.width,this.enable=true,
+    this.maxNum = 1000000, this.onTapOutside, this.width,
+
   });
 
   final TextEditingController controller;
@@ -22,122 +25,132 @@ class CounterTextfield extends StatelessWidget {
   final String? label;
   final String? symbol;
   final Function(String? val)? onChange;
+  final Function(PointerDownEvent)? onTapOutside;
   final double borderRadius;
   final double step;
   final double minNum;
   final double maxNum;
+  final FocusNode? focus;
   final double? width;
-
   @override
   Widget build(BuildContext context) {
     bool isPressed = false;
     return SizedBox(
       height: 40,
       width: width ?? 200,
-      child: TextFormField(
-        enabled:enable ,
-        controller: controller,
-        keyboardType: TextInputType.numberWithOptions(decimal: decimal),
-        onTapOutside: (val){
-          num valNum=double.tryParse(controller.text )?? minNum;
-          controller.text = decimal?valNum.toDouble().toString():valNum.toInt().toString();
-          if (valNum < minNum) {
-            controller.text = minNum.toString();
-          } else if (valNum > maxNum) {
-            controller.text = maxNum.toString();
-          }
-        },
-        onChanged: (val) {
-          // if (val != "" && val != "."  && val != "," &&
-          //     val != "-" && stringToDouble(val) < 0) {
-          //   controller.text = minNum.toString();
-          // }
-          if (onChange != null) {
-            onChange!(val);
-          }
-        },
-        textAlign: TextAlign.center,
-        onTap: () {
-          if (!isPressed) {
-            //logic:when user tap on the textfield ,text get selected
-            controller.selection = TextSelection(
-                baseOffset: 0,
-                extentOffset: controller.value.text.length);
-          }
-          isPressed = true;
-        },
-        decoration: InputDecoration(
-          ///counter buttons
-          suffixIcon: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              //add to value button
-              MiniButton(
-                icon: FontAwesomeIcons.angleUp,
-                onPress: () {
-                  double num1 =
-                      double.tryParse(controller.text) ?? minNum;
-                  if (num1 < maxNum-step) {
-                    num1 += step;
-                    controller.text = decimal ? num1.toStringAsFixed(2) : num1.toInt().toString()
-                        ;
-                  } else {
-                    controller.text = maxNum.toString();
-                  }
-                  if(onChange!=null) {
-                    onChange!(controller.text);
-                  }
-                },
-              ),
-              //subtract to value button
-              MiniButton(
-                icon: FontAwesomeIcons.angleDown,
-                onPress: () {
-                  double num1 =
-                      double.tryParse(controller.text) ?? minNum;
-                  if (num1 > minNum+step) {
-                    controller.text = decimal
-                        ? (num1 - step).toStringAsFixed(2)
-                        : (num1 - step).toInt().toString();
-                  } else {
-                    controller.text = minNum.toString();
-                  }
-                  if(onChange!=null) {
-                    onChange!(controller.text);
-                  }
-                },
-              ),
-            ],
-          ),
-          label: label == null
-              ? null
-              : Text(
+      child: Row(
+        children: [
+          Flexible(
+            child: TextFormField(
+              enabled: enable,
+              controller: controller,
+              focusNode: focus,
+              keyboardType: TextInputType.numberWithOptions(decimal: decimal),
+              onTapOutside: (val){
+                num valNum=double.tryParse(controller.text )?? minNum;
+                controller.text = decimal?valNum.toDouble().toString():valNum.toInt().toString();
+                if (valNum < minNum) {
+                  controller.text = minNum.toString();
+                } else if (valNum > maxNum) {
+                  controller.text = maxNum.toString();
+                }
+                if(onTapOutside!=null) {
+                  onTapOutside!(val);
+                }
+              },
+              onChanged: (val) {
+                if (onChange != null) {
+                  onChange!(val);
+                }
+              },
+              textAlign: TextAlign.center,
+              onTap: () {
+                if (!isPressed) {
+                  //logic:when user tap on the textfield ,text get selected
+                  controller.selection = TextSelection(
+                      baseOffset: 0,
+                      extentOffset: controller.value.text.length);
+                }
+                isPressed = true;
+              },
+              decoration: InputDecoration(
+                ///counter buttons
+                suffixIcon: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    //add to value button
+                    MiniButton(
+                      icon: FontAwesomeIcons.angleUp,
+                      onPress: () {
+                        double num1 =
+                            double.tryParse(controller.text) ?? minNum;
+                        if (num1 < maxNum-step) {
+                          num1 += step;
+                          controller.text = decimal ? num1.toStringAsFixed(2) : num1.toInt().toString()
+                          ;
+                        } else {
+                          controller.text = maxNum.toString();
+                        }
+                        if(onChange!=null) {
+                          onChange!(controller.text);
+                        }
+                      },
+                    ),
+                    //subtract to value button
+                    MiniButton(
+                      icon: FontAwesomeIcons.angleDown,
+                      onPress: () {
+                        double num1 =
+                            double.tryParse(controller.text) ?? minNum;
+                        if (num1 > minNum+step) {
+                          controller.text = decimal
+                              ? (num1 - step).toStringAsFixed(2)
+                              : (num1 - step).toInt().toString();
+                        } else {
+                          controller.text = minNum.toString();
+                        }
+                        if(onChange!=null) {
+                          onChange!(controller.text);
+                        }
+                      },
+                    ),
+                  ],
+                ),
+                label: label == null
+                    ? null
+                    : Text(
                   label!,
-                 style:const TextStyle( fontSize: 12),
+                  style:const TextStyle( fontSize: 12),
                   maxLines: 2,
                 ),
-          suffix: Text(symbol ?? ""),
-          contentPadding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-          counterText: "",
-          filled: true,
-          fillColor: Colors.white,
-          hoverColor: Colors.white70,
-          border: OutlineInputBorder(
-            borderSide: const BorderSide(width: .5),
-            borderRadius: BorderRadius.circular(borderRadius),
+                suffix: Text(symbol ?? ""),
+                contentPadding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                counterText: "",
+                filled: true,
+                fillColor: Colors.white,
+                hoverColor: Colors.white70,
+                border: OutlineInputBorder(
+                  borderSide: const BorderSide(width: .5),
+                  borderRadius: BorderRadius.circular(borderRadius),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(width: .5, color: kMainColor2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(width: .5, color: kMainColor2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(borderRadius * .8),
+                    borderSide: const BorderSide(color: Colors.red)),
+              ),
+            ),
           ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(width: .5, color: kMainColor2),
-            borderRadius: BorderRadius.circular(15),
+          const SizedBox(
+            width: 5,
           ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(width: .5, color: kMainColor2),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(borderRadius * .8),
-              borderSide: const BorderSide(color: Colors.red)),
-        ),
+        ],
       ),
     );
   }

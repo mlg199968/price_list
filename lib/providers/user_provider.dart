@@ -233,6 +233,6 @@ class UserProvider extends ChangeNotifier {
   ///
   setAppVersion(String version){
     _appVersion=version;
-    notifyListeners();
+    // notifyListeners();
   }
 }

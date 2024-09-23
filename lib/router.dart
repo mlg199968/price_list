@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:price_list/model/ware.dart';
 import 'package:price_list/screens/photo_screen/photo_view_screen.dart';
 import 'package:price_list/screens/purchase_screen/authority_screen.dart';
+import 'package:price_list/screens/purchase_screen/bazaar_subscription_screen.dart';
 import 'package:price_list/screens/purchase_screen/plan_screen.dart';
 import 'package:price_list/screens/purchase_screen/subscription_screen.dart';
 import 'package:price_list/screens/setting/currency_screen/currency_screen.dart';
@@ -13,6 +14,7 @@ import 'package:price_list/screens/notice_screen/notice_screen.dart';
 import 'package:price_list/screens/purchase_screen/purchase_screen.dart';
 import 'package:price_list/screens/shop_info_screen/shop_info_screen.dart';
 import 'package:price_list/screens/ware_list/panels/ware_action_panel.dart';
+import 'package:price_list/screens/ware_list/sort_ware_screen.dart';
 import 'package:price_list/screens/ware_list/ware_list_screen.dart';
 import 'package:price_list/screens/setting/setting_screen.dart';
 
@@ -24,6 +26,13 @@ Route generateRoute(RouteSettings routeSettings) {
       return MaterialPageRoute(
           builder: (_) => AddWareScreen(
                 oldWare: wareHive,
+              ));
+
+   case SortWareScreen.id:
+      List<Ware> wareList = routeSettings.arguments as List<Ware>;
+      return MaterialPageRoute(
+          builder: (_) => SortWareScreen(
+                wareList: wareList,
               ));
 
     case PhotoViewScreen.id:
@@ -53,11 +62,6 @@ Route generateRoute(RouteSettings routeSettings) {
     case CurrencyScreen.id:
       return MaterialPageRoute(builder: (_) => CurrencyScreen());
 
-    case PurchaseScreen.id:
-      return MaterialPageRoute(builder: (_) => PurchaseScreen());
-
-    case BazaarPurchaseScreen.id:
-         return MaterialPageRoute(builder: (_) => BazaarPurchaseScreen());
 
 
     case NoticeScreen.id:
@@ -70,6 +74,16 @@ Route generateRoute(RouteSettings routeSettings) {
          return MaterialPageRoute(builder: (_) => ShopInfoScreen());
 
   ///purchase screen
+
+    case PurchaseScreen.id:
+      return MaterialPageRoute(builder: (_) => PurchaseScreen());
+
+    case BazaarPurchaseScreen.id:
+      return MaterialPageRoute(builder: (_) => BazaarPurchaseScreen());
+
+    case BazaarSubscriptionScreen.id:
+      return MaterialPageRoute(builder: (_) => BazaarSubscriptionScreen());
+
     case PlanScreen.id:
       Map? args = routeSettings.arguments as Map?;
       return MaterialPageRoute(

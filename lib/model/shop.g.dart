@@ -40,13 +40,15 @@ class ShopAdapter extends TypeAdapter<Shop> {
       ..subscription = fields[20] as Subscription?
       ..descriptionList = (fields[21] as List?)
           ?.map((dynamic e) => (e as Map).cast<dynamic, dynamic>())
-          .toList();
+          .toList()
+      ..conditions = (fields[22] as Map?)?.cast<String, bool>()
+      ..listViewMode = fields[23] as String?;
   }
 
   @override
   void write(BinaryWriter writer, Shop obj) {
     writer
-      ..writeByte(22)
+      ..writeByte(24)
       ..writeByte(0)
       ..write(obj.shopName)
       ..writeByte(1)
@@ -90,7 +92,11 @@ class ShopAdapter extends TypeAdapter<Shop> {
       ..writeByte(20)
       ..write(obj.subscription)
       ..writeByte(21)
-      ..write(obj.descriptionList);
+      ..write(obj.descriptionList)
+      ..writeByte(22)
+      ..write(obj.conditions)
+      ..writeByte(23)
+      ..write(obj.listViewMode);
   }
 
   @override

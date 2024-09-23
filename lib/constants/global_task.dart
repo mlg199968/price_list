@@ -7,13 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:price_list/constants/error_handler.dart';
 import 'package:price_list/model/shop.dart';
+import 'package:price_list/screens/purchase_screen/services/bazaar_api.dart';
 import 'package:price_list/services/hive_boxes.dart';
-import 'package:price_list/services/pay_service.dart';
 import 'package:provider/provider.dart';
 import '../providers/user_provider.dart';
 import '../screens/notice_screen/services/notice_tools.dart';
 import '../services/backend_services.dart';
-import 'enums.dart';
 
 class GlobalTask {
   static final GlobalKey<NavigatorState> navigatorState = GlobalKey<NavigatorState>();
@@ -46,7 +45,7 @@ class GlobalTask {
       {
         //TODO:bazaar fetch data
         if(Platform.isAndroid) {
-          await PayService.fetchBazaarInfo(context);
+          BazaarApi().fetchBazaarInfo(context);
         }
         /// fetch subscription data
           BackendServices().fetchSubs(context);

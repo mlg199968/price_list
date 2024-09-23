@@ -1,16 +1,18 @@
-
-
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_poolakey/flutter_poolakey.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:gap/gap.dart';
 // import 'package:myket_iap/myket_iap.dart';
 import 'package:price_list/components/custom_button.dart';
+import 'package:price_list/components/dynamic_button.dart';
 import 'package:price_list/constants/constants.dart';
+import 'package:price_list/screens/purchase_screen/services/bazaar_api.dart';
+import 'package:price_list/screens/purchase_screen/services/purchase_tools.dart';
 // import 'package:price_list/screens/purchase_screen/purchase_screen.dart';
 import 'package:price_list/services/pay_service.dart';
 import 'package:provider/provider.dart';
-
+import '../../components/custom_text.dart';
 import '../../constants/enums.dart';
 import '../../constants/private.dart';
 import '../../constants/utils.dart';
@@ -28,6 +30,7 @@ class BazaarPurchaseScreen extends StatefulWidget {
 
 class _BazaarPurchaseScreenState extends State<BazaarPurchaseScreen> {
   final licenseTextController = TextEditingController();
+  String productId="m6";
 //TODO:myket starter api
   getMyketStartUpData()async{
     // if (Platform.isAndroid) {
@@ -51,7 +54,12 @@ class _BazaarPurchaseScreenState extends State<BazaarPurchaseScreen> {
     );
     if(connectionState){
       PurchaseInfo? purchaseInfo = await FlutterPoolakey.querySubscribedProduct('0');
-      print(purchaseInfo.toString());
+      List<PurchaseInfo> purchaseList = await FlutterPoolakey.getAllPurchasedProducts();
+      List<PurchaseInfo> subsList = await FlutterPoolakey.getAllSubscribedProducts();
+      DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(purchaseInfo?.purchaseTime ?? 1);
+      // PurchaseInfo? purchaseInfo2 =await FlutterPoolakey.purchase("3");
+      print(dateTime);
+      print(subsList);
       if(false){
         Provider.of<UserProvider>(context,listen: false).setUserLevel(1);
         Navigator.pushNamedAndRemoveUntil(context, WareListScreen.id,(route)=>false);
@@ -89,7 +97,7 @@ class _BazaarPurchaseScreenState extends State<BazaarPurchaseScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+                  // mainAxisSize: MainAxisSize.min,
                   children: [
                     ///circle crown
                     CrownIcon(),
@@ -112,9 +120,80 @@ class _BazaarPurchaseScreenState extends State<BazaarPurchaseScreen> {
                     SizedBox(
                       height: 50,
                     ),
-
+                    TextWithIcon(text: "در صورت بروز مشکل در پرداخت با پیشتیبانی در ارتباط باشید",
+                      icon: Icons.error_outline_outlined,
+                      iconColor: Colors.red,
+                    ),
                     //TODO: bazaar purchase button
-                   BazaarButton(),
+                    Gap(10),
+                    DynamicButton(
+                      height: 40,
+                      width: 400,
+                      label: "خرید اشتراک دائم",
+                      icon: FontAwesomeIcons.infinity,
+                      bgColor: Colors.transparent,
+                      borderColor: Colors.amberAccent,
+                      iconColor: Colors.amber,
+                      borderRadius: 10,
+                      onPress: ()async{
+                        await BazaarApi.connectToBazaar2(context);
+                      },
+                    ),
+                    Gap(10),
+                    Column(
+                      children: [
+                        Container(
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(color: Colors.white70)
+                          ),
+                          child: Column(
+                            children: [
+                              SubscribeHolder(
+                                title: "یک ماهه",
+                                type: "m1",
+                                selected: productId=="m1",
+                                onChange: (val){
+                                  productId=val;
+                                  setState(() {});
+                                },
+                              ),
+                              SubscribeHolder(
+                                title: "شش ماهه",
+                                type: "m6",
+                                selected: productId=="m6",
+                                onChange: (val){
+                                  productId=val;
+                                  setState(() {});
+                                },
+                              ),
+                              SubscribeHolder(
+                                title: "یک ساله",
+                                type: "m12",
+                                selected: productId=="m12",
+                                onChange: (val){
+                                  productId=val;
+                                  setState(() {});
+                                },
+                              ),
+                             SubscribeHolder(
+                                title: "test",
+                                type: "0",
+                                selected: productId=="0",
+                                onChange: (val){
+                                  productId=val;
+                                  setState(() {});
+                                },
+                              ),
+                              Gap(15),
+                              BazaarButton(productId: productId,),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                     //TODO: myket purchase button
                     // MyketButton(),
                     //TODO:license payment
@@ -149,9 +228,64 @@ class _BazaarPurchaseScreenState extends State<BazaarPurchaseScreen> {
   }
 }
 
+///
+class SubscribeHolder extends StatelessWidget {
+  const SubscribeHolder({
+    super.key,
+    required this.onChange,
+    this.selected=false,
+    required this.title,
+    required this.type,
+  });
+
+  final String title;
+  final Function(String type) onChange;
+  final bool selected;
+  final String type;
+  List<Color> get colors =>PurchaseTools.convertPlan(type)["colors"];
+
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: (){
+        onChange(type);
+      },
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 100),
+        transformAlignment: Alignment.center,
+        curve: Curves.bounceInOut,
+        margin: const EdgeInsets.only(top: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        width: 400,
+        height: selected?40:35,
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(selected?1:.7),
+            gradient: LinearGradient(
+              colors: colors,
+            ),
+            borderRadius: BorderRadius.circular(selected?20:5),
+            border: Border.all(
+                color: selected?Colors.orange:Colors.white70,
+                width: selected?1:0.5
+            ),
+            boxShadow:selected? [const BoxShadow(color: Colors.orange,blurRadius: 10)]:null
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const CText(" اشتراک ",fontSize: 13,color: Colors.amberAccent,),
+            CText(title,fontSize: 15,color: Colors.white,),
+          ],
+        ),
+      ),
+    );
+  }
+}
+///
 class CrownIcon extends StatelessWidget {
   const CrownIcon({
-    super.key, this.size=150,
+    super.key, this.size=80,
   });
   final double size;
   @override
@@ -162,7 +296,7 @@ class CrownIcon extends StatelessWidget {
         width: size,
         height: size,
         decoration: BoxDecoration(
-          color: Colors.white,
+          // color: Colors.white,
           border: Border.all(
               color: Colors.orangeAccent,
               strokeAlign: BorderSide.strokeAlignCenter,
@@ -190,19 +324,32 @@ class CrownIcon extends StatelessWidget {
 ///
 class BazaarButton extends StatelessWidget {
   const BazaarButton({
-    super.key,
+    super.key, required this.productId, this.isPurchase=false,
   });
+  final String productId;
+  final bool isPurchase;
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: CustomButton(
-        fontSize: 18,
-        width: 200,
-        radius: 20,
-        color: Colors.green,
-        text: "خرید از بازار",
-        onPressed: ()async{
-          await PayService.connectToBazaar(context);
+      child: DynamicButton(
+        height: 45,
+        width: 400,
+        bgColor: Colors.black54,
+        borderColor: Colors.amber,
+        label: "خرید از بازار",
+        borderRadius: 15,
+        iconSize: 14,
+        icon: CupertinoIcons.back,
+        image: "assets/icons/bazaar.png",
+        direction: TextDirection.ltr,
+        onPress: ()async{
+          if(isPurchase) {
+            await BazaarApi.connectToBazaar2(context);
+          }
+          else {
+            await BazaarApi.connectToBazaar(context, productId);
+          }
+          // await PayService.connectToBazaar2(context);
         },
       ),
     );
@@ -236,11 +383,12 @@ class MyketButton extends StatelessWidget {
 class TextWithIcon extends StatelessWidget {
   const TextWithIcon({
     super.key,
-    required this.text,
+    required this.text, this.icon, this.iconColor,
   });
 
   final String text;
-
+  final IconData? icon;
+  final Color? iconColor;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -251,8 +399,8 @@ class TextWithIcon extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         children: [
           Icon(
-            FontAwesomeIcons.circleCheck,
-            color: Colors.yellow,
+           icon ?? FontAwesomeIcons.circleCheck,
+            color: iconColor ?? Colors.yellow,
             size: 17,
           ),
           SizedBox(
@@ -261,7 +409,7 @@ class TextWithIcon extends StatelessWidget {
           Flexible(
             child: Text(
               text,
-              style: TextStyle(fontSize: 15, color: Colors.white),
+              style: TextStyle(fontSize: 13, color: Colors.white),
               maxLines: 3,
             ),
           ),
@@ -270,3 +418,4 @@ class TextWithIcon extends StatelessWidget {
     );
   }
 }
+

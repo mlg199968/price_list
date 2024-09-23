@@ -1,7 +1,5 @@
 import 'package:blurrycontainer/blurrycontainer.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:price_list/components/action_button.dart';
@@ -109,7 +107,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   textDirection: TextDirection.rtl,
                   child: SingleChildScrollView(
                     child: SizedBox(
-                      width: 450,
+                      width: 500,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -176,7 +174,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               ),
                             ],
                           ),
-
+                          ///load backup
                           Padding(
                             padding: const EdgeInsets.all(15),
                             child: Column(
@@ -699,6 +697,7 @@ class FancyButtonTile extends StatelessWidget {
                 borderRadius: borderRadius,
                 bgColor: bgColor ,
                 icon: icon,
+                iconSize: iconSize,
                 iconColor: iconColor ?? colors.last,
                 borderColor: borderColor ?? colors.last,
                 labelStyle: TextStyle(fontSize: 13,color: Colors.white),

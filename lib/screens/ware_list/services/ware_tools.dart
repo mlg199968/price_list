@@ -56,6 +56,18 @@ class WareTools {
               .compareTo(b.modifyDate ?? DateTime.now());
         });
         break;
+      case "ترتیب شخصی":
+        list.sort((b, a) {
+          return (b.sortIndex ?? 0)
+              .compareTo(a.sortIndex ?? 1);
+        });
+        break;
+      case "قیمت":
+        list.sort((b, a) {
+          return (a.saleConverted)
+              .compareTo(b.saleConverted);
+        });
+        break;
     }
     return list;
   }

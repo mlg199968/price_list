@@ -47,6 +47,10 @@ class Ware extends HiveObject {
   num? sale3;
   @HiveField(17)
   int? saleIndex;
+  @HiveField(18)
+  List<String>? images;
+  @HiveField(19)
+  int? sortIndex;
 
 
   num get selectedSale {
@@ -94,7 +98,9 @@ class Ware extends HiveObject {
       'isChecked': isChecked! ? 1 : 0,
       'color': color,
       'imagePath': imagePath,
-      'saleIndex': saleIndex
+      'images': images,
+      'saleIndex': saleIndex,
+      'sortIndex': sortIndex,
     };
   }
 
@@ -111,12 +117,14 @@ class Ware extends HiveObject {
       ..sale3 = map['sale3']
       ..quantity = map['quantity'] ?? 0
       ..date = DateTime.parse(map['date'])
-      ..modifyDate = DateTime.parse(map["modifyDate"])
+      ..modifyDate = DateTime.tryParse(map["modifyDate"] ?? "1" )
       ..wareID = map['wareID'] ?? ""
       ..isChecked = map['isChecked'] == 1 ? true : false
       ..color = map['color']
       ..saleIndex = map['saleIndex'] ?? 0
-      ..imagePath = map['imagePath'];
+      ..imagePath = map['imagePath']
+      ..sortIndex = map['sortIndex']
+      ..images = map['images'];
     return ware;
   }
 

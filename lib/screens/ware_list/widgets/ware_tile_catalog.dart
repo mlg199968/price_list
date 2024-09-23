@@ -2,7 +2,6 @@
 import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:price_list/components/custom_bg_shape.dart';
@@ -10,7 +9,6 @@ import 'package:price_list/constants/constants.dart';
 import 'package:provider/provider.dart';
 
 import '../../../components/empty_holder.dart';
-import '../../../constants/error_handler.dart';
 import '../../../constants/utils.dart';
 import '../../../model/ware.dart';
 import '../../../providers/user_provider.dart';
