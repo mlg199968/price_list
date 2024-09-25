@@ -11,6 +11,7 @@ import 'package:price_list/components/hide_keyboard.dart';
 import 'package:price_list/components/ware_suggestion_textfield.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/screens/ware_list/services/barcode_scanner.dart';
+import 'package:price_list/screens/ware_list/widgets/multi_image_holder.dart';
 import '../../components/custom_text.dart';
 import '../../components/price_textfield.dart';
 import '../../constants/consts_class.dart';
@@ -49,6 +50,7 @@ class _AddWareScreenState extends State<AddWareScreen> {
 
   String unitItem = kUnitList[0];
   String? imagePath;
+  List<String>? imageList;
   late List<Ware> wareList;
   bool repeatName = false;
   bool repeatSerial = false;
@@ -77,13 +79,32 @@ class _AddWareScreenState extends State<AddWareScreen> {
       ..wareID = id ?? const Uuid().v1()
       ..date = id != null ? widget.oldWare!.date : DateTime.now()
       ..modifyDate = DateTime.now()
-      ..imagePath = id == null ? null : widget.oldWare!.imagePath;
-    // save image if exist
-    if (imagePath != wareHive.imagePath) {
+      ..imagePath = id == null ? null : widget.oldWare!.imagePath
+      ..images=id == null ? null : widget.oldWare!.images;
+    /// save images list if exist
+    if(imageList!=null) {
+
       final String newPath = await Address.waresImage();
-      wareHive.imagePath =
-          await saveImage(imagePath, wareHive.wareID!, newPath);
+      for (int i=0;i<imageList!.length;i++){
+        if (wareHive.images==null || !wareHive.images!.contains(imageList![i])) {
+          imageList![i] =
+              await saveImage(imageList![i], wareHive.wareID!, newPath);
+        }
+      }
+      wareHive.images=imageList;
     }
+    /// save image if exist
+    if (imagePath != wareHive.imagePath) {
+      if((imageList ?? []).contains(imagePath!)){
+        wareHive.imagePath=imagePath;
+      }
+      else{
+        final String newPath = await Address.waresImage();
+        wareHive.imagePath =
+        await saveImage(imagePath, wareHive.wareID!, newPath);
+      }
+    }
+
     HiveBoxes.getWares().put(wareHive.wareID, wareHive);
     showSnackBar(context, "کالا با موفقیت ذخیره شد", type: SnackType.success);
   }
@@ -110,6 +131,11 @@ class _AddWareScreenState extends State<AddWareScreen> {
           widget.oldWare!.groupName;
       unitItem = widget.oldWare!.unit;
       imagePath = widget.oldWare!.imagePath;
+      imageList = widget.oldWare!.images;
+      if(imageList==null && imagePath!=null){
+        imageList=[imagePath!];
+      }
+      print(imageList);
     } catch (e) {
       ErrorHandler.errorManger(context, e,
           title: "AddWareScreen replaceOldWare function error ");
@@ -178,8 +204,13 @@ class _AddWareScreenState extends State<AddWareScreen> {
                   wareSerialController.clear();
                   costPriceController.clear();
                   salePriceController.clear();
+                  sale2PriceController.clear();
+                  sale3PriceController.clear();
                   quantityController.clear();
                   descriptionController.clear();
+                  discountController.clear();
+                  imagePath=null;
+                  imageList?.clear();
                   setState(() {});
                 }
               } else {
@@ -193,62 +224,53 @@ class _AddWareScreenState extends State<AddWareScreen> {
           title: Text(widget.oldWare == null ? "افزودن کالا" : "ویرایش کالا"),
         ),
         body: Consumer<WareProvider>(builder: (context, wareProvider, child) {
-          return Container(
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              gradient: kMainGradiant,
-            ),
+          return SingleChildScrollView(
             child: Container(
-              width: 550,
-              margin: isMobileSize
+              padding: isMobileSize
                   ? EdgeInsets.all(5).copyWith(top: 60)
                   : EdgeInsetsDirectional.symmetric(
-                          horizontal: 10, vertical: 30)
-                      .copyWith(top: 60),
-              alignment: Alignment.topCenter,
+                  horizontal: 10, vertical: 30)
+                  .copyWith(top: 60),
+              alignment: Alignment.center,
               decoration: BoxDecoration(
-                gradient: kBlackWhiteGradiant,
-                borderRadius: BorderRadius.circular(20),
+                gradient: kMainGradiant,
               ),
-              child: Form(
-                key: _formKey,
-                child: SingleChildScrollView(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: Stack(
-                      children: [
-                        ///image holder behind
-                        Container(
-                          margin: EdgeInsets.only(top: 150),
-                          height: 100,
-                          decoration: BoxDecoration(
-                            gradient: kMainGradiant,
-                          ),
+              child: SizedBox(
+                width: 550,
+                child: Column(
+                  children: [
+                    ///photo part
+                    AspectRatio(
+                      aspectRatio: 4 / 3,
+                      child: Container(
+                        height: 150,
+                        margin: const EdgeInsets.all(20),
+                        child: MultiImageHolder(
+                          imagePath: imagePath,
+                          otherImages: imageList,
+                          onSet: (path,allPath) {
+                            imageList=allPath;
+                            imagePath = path;
+                            setState(() {});
+                          },
                         ),
-
-                        ///
-                        Padding(
-                          padding: const EdgeInsets.all(20).copyWith(top: 100),
+                      ),
+                    ),
+                    ///form part
+                    Container(
+                      alignment: Alignment.topCenter,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.95),
+                        gradient: kBlackWhiteGradiant,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Form(
+                        key: _formKey,
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              ///photo part
-                              AspectRatio(
-                                aspectRatio: 16 / 9,
-                                child: Container(
-                                  height: 150,
-                                  margin: const EdgeInsets.all(5),
-                                  child: ItemImageHolder(
-                                    imagePath: imagePath,
-                                    onSet: (path) {
-                                      imagePath = path;
-                                      setState(() {});
-                                    },
-                                  ),
-                                ),
-                              ),
-                              const Gap(20),
-
                               ///select group dropdown list and add group
                               Row(
                                 mainAxisAlignment:
@@ -266,6 +288,8 @@ class _AddWareScreenState extends State<AddWareScreen> {
                                                 CreateGroupPanel());
                                       }),
                                   DropListModel(
+                                    width: 200,
+                                    elevation: .2,
                                     selectedValue: wareProvider.selectedGroup,
                                     listItem: wareProvider.groupList,
                                     onChanged: (value) {
@@ -464,9 +488,9 @@ class _AddWareScreenState extends State<AddWareScreen> {
                             ],
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ),
             ),

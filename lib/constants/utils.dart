@@ -269,14 +269,27 @@ DateTime findMinDate(List<DateTime> dateList) {
 
 ///save image from cache to new path
 saveImage(String? path,String idName,String newPath)async{
-  if(path!=null){
-    //get image directory from consts_class file in constants folder
-    File newFile= await File(path).copy("$newPath/$idName.jpg");
-    //delete file picker cache file in android and ios because windows show original path file so when you delete it's delete orginal file
-    if(Platform.isAndroid || Platform.isIOS) {
-      await File(path).delete();
+  try {
+    if (path != null) {
+      int index=0;
+      String newFilePath = "$newPath/$idName-${index}.jpg";
+      while (await File(newFilePath).exists()) {
+        index++;
+        newFilePath = "$newPath/$idName-${index}.jpg";
+      }
+      File newFile = await File(path).copy(newFilePath);
+      //delete file picker cache file in android and ios because windows show original path file so when you delete it's delete orginal file
+      if (Platform.isAndroid || Platform.isIOS) {
+        await File(path).delete();
+      }
+      return newFile.path;
     }
-    return newFile.path;
+  }catch(e,stacktrace){
+    ErrorHandler.errorManger(null,
+        e,
+        stacktrace: stacktrace,
+        route: "util.dart saveImage function error ",
+        errorText: "خطا در کپی کردن تصویر در مسیر جدید");
   }
   return null;
 }

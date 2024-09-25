@@ -27,7 +27,6 @@ class DropListModel extends StatelessWidget {
   final double borderRadius;
   final Widget? subWidget;
   final String? valueSubWidget;
-
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -98,17 +97,19 @@ class DropListModel extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             ///item name
-                            Text(
-                              item,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 4,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: icon != null
-                                    ? (selectedValue == item
-                                        ? Colors.white70
-                                        : null)
-                                    : null,
+                            Flexible(
+                              child: Text(
+                                item,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 4,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: icon != null
+                                      ? (selectedValue == item
+                                          ? Colors.white70
+                                          : null)
+                                      : null,
+                                ),
                               ),
                             ),
                             if (item == valueSubWidget && subWidget != null)
