@@ -21,8 +21,11 @@ class PurchaseTools{
       else if(id == "free"){
         return {"title":"رایگان","colors":[Colors.green, Colors.teal]};
       }
+      else if(id == "p1"){
+        return {"title":"دائم","colors":[Colors.purpleAccent, Colors.deepPurple,]};
+      }
       else if(id == "3"){
-        return {"title":"دائم","colors":[Colors.deepOrange, Colors.redAccent]};
+        return {"title":"خرید قبل","colors":[Colors.deepOrange, Colors.orangeAccent,Colors.deepOrange]};
       }
       else {
         return {"title":"نامشخص","colors":[Colors.grey, Colors.blueGrey]};

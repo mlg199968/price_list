@@ -89,7 +89,7 @@ class ActionButton extends StatelessWidget {
                       overflow: TextOverflow.fade,
                       maxLines: 1,
                       style:labelStyle ??
-                      const TextStyle(color: Colors.white),
+                      const TextStyle(color: Colors.white,fontSize: 12),
                     ),
                   ),
                   constraint.maxWidth < 100

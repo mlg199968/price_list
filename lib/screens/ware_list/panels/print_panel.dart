@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
@@ -13,6 +14,7 @@ import 'package:price_list/components/drop_list_model.dart';
 import 'package:price_list/components/pdf/pdf_api.dart';
 import 'package:price_list/components/pdf/pdf_ware_list_api.dart';
 import 'package:price_list/constants/constants.dart';
+import 'package:price_list/constants/enums.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/model/ware.dart';
 import 'package:price_list/providers/ware_provider.dart';
@@ -78,6 +80,8 @@ class _PrintPanelState extends State<PrintPanel> {
       file = await pdfWareListApi.generateCustomWareList();
     } else if (printType == "کاتالوگ") {
       file = await pdfWareListApi.generateCatalog();
+    }  else if (printType == "کاتالوگ2") {
+      file = await pdfWareListApi.generateCatalog2();
     } else {
       file = await pdfWareListApi.generateSimpleWareList();
     }
@@ -307,8 +311,15 @@ class _PrintPanelState extends State<PrintPanel> {
                             setState(() {});
                           }),
                     ),
+                    if(sortItem==SortItem.custom.value)
                     ActionButton(
+                      height: 25,
                       label: "ترتیب بندی",
+                      icon: CupertinoIcons.sort_down_circle,
+                      bgColor: Colors.black87,
+                      borderColor: Colors.indigo,
+                      iconColor: Colors.blueAccent,
+                      labelStyle: TextStyle(fontSize: 10,color: Colors.white),
                       onPress: (){
                         Navigator.pushNamed(context, SortWareScreen.id,arguments: widget.wares);
                       },

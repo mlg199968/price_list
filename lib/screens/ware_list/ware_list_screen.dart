@@ -15,6 +15,7 @@ import 'package:price_list/components/custom_icon_button.dart';
 import 'package:price_list/components/custom_search_bar.dart';
 import 'package:price_list/components/custom_text.dart';
 import 'package:price_list/screens/purchase_screen/widgets/subscription_timer.dart';
+import 'package:price_list/screens/ware_list/panels/ware_info_panel.dart';
 import 'package:price_list/screens/ware_list/widgets/ware_tile.dart';
 import 'package:price_list/components/empty_holder.dart';
 import 'package:price_list/components/hide_keyboard.dart';
@@ -29,7 +30,6 @@ import 'package:price_list/screens/ware_list/widgets/ware_tile_catalog.dart';
 import 'package:price_list/services/hive_boxes.dart';
 import 'package:price_list/model/ware.dart';
 import 'package:price_list/screens/ware_list/add_ware_screen.dart';
-import 'package:price_list/screens/ware_list/panels/info_panel.dart';
 import 'package:price_list/screens/ware_list/panels/ware_action_panel.dart';
 import 'package:price_list/screens/ware_list/services/ware_tools.dart';
 import 'package:price_list/providers/ware_provider.dart';
@@ -242,7 +242,7 @@ class _WareListScreenState extends State<WareListScreen> {
                                 color: Colors.lightBlueAccent,
                                 shadows: [kShadow],
                               ),
-                              listItem: ListViewMode.values.map((e) => e.name).toList(),
+                              listItem: ListViewMode.values.map((e) => e.value).toList(),
                               selectedValue: Provider.of<UserProvider>(context,listen: false).listViewMode,
                               onChanged: (val) {
                                 Provider.of<UserProvider>(context,listen: false).setListViewMode(val);
@@ -345,20 +345,14 @@ class _ListPartState extends State<ListPart> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      if (!isMobile)
-                        Flexible(
-                          child: SizedBox(
-                            width: 400,
-                            child: selectedWare == null
-                                ? null
-                                : InfoPanelDesktop(
-                                    ware: selectedWare!,
-                                    onReload: () {
-                                      selectedWare = null;
-                                      setState(() {});
-                                    }),
-                          ),
-                        ),
+                      ///windows mode side info panel
+                      if (!isMobile && selectedWare!=null)
+                        InfoPanelDesktop(
+                                ware: selectedWare!,
+                                onReload: () {
+                                  selectedWare = null;
+                                  setState(() {});
+                                }),
                       Flexible(
                         child: SizedBox(
                           width: 550,
@@ -391,7 +385,7 @@ class _ListPartState extends State<ListPart> {
                                                   : showDialog(
                                                       context: context,
                                                       builder: (context) =>
-                                                          InfoPanel(
+                                                          WareInfoPanel(
                                                               ware: ware));
                                             }
                                           } else {
@@ -456,7 +450,7 @@ class _ListPartState extends State<ListPart> {
                                                     : showDialog(
                                                         context: context,
                                                         builder: (context) =>
-                                                            InfoPanel(
+                                                            WareInfoPanel(
                                                                 ware: ware));
                                               }
                                             } else {

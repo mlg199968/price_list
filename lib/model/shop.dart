@@ -55,6 +55,12 @@ class Shop extends HiveObject {
   Map<String, bool>? conditions;
   @HiveField(23)
   String? listViewMode;
+  @HiveField(24)
+  int? imageQuality;
+  @HiveField(25)
+  int? imageSize;
+  @HiveField(26)
+  String? sortItem;
 
 
 
@@ -83,6 +89,9 @@ class Shop extends HiveObject {
     List<Map>? descriptionList,
     Map<String, bool>? conditions,
     String? listViewMode,
+    int? imageQuality,
+    int? imageSize,
+    String? sortItem,
   }) {
     Shop shop=Shop()
       ..shopName= shopName ?? this.shopName
@@ -108,6 +117,9 @@ class Shop extends HiveObject {
       ..descriptionList= descriptionList ?? this.descriptionList
       ..conditions= conditions ?? this.conditions
       ..listViewMode= listViewMode ?? this.listViewMode
+      ..imageQuality= imageQuality ?? this.imageQuality
+      ..sortItem= sortItem ?? this.sortItem
+      ..imageSize= imageSize ?? this.imageSize
       ..activeUser= activeUser ?? this.activeUser;
     return shop;
   }

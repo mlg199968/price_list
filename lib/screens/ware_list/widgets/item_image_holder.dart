@@ -12,6 +12,9 @@ import 'package:price_list/constants/error_handler.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/constants/permission_handler.dart';
 import 'package:price_list/screens/photo_screen/photo_view_screen.dart';
+import 'package:provider/provider.dart';
+
+import '../../../providers/user_provider.dart';
 
 class ItemImageHolder extends StatefulWidget {
   const ItemImageHolder(
@@ -26,6 +29,7 @@ class ItemImageHolder extends StatefulWidget {
 
 class _ItemImageHolderState extends State<ItemImageHolder> {
   bool isLoading = false;
+  ///
   chooseImageFunction({ImageSource imageSource = ImageSource.gallery}) async {
     if (widget.imagePath == null || widget.imagePath == "") {
       try {
@@ -33,6 +37,7 @@ class _ItemImageHolderState extends State<ItemImageHolder> {
         isLoading = true;
         setState(() {});
         String? path;
+        String? fileName;
         FilePickerResult? pickedFile;
 
         ///if platform is android or ios use image picker package else use file
@@ -43,10 +48,15 @@ class _ItemImageHolderState extends State<ItemImageHolder> {
         } else {
           pickedFile = await FilePicker.platform.pickFiles();
           path = pickedFile?.files.single.path;
+          fileName=pickedFile?.files.single.name;
         }
         if (path != null) {
+          if (Platform.isWindows) {
+            path = path.replaceAll(fileName!, "resized-$fileName");
+            await File(pickedFile!.files.single.path!).copy(path);
+          }
           debugPrint("Start resizing");
-          await reSizeImage(path);
+          await reSizeImage(path,quality: Provider.of<UserProvider>(context,listen: false).imageQuality);
           debugPrint("after resizing");
           isLoading = false;
           widget.onSet(path);

@@ -100,4 +100,14 @@ static List<Ware> sortGroups(List<Ware> wareList){
       return false;
     }
   }
+  /// null item in model fix
+  static void wareNullFixer(){
+    List<Ware> wares=HiveBoxes.getWares().values.toList();
+    for(Ware ware in wares){
+      if(ware.saleIndex==null){
+        ware.saleIndex=0;
+        HiveBoxes.getWares().put(ware.wareID, ware);
+      }
+    }
+  }
 }

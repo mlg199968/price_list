@@ -75,13 +75,13 @@ const List<String> kCurrencyList = [
   "درهم",
 ];
 const Map kCurrencyListMap = {
-  "ریال":"IRR",
-  "تومان":"IRT",
-  "دلار":"USD",
-  "لیر":"TRY",
-  "درهم":"AED",
-  "یوان":"CNY",
-  "یورو":"EUR",
+  "ریال": "IRR",
+  "تومان": "IRT",
+  "دلار": "USD",
+  "لیر": "TRY",
+  "درهم": "AED",
+  "یوان": "CNY",
+  "یورو": "EUR",
 };
 const List<String> kFonts = [
   'Shabnam',
@@ -102,7 +102,13 @@ const List<String> kPdfFonts = [
   'elham',
   'titr'
 ];
-const List kPrintTypeList = ['کاستوم', 'ساده', 'اتیکت', 'کاتالوگ'];
+const List kPrintTypeList = [
+  'کاستوم',
+  'ساده',
+  'اتیکت',
+  'کاتالوگ',
+  'کاتالوگ2',
+];
 
 const kSpaceBetween = 20.0;
 

@@ -21,7 +21,7 @@ class BazaarApi {
         },
       );
       if (connectionState) {
-        PurchaseInfo purchaseInfo = await FlutterPoolakey.purchase('3');
+        PurchaseInfo purchaseInfo = await FlutterPoolakey.purchase('p1');
         if (purchaseInfo.purchaseState == PurchaseState.PURCHASED) {
           Provider.of<UserProvider>(context, listen: false).setUserLevel(1);
           Navigator.pushNamedAndRemoveUntil(
@@ -68,17 +68,28 @@ class BazaarApi {
 
 //TODO: bazaar fetch info function
   fetchBazaarInfo(BuildContext context) async {
-    bool? isSubscribe = await checkSubscribe(context, await getPurchasesList());
-    if (isSubscribe == true) {
-      Provider.of<UserProvider>(context, listen: false).setUserLevel(1);
-    } else if (isSubscribe == false) {
-      Provider.of<UserProvider>(context, listen: false).setUserLevel(0);
+    try {
+      bool? isSubscribe = await checkSubscribe(
+          context, await getPurchasesList());
+      print(isSubscribe);
+      if (isSubscribe == true) {
+        Provider.of<UserProvider>(context, listen: false).setUserLevel(1);
+      } else if (isSubscribe == false) {
+        Provider.of<UserProvider>(context, listen: false).setUserLevel(0);
+      }
+    }catch(e,stacktrace){
+      ErrorHandler.errorManger(context, e,
+          stacktrace: stacktrace,
+          route: "BazaarApi fetchBazaarInfo function error",
+          title: "خواندن داده های  بازار با مشکل مواجه شده است");
     }
   }
 
   ///
   static Future<List<PurchaseInfo>?> getPurchasesList() async {
-    bool connection = await FlutterPoolakey.connect(PrivateKeys.rsaKey);
+    bool connection = await FlutterPoolakey.connect(PrivateKeys.rsaKey,onDisconnected: (){
+      debugPrint("failed to connect to bazaar");
+    }).timeout(Duration(seconds: 6));
     if (connection) {
       List<PurchaseInfo> purchaseList =
           await FlutterPoolakey.getAllPurchasedProducts();

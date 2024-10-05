@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:blurrycontainer/blurrycontainer.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:gap/gap.dart';
 import 'package:file_picker/file_picker.dart';
@@ -256,7 +257,7 @@ DateTime findMaxDate(List<DateTime> dateList) {
   }
   return maxDate;
 }
-
+///
 DateTime findMinDate(List<DateTime> dateList) {
   DateTime minDate = dateList[0];
   for (int i = 1; i < dateList.length; i++) {
@@ -293,8 +294,8 @@ saveImage(String? path,String idName,String newPath)async{
   }
   return null;
 }
-///
-reSizeImage(String iPath,{int width=600})async{
+/// resize image
+reSizeImage(String iPath,{int width=600,int quality=30})async{
   await (img.Command()
   // Read a jpj image from a file.
     ..decodeJpgFile(iPath)
@@ -308,12 +309,12 @@ reSizeImage(String iPath,{int width=600})async{
   //******
   //compress image
   ImageFile input=ImageFile(filePath: iPath,rawBytes: File(iPath).readAsBytesSync()); // set the input image file
-  Configuration config = const Configuration(
+  Configuration config = Configuration(
     outputType: ImageOutputType.jpg,
     // can only be true for Android and iOS while using ImageOutputType.jpg or ImageOutputType.pngÏ
     useJpgPngNativeCompressor:false,//(Platform.isAndroid || Platform.isIOS) ? true : false,
     // set quality between 0-100
-    quality: 25,
+    quality: quality,
   );
   final param = ImageFileConfiguration(input: input, config: config);
   final output = await compressor.compress(param);
@@ -342,7 +343,7 @@ Future<bool> deleteImageFile(String? path) async {
   return false;
 }
 
-///
+/// delete directory
 Future<bool> deleteDirectory(String path) async {
   final directory = Directory(path);
 
@@ -358,3 +359,27 @@ Future<bool> deleteDirectory(String path) async {
   return false;
 }
 
+/// check internet connection
+Future<bool> checkNetworkConnection() async{
+  final connectivityResult=await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi ||
+        connectivityResult == ConnectivityResult.ethernet ||
+        connectivityResult == ConnectivityResult.vpn)
+    {
+       final result=await InternetAddress.lookup('google.com').timeout(Duration(seconds: 5)).catchError((e,stacktrace){
+         debugPrint("connection found but Network error");
+       });
+          if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+            debugPrint("Network is connected!");
+            return true;
+          }else{
+            debugPrint("connection found but no Network");
+            return false;
+          }
+    }else{
+      debugPrint("No connection found!");
+      return false;
+    }
+
+}

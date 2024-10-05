@@ -7,7 +7,7 @@ import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:price_list/components/action_button.dart';
 import 'package:price_list/components/custom_alert.dart';
 import 'package:price_list/components/custom_button.dart';
-import 'package:price_list/components/custom_dialog.dart';
+import 'package:price_list/components/custom_dialog_2.dart';
 import 'package:price_list/components/empty_holder.dart';
 import 'package:price_list/constants/enums.dart';
 import 'package:price_list/constants/error_handler.dart';
@@ -36,7 +36,7 @@ class InfoPanel extends StatelessWidget {
   };
   @override
   Widget build(BuildContext context) {
-    return CustomDialog(
+    return CustomDialog2(
       height: 600,
       contentPadding: EdgeInsets.zero,
       image: ware.imagePath,
@@ -111,6 +111,7 @@ class InfoPanel extends StatelessWidget {
     );
   }
 }
+
 
 
 

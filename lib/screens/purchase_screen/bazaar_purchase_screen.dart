@@ -178,15 +178,15 @@ class _BazaarPurchaseScreenState extends State<BazaarPurchaseScreen> {
                                   setState(() {});
                                 },
                               ),
-                             SubscribeHolder(
-                                title: "test",
-                                type: "0",
-                                selected: productId=="0",
-                                onChange: (val){
-                                  productId=val;
-                                  setState(() {});
-                                },
-                              ),
+                             // SubscribeHolder(
+                             //    title: "test",
+                             //    type: "0",
+                             //    selected: productId=="0",
+                             //    onChange: (val){
+                             //      productId=val;
+                             //      setState(() {});
+                             //    },
+                             //  ),
                               Gap(15),
                               BazaarButton(productId: productId,),
                             ],
@@ -235,7 +235,7 @@ class SubscribeHolder extends StatelessWidget {
     required this.onChange,
     this.selected=false,
     required this.title,
-    required this.type,
+    required this.type,this.showSubsText=true,
   });
 
   final String title;
@@ -243,6 +243,7 @@ class SubscribeHolder extends StatelessWidget {
   final bool selected;
   final String type;
   List<Color> get colors =>PurchaseTools.convertPlan(type)["colors"];
+  final bool showSubsText;
 
 
   @override
@@ -274,6 +275,7 @@ class SubscribeHolder extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            if(showSubsText)
             const CText(" اشتراک ",fontSize: 13,color: Colors.amberAccent,),
             CText(title,fontSize: 15,color: Colors.white,),
           ],

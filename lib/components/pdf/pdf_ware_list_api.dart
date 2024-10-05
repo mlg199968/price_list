@@ -96,6 +96,23 @@ class PdfWareListApi {
     return PdfApi.saveDocument(name: "catalog Ware List.pdf", pdf: pdf);
   }
 
+  ///generate catalog2 list
+  Future<File> generateCatalog2() async {
+    final pdf = Document(theme: await _customTheme());
+    final invoicePart = await catalogType2();
+    final invoiceHeader = await buildTitle();
+    pdf.addPage(MultiPage(
+      margin: EdgeInsets.all(10),
+      maxPages: 100,
+      build: (context) => [
+        invoicePart,
+      ],
+      header: showHeader ? (context) => invoiceHeader : null,
+      footer: showFooter ? (context) => buildFooter() : null,
+    ));
+    return PdfApi.saveDocument(name: "catalog Ware List.pdf", pdf: pdf);
+  }
+
   ///generate legacy ware list
   Future<File> generateLegacyWareList() async {
     final pdf = Document(theme: await _customTheme());
@@ -324,6 +341,7 @@ class PdfWareListApi {
                 //sale price text
                 priceHolder(item),
                 SizedBox(height: 1 * PdfPageFormat.mm),
+
                 ///ware serial number barcode if exist
                 if (item.wareSerial != null &&
                     item.wareSerial != "" &&
@@ -429,6 +447,128 @@ class PdfWareListApi {
     );
   }
 
+  ///catalog type 2 print with image
+  Future<Widget> catalogType2() async {
+    final emptyImage = (await rootBundle.load("assets/images/empty-image.jpg"))
+        .buffer
+        .asUint8List();
+    final data = wareList.map((item) {
+      File? itemImage;
+      List<File>? images;
+      if (item.imagePath != null) {
+        itemImage = File(item.imagePath!);
+      }
+      if (item.images != null && item.images!.isNotEmpty) {
+        List<String> copyList = List<String>.from(item.images!);
+        copyList.removeWhere((element) => element == item.imagePath);
+
+        images = copyList.map((e) => File(e)).toList();
+      }
+
+      return Directionality(
+          textDirection: TextDirection.rtl,
+          child: Column(children: [
+            Container(
+              height: 55 * PdfPageFormat.mm,
+              width: 190 * PdfPageFormat.mm,
+              margin: const EdgeInsets.all(2 * PdfPageFormat.mm),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                // border: Border.all(color: PdfColors.black, width: 0.8),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Flexible(
+                      child: Padding(
+                    padding: const EdgeInsets.all(2 * PdfPageFormat.mm),
+                    child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ///ware name text
+                          Flexible(
+                            child: Text(
+                              item.wareName.toPersianDigit(),
+                              style: TextStyle(fontSize: 15 * scale),
+                              maxLines: 4,
+                            ),
+                          ),
+                          SizedBox(height: 3 * PdfPageFormat.mm),
+
+                          ///catalog description
+                          if (show["des"]!)
+                            Flexible(
+                              child: Text(
+                                item.description.toPersianDigit(),
+                                style: TextStyle(
+                                    fontSize: 10 * scale,
+                                    color: PdfColors.blueGrey),
+                                maxLines: 4,
+                              ),
+                            ),
+                          SizedBox(height: 3 * PdfPageFormat.mm),
+                          if (show["sale"]!)
+
+                            ///sale price text
+                            priceHolder(item),
+                        ]),
+                  )),
+                  Row(children: [
+                    if (images != null)
+                      Wrap(
+                        direction: Axis.vertical,
+                        children: images
+                            .map(
+                              (image) => Container(
+                                margin: EdgeInsets.all(1),
+                                alignment: Alignment.center,
+                                height: 17 * PdfPageFormat.mm,
+                                width: 17 * PdfPageFormat.mm,
+                                decoration: BoxDecoration(
+                                  color: PdfColors.white,
+                                  borderRadius: BorderRadius.circular(5),
+                                  image: DecorationImage(
+                                    image: image == ""
+                                        ? MemoryImage(emptyImage)
+                                        : MemoryImage(image.readAsBytesSync()),
+                                  ),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
+
+                    ///catalog image holder
+                    Container(
+                      alignment: Alignment.center,
+                      height: 60 * PdfPageFormat.mm,
+                      width: 60 * PdfPageFormat.mm,
+                      decoration: BoxDecoration(
+                        color: PdfColors.white,
+                        borderRadius: BorderRadius.circular(5),
+                        image: DecorationImage(
+                          image: itemImage == null
+                              ? MemoryImage(emptyImage)
+                              : MemoryImage(itemImage.readAsBytesSync()),
+                        ),
+                      ),
+                    ),
+                  ])
+                ],
+              ),
+            ),
+            pw.Divider(thickness: .5,color: PdfColors.blueGrey,height: 2),
+          ],),);
+    }).toList();
+    return Center(
+      child: Wrap(
+          alignment: WrapAlignment.end,
+          runAlignment: WrapAlignment.end,
+          children: data),
+    );
+  }
+
   ///
   Future<Widget> legacyList() async {
     String currency = shopData.currency;
@@ -481,8 +621,7 @@ class PdfWareListApi {
         children: [
           Divider(),
           SizedBox(height: 2 * PdfPageFormat.mm),
-          buildSimpleText(
-              title: 'آدرس:', value: shopData.address),
+          buildSimpleText(title: 'آدرس:', value: shopData.address),
           SizedBox(height: 1 * PdfPageFormat.mm),
           buildSimpleText(
               title: 'شماره تماس:',
@@ -491,10 +630,9 @@ class PdfWareListApi {
       ));
 
   ///******************************** widgets **********************************
-   buildSimpleText({
+  buildSimpleText({
     required String title,
     required String value,
-
   }) {
     final style = TextStyle(
       fontSize: 12 * scale,
@@ -512,7 +650,7 @@ class PdfWareListApi {
   }
 
   ///
-   buildText({
+  buildText({
     required String title,
     required String value,
     double width = double.infinity,
@@ -540,6 +678,7 @@ class PdfWareListApi {
           ),
         ));
   }
+
   ///
   priceHolder(Ware ware) {
     return Column(
@@ -595,4 +734,3 @@ class PdfWareListApi {
     );
   }
 }
-

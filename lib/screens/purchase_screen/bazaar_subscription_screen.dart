@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_poolakey/flutter_poolakey.dart';
 import 'package:gap/gap.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
+import 'package:price_list/constants/utils.dart';
 import 'package:price_list/providers/value_provider.dart';
 import 'package:price_list/screens/purchase_screen/bazaar_purchase_screen.dart';
 import 'package:price_list/screens/purchase_screen/services/bazaar_api.dart';
@@ -57,7 +58,7 @@ late Future getList;
               bgColor: Colors.black12,
               iconColor: Colors.teal,
               onPress: () async {
-                await fetchSubs(subs, userProvider);
+                  await fetchSubs(subs, userProvider);
               },
             ),
           ],

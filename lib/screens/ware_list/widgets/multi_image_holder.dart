@@ -4,7 +4,6 @@ import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:image_picker/image_picker.dart';
@@ -15,17 +14,20 @@ import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/error_handler.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/constants/permission_handler.dart';
+import 'package:price_list/providers/user_provider.dart';
 import 'package:price_list/screens/photo_screen/photo_view_screen.dart';
+import 'package:provider/provider.dart';
 
 class MultiImageHolder extends StatefulWidget {
   const MultiImageHolder(
       {super.key,
       this.imagePath,
       required this.onSet,
-      this.otherImages = const []});
+      this.otherImages = const [], required this.onDelete});
 
   final String? imagePath;
   final Function(String? path, List<String> pathes) onSet;
+  final Function(String removedPath) onDelete;
   final List<String>? otherImages;
 
   @override
@@ -42,6 +44,7 @@ class _ItemImageHolderState extends State<MultiImageHolder> {
         isLoading = true;
         setState(() {});
         String? path;
+        String? fileName;
         FilePickerResult? pickedFile;
 
         ///if platform is android or ios use image picker package else use file
@@ -52,10 +55,15 @@ class _ItemImageHolderState extends State<MultiImageHolder> {
         } else {
           pickedFile = await FilePicker.platform.pickFiles();
           path = pickedFile?.files.single.path;
+          fileName=pickedFile?.files.single.name;
         }
         if (path != null) {
+            if (Platform.isWindows) {
+              path = path.replaceAll(fileName!, "resized-$fileName");
+              await File(pickedFile!.files.single.path!).copy(path);
+            }
           debugPrint("Start resizing");
-          await reSizeImage(path);
+          await reSizeImage(path,quality: Provider.of<UserProvider>(context,listen: false).imageQuality);
           debugPrint("after resizing");
           isLoading = false;
           print(path);
@@ -85,13 +93,14 @@ class _ItemImageHolderState extends State<MultiImageHolder> {
           CircularProgressIndicator(
             color: kMainColor,
             semanticsLabel: "در حال پردازش تصویر",
+
           ),
           Gap(
             10,
           ),
           CText(
             "در حال پردازش تصویر",
-            color: Colors.black38,
+            color: Colors.white54,
           ),
         ],
       );
@@ -195,6 +204,7 @@ class _ItemImageHolderState extends State<MultiImageHolder> {
                               ),
                               Expanded(child: SizedBox()),
                               ///delete button
+                              if(widget.imagePath != null && widget.imagePath != "")
                               ActionButton(
                                 label: "حذف",
                                 icon:CupertinoIcons.trash_fill,
@@ -206,10 +216,11 @@ class _ItemImageHolderState extends State<MultiImageHolder> {
                                 borderRadius: 5,
                                 labelStyle: TextStyle(fontSize: 10,color: Colors.white),
                                 onPress: () {
-                                  File(widget.imagePath!).delete(recursive: true);
+                                  // File(widget.imagePath!).delete(recursive: true);
                                   widget.otherImages!.remove(widget.imagePath!);
                                   String? firstImage=(widget.otherImages?.length ?? 0)!=0?widget.otherImages?.first:null;
-                                  widget.onSet(firstImage, widget.otherImages!);
+                                  widget.onDelete(widget.imagePath!);
+                                widget.onSet(firstImage, widget.otherImages!);
                                 },
 
 
@@ -217,6 +228,7 @@ class _ItemImageHolderState extends State<MultiImageHolder> {
                               ),
 
                               ///See pic button
+                              if (widget.imagePath != null && widget.imagePath != "")
                               ActionButton(
                                 label: "نمایش",
                                 icon: CupertinoIcons.eye,

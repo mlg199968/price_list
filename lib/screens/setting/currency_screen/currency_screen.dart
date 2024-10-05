@@ -145,31 +145,31 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
                         color: Colors.white60,
                       ),
                       ///usd
-                      InputItem(
+                      PriceInputItem(
                         controller: usdController,
                         label: "دلار به تومان",
                         inputLabel: "ارزش",
                       ),
                     ///try
-                      InputItem(
+                      PriceInputItem(
                         controller: tryController,
                         label: "لیر به تومان",
                         inputLabel: "ارزش",
                       ),
                     ///aed
-                      InputItem(
+                      PriceInputItem(
                         controller: aedController,
                         label: "درهم به تومان",
                         inputLabel: "ارزش",
                       ),
                     ///cny
-                      InputItem(
+                      PriceInputItem(
                         controller: cnyController,
                         label: "یوان به تومان",
                         inputLabel: "ارزش",
                       ),
                     ///eur
-                      InputItem(
+                      PriceInputItem(
                         controller: eurController,
                         label: "یورو به تومان",
                         inputLabel: "ارزش",

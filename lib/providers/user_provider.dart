@@ -70,29 +70,43 @@ class UserProvider extends ChangeNotifier {
   double preDiscount = 0;
   int preBillNumber = 1;
   int preTax = 0;
-
+  Map? currenciesMap;
+  //
   String _fontFamily = kFonts[0];
   String get fontFamily => _fontFamily;
-  String _pdfFont = kFonts[0];
+  //
+  String _pdfFont = kPdfFonts[0];
   String get pdfFont => _pdfFont;
+  //
   bool _showCostPrice = false;
   bool get showCostPrice => _showCostPrice;
+  //
   bool _showQuantity = false;
   bool get showQuantity => _showQuantity;
-  Map? currenciesMap;
+  //
   bool _replacedCurrency=false;
   bool get replacedCurrency=>_replacedCurrency;
+  //
   Map<String, bool>? _conditions;
   Map<String, bool>? get conditions=>conditions;
-  String _listViewMode=ListViewMode.list.name;
+  //
+  String _listViewMode=ListViewMode.list.value;
   String get listViewMode => _listViewMode;
-  // set setListViewMode(String mode)=>_listViewMode=mode;
   setListViewMode(String mode){
     _listViewMode = mode;
     notifyListeners();
-
   }
+  //
+  int _imageQuality=30;
+  int get imageQuality => _imageQuality;
+  //
+  int _imageSize=700;
+  int get imageSize => _imageSize;
+  //
+  String _sortItem=SortItem.modifiedDate.value;
+  String get sortItem => _sortItem;
 
+  ///
   void getData(Shop shop) {
     shopName = shop.shopName;
     address = shop.address;
@@ -113,8 +127,10 @@ class UserProvider extends ChangeNotifier {
     currenciesMap=shop.currenciesValue;
     _replacedCurrency=shop.replacedCurrency ?? false;
     _conditions=shop.conditions;
-    _listViewMode=shop.listViewMode ?? ListViewMode.list.name;
-
+    _listViewMode=shop.listViewMode ?? ListViewMode.list.value;
+    _sortItem=shop.sortItem ?? SortItem.modifiedDate.value;
+    _imageQuality=shop.imageQuality ?? 30;
+    _imageSize=shop.imageSize ?? 700;
     _user = shop.activeUser;
     _appType = shop.appType;
     _userLevel = shop.userLevel;
@@ -122,11 +138,6 @@ class UserProvider extends ChangeNotifier {
     _backupDirectory = shop.backupDirectory;
     if(shop.descriptionList!=null) {
       descriptionList=shop.descriptionList!;
-    }
-
-    ///this for just use complete for debug app
-    if (kDebugMode) {
-      // _userLevel = 0;
     }
   }
 

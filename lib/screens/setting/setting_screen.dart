@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:price_list/components/action_button.dart';
+import 'package:price_list/components/counter_textfield.dart';
 import 'package:price_list/components/dynamic_button.dart';
 import 'package:price_list/components/custom_text.dart';
 import 'package:price_list/components/custom_textfield.dart';
@@ -37,6 +38,7 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends State<SettingScreen> {
+  final TextEditingController imageQualityController=TextEditingController();
   late final SharedPreferences prefs;
   late String selectedValue;
   late UserProvider provider;
@@ -47,11 +49,13 @@ class _SettingScreenState extends State<SettingScreen> {
   String selectedPdfFont = kPdfFonts[0];
   String? backupDirectory;
 
+
   void storeInfoShop() {
     Shop dbShop = HiveBoxes.getShopInfo().values.first.copyWith(
           fontFamily: selectedFont,
           pdfFont: selectedPdfFont,
           backupDirectory: backupDirectory,
+      imageQuality: int.tryParse(imageQualityController.text) ?? 30
         );
     provider.getData(dbShop);
     HiveBoxes.getShopInfo().putAt(0, dbShop);
@@ -61,21 +65,13 @@ class _SettingScreenState extends State<SettingScreen> {
     selectedFont = provider.fontFamily;
     selectedPdfFont = provider.pdfFont;
     backupDirectory = provider.backupDirectory;
+    imageQualityController.text=provider.imageQuality.toString();
     setState(() {});
   }
 
   @override
   void initState() {
-    print("subscription");
-    print(Provider.of<UserProvider>(context, listen: false)
-        .subscription
-        ?.toMap());
-    print("isVip");
-    print(!Provider.of<UserProvider>(context, listen: false).isVip);
-    print("user level");
-    print(Provider.of<UserProvider>(context, listen: false).userLevel);
     provider = Provider.of<UserProvider>(context, listen: false);
-
     getData();
     super.initState();
   }
@@ -367,7 +363,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               setState(() {});
                             },
                           ),
-
+                          NumberInputItem(controller: imageQualityController, label: "کیفیت تصویر", inputLabel: "1 تا 100"),
                           ///developer section
                           const CText(
                             "توسعه دهنده",
@@ -524,14 +520,15 @@ class DropListItem extends StatelessWidget {
 }
 
 ///text field
-class InputItem extends StatelessWidget {
-  const InputItem(
+class PriceInputItem extends StatelessWidget {
+  const PriceInputItem(
       {Key? key,
       required this.controller,
       this.onChange,
       this.width = 150,
       required this.label,
-      required this.inputLabel})
+      required this.inputLabel,
+        this.showCurrency=true,})
       : super(key: key);
 
   final String label;
@@ -539,6 +536,7 @@ class InputItem extends StatelessWidget {
   final TextEditingController controller;
   final double width;
   final Function(String val)? onChange;
+  final bool showCurrency;
 
   @override
   Widget build(BuildContext context) {
@@ -558,6 +556,47 @@ class InputItem extends StatelessWidget {
                 textFormat: TextFormatter.price,
                 currency: "تومان",
                 onChange: onChange)
+          ],
+        ),
+      ),
+    );
+  }
+}///text field
+class NumberInputItem extends StatelessWidget {
+  const NumberInputItem(
+      {Key? key,
+      required this.controller,
+      this.onChange,
+      this.width = 150,
+      required this.label,
+      required this.inputLabel,
+      })
+      : super(key: key);
+
+  final String label;
+  final String inputLabel;
+  final TextEditingController controller;
+  final double width;
+  final Function(String val)? onChange;
+  
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(child: Text(label)),
+            CounterTextfield(
+                label: inputLabel,
+                controller: controller,
+                width: width,
+            decimal: false,
+            minNum: 1,
+            maxNum: 100,)
           ],
         ),
       ),

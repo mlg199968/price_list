@@ -18,7 +18,6 @@ import '../../constants/consts_class.dart';
 import 'package:price_list/constants/enums.dart';
 import 'package:price_list/constants/error_handler.dart';
 import 'package:price_list/constants/utils.dart';
-import 'package:price_list/screens/ware_list/widgets/item_image_holder.dart';
 import 'package:price_list/services/hive_boxes.dart';
 import 'package:price_list/model/ware.dart';
 import 'package:price_list/screens/ware_list/panels/create_group_panel.dart';
@@ -51,6 +50,7 @@ class _AddWareScreenState extends State<AddWareScreen> {
   String unitItem = kUnitList[0];
   String? imagePath;
   List<String>? imageList;
+  List<String> removedImages=[];
   late List<Ware> wareList;
   bool repeatName = false;
   bool repeatSerial = false;
@@ -87,15 +87,19 @@ class _AddWareScreenState extends State<AddWareScreen> {
       final String newPath = await Address.waresImage();
       for (int i=0;i<imageList!.length;i++){
         if (wareHive.images==null || !wareHive.images!.contains(imageList![i])) {
+          String oldPath=imageList![i];
           imageList![i] =
               await saveImage(imageList![i], wareHive.wareID!, newPath);
+          if(imagePath==oldPath){
+            imagePath=imageList![i];
+          }
         }
       }
       wareHive.images=imageList;
     }
     /// save image if exist
     if (imagePath != wareHive.imagePath) {
-      if((imageList ?? []).contains(imagePath!)){
+      if(imagePath!=null && (imageList ?? []).contains(imagePath!)){
         wareHive.imagePath=imagePath;
       }
       else{
@@ -104,7 +108,10 @@ class _AddWareScreenState extends State<AddWareScreen> {
         await saveImage(imagePath, wareHive.wareID!, newPath);
       }
     }
-
+    ///remove images that not use or deleted
+    if(removedImages.isNotEmpty){
+      removedImages.forEach((path) async =>await deleteImageFile(path));
+    }
     HiveBoxes.getWares().put(wareHive.wareID, wareHive);
     showSnackBar(context, "کالا با موفقیت ذخیره شد", type: SnackType.success);
   }
@@ -135,9 +142,8 @@ class _AddWareScreenState extends State<AddWareScreen> {
       if(imageList==null && imagePath!=null){
         imageList=[imagePath!];
       }
-      print(imageList);
-    } catch (e) {
-      ErrorHandler.errorManger(context, e,
+    } catch (e,stacktrace) {
+      ErrorHandler.errorManger(context, e,stacktrace: stacktrace,
           title: "AddWareScreen replaceOldWare function error ");
     }
   }
@@ -252,6 +258,9 @@ class _AddWareScreenState extends State<AddWareScreen> {
                             imageList=allPath;
                             imagePath = path;
                             setState(() {});
+                          },
+                          onDelete: (delPath){
+                            removedImages.add(delPath);
                           },
                         ),
                       ),
