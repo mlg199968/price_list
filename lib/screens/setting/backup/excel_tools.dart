@@ -142,7 +142,7 @@ static Future<String?> createExcel(context,String? directory)async{
               return (cell.value as DoubleCellValue).value;
             }
             else if(cell.value.runtimeType==TextCellValue){
-              return stringToDouble((cell.value as TextCellValue).value);
+              return stringToDouble((cell.value as TextCellValue).value.text!);
             }
             else{
               showSnackBar(context, " خطا در ردیف $index  ${ware.wareName}",type: SnackType.error);
@@ -152,12 +152,12 @@ static Future<String?> createExcel(context,String? directory)async{
           ///ware name
           Data nameCell = sheet.cell(CellIndex.indexByString('B$index'));
           ware.wareName =
-              nameCell.value == null ? "unknown" : (nameCell.value as TextCellValue).value;
+              nameCell.value == null ? "unknown" : (nameCell.value as TextCellValue).value.text!;
 
           ///serial
           Data serialCell = sheet.cell(CellIndex.indexByString('C$index'));
           ware.wareSerial =
-              serialCell.value == null ? "" : (serialCell.value as TextCellValue).value;
+              serialCell.value == null ? "" : (serialCell.value as TextCellValue).value.text;
 
           ///quantity
           Data quantityCell = sheet.cell(CellIndex.indexByString('D$index'));
@@ -165,7 +165,7 @@ static Future<String?> createExcel(context,String? directory)async{
           ///unit
           Data unitCell = sheet.cell(CellIndex.indexByString('E$index'));
           ware.unit =
-              unitCell.value == null ? "عدد" : (unitCell.value as TextCellValue).value;
+              unitCell.value == null ? "عدد" : (unitCell.value as TextCellValue).value.text!;
           ///cost
           Data costCell = sheet.cell(CellIndex.indexByString('F$index'));
             ware.cost =cellToNumber(costCell);
@@ -184,19 +184,19 @@ static Future<String?> createExcel(context,String? directory)async{
               sheet.cell(CellIndex.indexByString('J$index'));
           ware.groupName = categoryCell.value == null
               ? "نامشخص"
-              : (categoryCell.value as TextCellValue).value;
+              : (categoryCell.value as TextCellValue).value.text!;
 
           ///description
           Data descriptionCell =
               sheet.cell(CellIndex.indexByString('K$index'));
           ware.description = descriptionCell.value == null
               ? ""
-              : (descriptionCell.value as TextCellValue).value;
+              : (descriptionCell.value as TextCellValue).value.text!;
 
           ///id
           Data idCell = sheet.cell(CellIndex.indexByString('L$index'));
           ware.wareID =
-              idCell.value == null ? Uuid().v1() : (idCell.value as TextCellValue).value;
+              idCell.value == null ? Uuid().v1() : (idCell.value as TextCellValue).value.text;
 
           HiveBoxes.getWares().put(ware.wareID, ware);
         }

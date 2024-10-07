@@ -359,7 +359,7 @@ class _ListPartState extends State<ListPart> {
                           child: Stack(
                             children: [
                               ///list mode show
-                              if (userProvider.listViewMode==ListViewMode.list.name)
+                              if (userProvider.listViewMode==ListViewMode.list.value)
                                 ListView.builder(
                                     itemCount: widget.wareList.length,
                                     itemBuilder: (context, index) {
@@ -421,7 +421,7 @@ class _ListPartState extends State<ListPart> {
                                     })
 
                               ///grid mode show
-                              else if(userProvider.listViewMode==ListViewMode.grid.name)
+                              else if(userProvider.listViewMode==ListViewMode.grid.value)
                                 SingleChildScrollView(
                                   child: StaggeredGrid.extent(
                                               maxCrossAxisExtent: 150,

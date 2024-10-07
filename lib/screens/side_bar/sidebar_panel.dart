@@ -9,14 +9,16 @@ import 'package:price_list/components/custom_text.dart';
 import 'package:price_list/components/over_cage.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/utils.dart';
-import 'package:price_list/screens/purchase_screen/bazaar_purchase_screen.dart';
 import 'package:price_list/screens/notice_screen/notice_screen.dart';
 import 'package:price_list/screens/notice_screen/services/notice_tools.dart';
 import 'package:price_list/screens/setting/setting_screen.dart';
 import 'package:price_list/screens/shop_info_screen/shop_info_screen.dart';
 import 'package:provider/provider.dart';
 import '../../providers/user_provider.dart';
+import '../purchase_screen/authority_screen.dart';
 import '../purchase_screen/bazaar_subscription_screen.dart';
+import '../purchase_screen/purchase_screen.dart';
+import '../purchase_screen/subscription_screen.dart';
 
 
 class SideBarPanel extends StatelessWidget {
@@ -230,15 +232,14 @@ class PurchaseButton extends StatelessWidget {
           return InkWell(
             onTap: () {
               //TODO: main purchases
-              // if(userProvider.subscription==null) {
-              //   Navigator.pushNamed(context, AuthorityScreen.id);
-              // }else{
-              //   Navigator.pushNamed(context, SubscriptionScreen.id);
-              // }
+              if(userProvider.subscription==null) {
+                Navigator.pushNamed(context, AuthorityScreen.id);
+              }else{
+                Navigator.pushNamed(context, SubscriptionScreen.id);
+              }
               //TODO: bazaar purchases
               if(Platform.isAndroid) {
-                Navigator.pushNamed(context, BazaarSubscriptionScreen.id);
-                // Navigator.pushNamed(context, BazaarPurchaseScreen.id);
+                // Navigator.pushNamed(context, BazaarSubscriptionScreen.id);
               }
             },
             child: Container(
@@ -269,52 +270,6 @@ class PurchaseButton extends StatelessWidget {
             ),
           );
         }
-    );
-  }
-}
-///
-class PurchaseButton2 extends StatelessWidget {
-  const PurchaseButton2({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: (){
-        //TODO: main purchase way options
-        // Navigator.pushNamed(context, PurchaseScreen.id);
-        //TODO: bazaar purchase button
-        Navigator.pushNamed(context, BazaarPurchaseScreen.id);
-      },
-      child: Container(
-        width: 400,
-        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-        padding: EdgeInsets.all(5),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-              colors: [Colors.yellow, Colors.orange],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight),
-          borderRadius: BorderRadius.circular(5),
-          boxShadow: [
-            BoxShadow(blurRadius: 2,color: Colors.grey,offset: Offset(1, 1))
-          ]
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("خرید نسخه کامل"),
-            SizedBox(
-              width: 8,
-            ),
-            Icon(
-              FontAwesomeIcons.crown,
-              color: Colors.yellowAccent,
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

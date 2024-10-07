@@ -42,7 +42,7 @@ class GlobalTask {
         {
           //TODO:bazaar fetch data
           if(Platform.isAndroid) {
-            BazaarApi().fetchBazaarInfo(context);
+            // BazaarApi().fetchBazaarInfo(context);
           }
           /// fetch subscription data
           BackendServices().fetchSubs(context);

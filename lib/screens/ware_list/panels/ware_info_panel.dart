@@ -357,22 +357,6 @@ class InfoPanelDesktop extends StatelessWidget {
             ]),
         child: Stack(
           children: [
-            ///close button
-            Align(
-              alignment: Alignment.topLeft,
-              child: SizedBox(
-                height: 30,
-                width: 30,
-                child: CustomIconButton(
-                  icon: CupertinoIcons.clear_fill,
-                  iconColor: Colors.red,
-                  iconSize: 30,
-                  onPress: () {
-                    Navigator.pop(context, false);
-                  },
-                ),
-              ),
-            ),
             ///whole top part
             ClipRRect(
               borderRadius: BorderRadius.circular(10),

@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_poolakey/flutter_poolakey.dart';
+// import 'package:flutter_poolakey/flutter_poolakey.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 // import 'package:myket_iap/myket_iap.dart';
@@ -9,15 +9,10 @@ import 'package:price_list/components/dynamic_button.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/screens/purchase_screen/services/bazaar_api.dart';
 import 'package:price_list/screens/purchase_screen/services/purchase_tools.dart';
-// import 'package:price_list/screens/purchase_screen/purchase_screen.dart';
 import 'package:price_list/services/pay_service.dart';
-import 'package:provider/provider.dart';
 import '../../components/custom_text.dart';
-import '../../constants/enums.dart';
-import '../../constants/private.dart';
-import '../../constants/utils.dart';
-import '../../providers/user_provider.dart';
-import '../ware_list/ware_list_screen.dart';
+
+
 
 class BazaarPurchaseScreen extends StatefulWidget {
   static const String id = "/bazaarPurchaseScreen";
@@ -45,27 +40,24 @@ class _BazaarPurchaseScreenState extends State<BazaarPurchaseScreen> {
   }
 
   getBazaarData()async{
-    bool connectionState=await FlutterPoolakey.connect(
-      PrivateKeys.rsaKey,
-      onDisconnected: () {
-        showSnackBar(context, "خطا در ارتباط با بازار");
-        print("bazaar not connected");
-      },
-    );
-    if(connectionState){
-      PurchaseInfo? purchaseInfo = await FlutterPoolakey.querySubscribedProduct('0');
-      List<PurchaseInfo> purchaseList = await FlutterPoolakey.getAllPurchasedProducts();
-      List<PurchaseInfo> subsList = await FlutterPoolakey.getAllSubscribedProducts();
-      DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(purchaseInfo?.purchaseTime ?? 1);
-      // PurchaseInfo? purchaseInfo2 =await FlutterPoolakey.purchase("3");
-      print(dateTime);
-      print(subsList);
-      if(false){
-        Provider.of<UserProvider>(context,listen: false).setUserLevel(1);
-        Navigator.pushNamedAndRemoveUntil(context, WareListScreen.id,(route)=>false);
-        showSnackBar(context, "برنامه با موفقیت فعال شد",type: SnackType.success,dialogMode: true);
-      }
-    }
+    // bool connectionState=await FlutterPoolakey.connect(
+    //   PrivateKeys.rsaKey,
+    //   onDisconnected: () {
+    //     showSnackBar(context, "خطا در ارتباط با بازار");
+    //     print("bazaar not connected");
+    //   },
+    // );
+    // if(connectionState){
+    //   PurchaseInfo? purchaseInfo = await FlutterPoolakey.querySubscribedProduct('0');
+    //   List<PurchaseInfo> purchaseList = await FlutterPoolakey.getAllPurchasedProducts();
+    //   List<PurchaseInfo> subsList = await FlutterPoolakey.getAllSubscribedProducts();
+    //   DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(purchaseInfo?.purchaseTime ?? 1);
+    //   // PurchaseInfo? purchaseInfo2 =await FlutterPoolakey.purchase("3");
+    //   List<SkuDetails> skuDetails =await FlutterPoolakey.getInAppSkuDetails(["m1","m6","m12"]);
+    //   print(skuDetails);
+    //   print(skuDetails.length);
+
+    // }
   }
 @override
   void initState() {
