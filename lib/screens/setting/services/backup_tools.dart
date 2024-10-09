@@ -49,8 +49,8 @@ class BackupTools {
       }else{
         showSnackBar(context, "مسیر ذخیره سازی انتخاب نشده است!",type: SnackType.warning);
       }
-    } catch (e) {
-      ErrorHandler.errorManger(context, e,
+    } catch (e,stacktrace) {
+      ErrorHandler.errorManger(context, e,stacktrace: stacktrace,
           title: "BackupTools - createBackup error", showSnackbar: true);
     }
   }
@@ -79,7 +79,7 @@ ErrorHandler.errorManger(
   }
 
   ///read zip file
-  static readZipFile(context) async {
+   readZipFile(context) async {
     try {
       await Address.waresImage();
       FilePickerResult? result = await FilePicker.platform.pickFiles();
@@ -185,7 +185,7 @@ ErrorHandler.errorManger(
     }
   }
   ///
-  static Future<void> updateImagePath()async{
+  static Future<void> updateImagePath2()async{
     String directoryPath=await Address.waresImage();
     List<Ware> itemsList=HiveBoxes.getWares().values.toList();
     for (int i = 0; i < itemsList.length; i++) {
@@ -200,6 +200,58 @@ ErrorHandler.errorManger(
           .put(id,itemsList[i]);
     }
 
+  }
+ ///
+   Future<void> updateImagePath()async{
+    String directoryPath=await Address.waresImage();
+    List<Ware> itemsList=HiveBoxes.getWares().values.toList();
+    for (int i = 0; i < itemsList.length; i++) {
+      //
+      if(itemsList[i].imagePath!=null){
+        String imgName = _extractFileName(itemsList[i].imagePath!);
+        itemsList[i].imagePath="$directoryPath/$imgName";
+        if(!(await File(itemsList[i].imagePath!).exists())) {
+          itemsList[i].imagePath=null;
+        }
+      }
+      //
+      if(itemsList[i].images!=null &&itemsList[i].images!.isNotEmpty ){
+        for(int j=0;itemsList[i].images!.length>j;j++) {
+          String img=itemsList[i].images![j];
+          String imgName = _extractFileName(img);
+          itemsList[i].images![j] = "$directoryPath/$imgName";
+          if(!(await File(itemsList[i].images![j]).exists())) {
+            itemsList[i].images!.removeAt(j);  }
+        }
+      }
+      String id=itemsList[i].wareID!;
+      String imagePath="$directoryPath/$id.jpg";
+      if(await File(imagePath).exists()) {
+        itemsList[i].imagePath=imagePath;
+      }else{
+        itemsList[i].imagePath=null;
+      }
+      HiveBoxes.getWares()
+          .put(id,itemsList[i]);
+    }
+
+  }
+  ///
+  String _extractFileName(String text) {
+    List<String> parts = [];
+    String currentPart = "";
+    for (int i = 0; i < text.length; i++) {
+      if (text[i] == '/' || text[i] == '\\') {
+        parts.add(currentPart);
+        currentPart = "";
+      } else {
+        currentPart += text[i];
+      }
+    }
+    if (currentPart.isNotEmpty) {
+      parts.add(currentPart);
+    }
+    return parts.last;
   }
   // static Future<void> _saveJson(String json,BuildContext context) async {
   //   String formattedDate= intl.DateFormat('yyyyMMdd-kkmmss').format(DateTime.now());

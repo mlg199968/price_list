@@ -16,8 +16,8 @@ import 'package:price_list/constants/utils.dart';
 import 'package:price_list/model/shop.dart';
 import 'package:price_list/constants/permission_handler.dart';
 import 'package:price_list/screens/bug_screen/bug_list_screen.dart';
-import 'package:price_list/screens/setting/backup/backup_tools.dart';
-import 'package:price_list/screens/setting/backup/excel_tools.dart';
+import 'package:price_list/screens/setting/services/backup_tools.dart';
+import 'package:price_list/screens/setting/services/excel_tools.dart';
 import 'package:price_list/screens/setting/currency_screen/currency_screen.dart';
 import 'package:price_list/screens/side_bar/sidebar_panel.dart';
 import 'package:price_list/services/hive_boxes.dart';
@@ -192,7 +192,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                           context, Allow.externalStorage);
                                     }
                                     if (context.mounted) {
-                                      await BackupTools.readZipFile(context);
+                                      await BackupTools().readZipFile(context);
                                     }
                                   },
                                 ),

@@ -23,13 +23,15 @@ class BugAdapter extends TypeAdapter<Bug> {
       ..directory = fields[3] as String?
       ..bugDate = fields[4] as DateTime
       ..bugId = fields[5] as String
-      ..stacktrace = fields[6] as String?;
+      ..stacktrace = fields[6] as String?
+      ..device = fields[7] as String?
+      ..subscriber = fields[8] as String?;
   }
 
   @override
   void write(BinaryWriter writer, Bug obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.title)
       ..writeByte(1)
@@ -43,7 +45,11 @@ class BugAdapter extends TypeAdapter<Bug> {
       ..writeByte(5)
       ..write(obj.bugId)
       ..writeByte(6)
-      ..write(obj.stacktrace);
+      ..write(obj.stacktrace)
+      ..writeByte(7)
+      ..write(obj.device)
+      ..writeByte(8)
+      ..write(obj.subscriber);
   }
 
   @override

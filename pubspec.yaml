@@ -4,7 +4,7 @@ description: Price List project
 publish_to: 'none'
 
 
-version: 5.0.1+25
+version: 5.0.2+25
 
 environment:
   sdk: '>=2.18.0-271.4.beta <3.0.0'

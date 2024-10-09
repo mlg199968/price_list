@@ -124,7 +124,7 @@ class Ware extends HiveObject {
       ..saleIndex = map['saleIndex'] ?? 0
       ..imagePath = map['imagePath']
       ..sortIndex = map['sortIndex']
-      ..images = map['images'];
+      ..images = map['images']!=null? List<String>.from(map['images']):null;
     return ware;
   }
 

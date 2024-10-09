@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
+import 'package:price_list/components/action_button.dart';
 import 'package:price_list/components/empty_holder.dart';
 import 'package:price_list/constants/constants.dart';
+import 'package:price_list/constants/error_handler.dart';
 import 'package:price_list/model/bug.dart';
 import 'package:price_list/screens/bug_screen/panels/bug_detail_panel.dart';
 import 'package:price_list/services/hive_boxes.dart';
+
+import '../../components/dynamic_button.dart';
 
 class BugListScreen extends StatelessWidget {
   static const String id = "/bug-screen";
@@ -17,6 +21,14 @@ class BugListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("لیست خطا ها"),
+        actions: [
+          DynamicButton(
+            label: " اشتراک گذاری",
+            onPress: ()async{
+             await ErrorHandler().shareErrors();
+            },
+          ),
+        ],
       ),
       body: Directionality(
         textDirection: TextDirection.ltr,
