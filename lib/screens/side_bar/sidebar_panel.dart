@@ -39,7 +39,8 @@ class SideBarPanel extends StatelessWidget {
                 backgroundColor: Colors.transparent,
                 child: Container(
                   child: BlurryContainer(
-                    color: Colors.white.withOpacity(.3),
+                    color: Colors.white.withOpacity(.25),
+                    blur: 15,
                     borderRadius: BorderRadius.only(topRight: Radius.circular(0),bottomRight: Radius.circular(40)),
                     elevation: 1,
                     padding: EdgeInsets.all(0),
@@ -232,14 +233,14 @@ class PurchaseButton extends StatelessWidget {
           return InkWell(
             onTap: () {
               //TODO: main purchases
-              if(userProvider.subscription==null) {
-                Navigator.pushNamed(context, AuthorityScreen.id);
-              }else{
-                Navigator.pushNamed(context, SubscriptionScreen.id);
-              }
+              // if(userProvider.subscription==null) {
+              //   Navigator.pushNamed(context, AuthorityScreen.id);
+              // }else{
+              //   Navigator.pushNamed(context, SubscriptionScreen.id);
+              // }
               //TODO: bazaar purchases
               if(Platform.isAndroid) {
-                // Navigator.pushNamed(context, BazaarSubscriptionScreen.id);
+                Navigator.pushNamed(context, BazaarSubscriptionScreen.id);
               }
             },
             child: Container(

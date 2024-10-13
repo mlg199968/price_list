@@ -48,6 +48,7 @@ class CustomDialog extends StatelessWidget {
       actionsPadding: EdgeInsets.zero,
       actions:(actions==null || vip)?null:[
         BlurryContainer(
+          blur: 20,
           borderRadius:BorderRadius.vertical(bottom:Radius.circular(borderRadius),),
             child: Row(
               children: actions!,),
@@ -55,6 +56,7 @@ class CustomDialog extends StatelessWidget {
       ],
       content: HideKeyboard(
         child: BlurryContainer(
+          blur: 20,
           padding: const EdgeInsets.all(0),
           borderRadius: BorderRadius.vertical(top:Radius.circular(borderRadius),bottom:Radius.circular(actions==null?borderRadius:0),),
           child: SizedBox(

@@ -91,10 +91,9 @@ flutter {
 
 dependencies {
     implementation 'com.google.mlkit:barcode-scanning:17.2.0'
-    // RxJava 3
-    implementation "com.github.cafebazaar.Poolakey:poolakey-rx3:2.2.0"
-    // RxJava 2
-    implementation "com.github.cafebazaar.Poolakey:poolakey-rx:2.2.0"
+//    // RxJava 3
+//    implementation "com.github.cafebazaar.Poolakey:poolakey-rx3:2.2.0"
+//    // RxJava 2
+//    implementation "com.github.cafebazaar.Poolakey:poolakey-rx:2.2.0"
 
-//    implementation "com.github.cafebazaar.Poolakey:poolakey:2.2.0"
 }

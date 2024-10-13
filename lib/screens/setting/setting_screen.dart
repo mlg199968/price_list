@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -124,7 +126,8 @@ class _SettingScreenState extends State<SettingScreen> {
                                       directory: backupDirectory);
                                 },
                                 ///share backup
-                                extra: DynamicButton(
+                                extra:Platform.isAndroid || Platform.isIOS
+                                    ? DynamicButton(
                                   label: "اشتراک گذاری",
                                   height: 18,
                                   borderRadius: 5,
@@ -138,7 +141,8 @@ class _SettingScreenState extends State<SettingScreen> {
                                         directory: backupDirectory,
                                         isSharing: true);
                                   },
-                                ),
+                                )
+                                :null,
                               ),
                               ///create backup database
                               FancyButtonTileVertical(
@@ -152,7 +156,8 @@ class _SettingScreenState extends State<SettingScreen> {
                                   await BackupTools(quickBackup: true).createBackup(context,
                                       directory: backupDirectory);
                                 },
-                                extra: DynamicButton(
+                                extra:(Platform.isAndroid || Platform.isIOS)
+                                    ?DynamicButton(
                                   label: "اشتراک گذاری",
                                   height: 18,
                                   borderRadius: 5,
@@ -166,7 +171,8 @@ class _SettingScreenState extends State<SettingScreen> {
                                         directory: backupDirectory,
                                         isSharing: true);
                                   },
-                                ),
+                                )
+                                :null,
                               ),
                             ],
                           ),
@@ -301,6 +307,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                     await ExcelTools.readExcel(context);
                                   },
                                 ),
+                                if(Platform.isAndroid || Platform.isIOS)
                                 DynamicButton(
                                   label: "share",
                                   height: 20,
@@ -315,7 +322,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                         context, backupDirectory);
                                     if (path != null &&
                                         backupDirectory != null) {
-                                      await Share.shareXFiles([XFile(path)]);
+                                        await Share.shareXFiles([XFile(path)]);
                                     } else {
                                       showSnackBar(context,
                                           "مسیر ذخیره سازی انتخاب نشده است!",

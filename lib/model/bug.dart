@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:hive/hive.dart';
+import 'package:uuid/uuid.dart';
 
 part 'bug.g.dart';
 
@@ -24,6 +25,8 @@ class Bug extends HiveObject {
   String? device;
   @HiveField(8)
   String? subscriber;
+  @HiveField(9)
+  String? appVersion;
 
   Map<String, dynamic> toMap() {
     return {
@@ -36,19 +39,21 @@ class Bug extends HiveObject {
       "stacktrace": this.stacktrace,
       "device": this.device,
       "subscriber": this.subscriber,
+      "appVersion": this.appVersion,
     };
   }
 
   Bug fromMap(Map<String, dynamic> json) {
     Bug bug = Bug()
-      ..title = json["title"]
+      ..title = json["title"] ?? ""
       ..errorText = json["errorText"]
-      ..count = int.parse(json["count"])
+      ..count = int.tryParse(json["count"] ?? "1") ?? 1
       ..directory = json["directory"]
       ..bugDate = DateTime.parse(json["bugDate"])
-      ..bugId = json["bugId"]
+      ..bugId = json["bugId"] ?? Uuid().v1()
       ..stacktrace = json["stacktrace"]
       ..device = json["device"]
+      ..appVersion = json["appVersion"]
       ..subscriber = json["subscriber"];
     return bug;
   }

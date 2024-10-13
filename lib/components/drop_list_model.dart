@@ -119,7 +119,7 @@ class DropListModel extends StatelessWidget {
                       ),
                     ))
                 .toList(),
-            value: selectedValue,
+            value: listItem.contains(selectedValue)?selectedValue:listItem.first,
             onChanged: (val) {
               onChanged(val);
             },

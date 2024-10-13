@@ -63,7 +63,6 @@ class _WareListScreenState extends State<WareListScreen> {
 
   @override
   void initState() {
-    print("object");
     Provider.of<WareProvider>(context, listen: false).loadGroupList();
     Provider.of<UserProvider>(context, listen: false).deviceAuthority;
     super.initState();
@@ -76,7 +75,7 @@ class _WareListScreenState extends State<WareListScreen> {
         key: scaffoldKey,
         floatingActionButton: CustomFloatActionButton(
             // label: "افزودن کالا",
-            bgColor: Colors.indigo,
+            bgColor: Colors.teal,
             onPressed: () async {
               Navigator.pushNamed(context, AddWareScreen.id);
             }),

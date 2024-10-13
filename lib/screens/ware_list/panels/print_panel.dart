@@ -24,7 +24,7 @@ import 'package:price_list/screens/ware_list/sort_ware_screen.dart';
 import 'package:price_list/services/hive_boxes.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
-
+import 'package:path/path.dart' as path;
 import '../../../providers/user_provider.dart';
 
 class PrintPanel extends StatefulWidget {
@@ -115,7 +115,7 @@ class _PrintPanelState extends State<PrintPanel> {
     return CustomDialog(
         vip: !Provider.of<UserProvider>(context, listen: false).isVip,
         contentPadding: EdgeInsets.all(8),
-        opacity: .7,
+        opacity: 1,
         height: 600,
         title: "",
         topTrail: Padding(
@@ -177,7 +177,15 @@ class _PrintPanelState extends State<PrintPanel> {
               ),
               onPressed: () async {
                 File file = await pdfTypeFile();
-                await Share.shareXFiles([XFile(file.path)]);
+                if(Platform.isAndroid || Platform.isIOS) {
+                  await Share.shareXFiles([XFile(file.path)]);
+                }else{
+                  String? directory=await chooseDirectory();
+                  if(directory!=null){
+                    String name = path.basename(file.path);
+                  await file.copy("$directory\\$name");
+                  };
+                }
               },
             ),
           ),

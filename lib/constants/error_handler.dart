@@ -6,8 +6,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/enums.dart';
 import 'package:price_list/constants/utils.dart';
+import 'package:price_list/providers/user_provider.dart';
 import 'package:price_list/services/hive_boxes.dart';
 import 'package:price_list/model/bug.dart';
+import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart' as intl;
@@ -39,24 +41,40 @@ class ErrorHandler {
       showSnackBar(context, title,type: SnackType.error);
     }
   }
-  shareErrors()async{
-    File errorsFile=await _createErrorFile();
-    await Share.shareXFiles([XFile(errorsFile.path)]);
+  ///
+  shareErrors(BuildContext context)async{
+    File errorsFile = await _createErrorFile(context);
+    if(Platform.isAndroid || Platform.isIOS) {
+      await Share.shareXFiles([XFile(errorsFile.path)]);
+    }
+    else{
+      String? directory=await chooseDirectory();
+      if(directory!=null){
+        print(directory);
+        await errorsFile.copy("$directory\\$outPutName");
+      }
+    }
   }
-  ///save error list
-   Future<File> _createErrorFile() async {
-    Device device=await getDeviceInfo();
-    final Directory directory = await getApplicationDocumentsDirectory();
-    List<Map> bugList=HiveBoxes.getBugs().values.map((e) {
-      e.device=device.toJson();
-      return e.toMap();
-    }).toList();
-    File createdFile = File("${directory.path}/$outPutName");
-    print("createdFile.path");
-    print(createdFile.path);
-    await createdFile.create(recursive: true);
-    await createdFile.writeAsString(jsonEncode(bugList));
 
-    return createdFile;
-  }
+    ///save error list
+    Future<File> _createErrorFile(BuildContext context) async {
+      Device device = await getDeviceInfo();
+      String appVersion =
+          Provider.of<UserProvider>(context, listen: false).appVersion;
+      final Directory directory = await getApplicationDocumentsDirectory();
+      List<Map> bugList =
+          HiveBoxes.getBugs().values.map((e) => e.toMap()).toList();
+      Map finalFile = {
+        "appVersion": appVersion,
+        "device": device.toMap(),
+        "bugList": bugList
+      };
+      File createdFile = File("${directory.path}/$outPutName");
+      print("createdFile.path");
+      print(createdFile.path);
+      await createdFile.create(recursive: true);
+      await createdFile.writeAsString(jsonEncode(finalFile));
+
+      return createdFile;
+    }
 }
