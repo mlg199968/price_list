@@ -59,7 +59,9 @@ class BackendServices {
       if (res.statusCode == 200) {
         var backData = jsonDecode(res.body);
         if (backData["success"] == true) {
-          debugPrint(backData["message"] ?? "success",);
+          debugPrint(
+            backData["message"] ?? "success",
+          );
           return backData["id"].toString();
         } else {
           debugPrint(backData["message"] ?? "not success");
@@ -79,18 +81,23 @@ class BackendServices {
     }
     return null;
   }
+
   ///update subscription data in host
-  static Future<String?> removeDeviceFromServer(context,
-      {required String id,}) async {
+  static Future<String?> removeDeviceFromServer(
+    context, {
+    required String id,
+  }) async {
     try {
       http.Response res = await http.post(
           Uri.parse("$hostUrl/user/remove_device.php"),
-          body: {"id":id,"fetch_date":DateTime.now().toIso8601String()});
+          body: {"id": id, "fetch_date": DateTime.now().toIso8601String()});
       print(res.body);
       if (res.statusCode == 200) {
         var backData = jsonDecode(res.body);
         if (backData["success"] == true) {
-          debugPrint(backData["message"] ?? "success",);
+          debugPrint(
+            backData["message"] ?? "success",
+          );
           return backData["id"].toString();
         } else {
           debugPrint(backData["message"] ?? "not success");

@@ -225,12 +225,6 @@ ErrorHandler.errorManger(
         }
       }
       String id=itemsList[i].wareID!;
-      String imagePath="$directoryPath/$id.jpg";
-      if(await File(imagePath).exists()) {
-        itemsList[i].imagePath=imagePath;
-      }else{
-        itemsList[i].imagePath=null;
-      }
       HiveBoxes.getWares()
           .put(id,itemsList[i]);
     }

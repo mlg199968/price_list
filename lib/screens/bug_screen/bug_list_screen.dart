@@ -1,15 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:price_list/components/action_button.dart';
 import 'package:price_list/components/custom_alert.dart';
-import 'package:price_list/components/custom_icon_button.dart';
 import 'package:price_list/components/empty_holder.dart';
-import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/error_handler.dart';
 import 'package:price_list/model/bug.dart';
 import 'package:price_list/screens/bug_screen/panels/bug_detail_panel.dart';

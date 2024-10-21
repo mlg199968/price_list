@@ -40,7 +40,8 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends State<SettingScreen> {
-  final TextEditingController imageQualityController=TextEditingController();
+  final TextEditingController imageQualityController = TextEditingController();
+  final TextEditingController imageWidthController = TextEditingController();
   late final SharedPreferences prefs;
   late String selectedValue;
   late UserProvider provider;
@@ -51,14 +52,12 @@ class _SettingScreenState extends State<SettingScreen> {
   String selectedPdfFont = kPdfFonts[0];
   String? backupDirectory;
 
-
   void storeInfoShop() {
     Shop dbShop = HiveBoxes.getShopInfo().values.first.copyWith(
-          fontFamily: selectedFont,
-          pdfFont: selectedPdfFont,
-          backupDirectory: backupDirectory,
-      imageQuality: int.tryParse(imageQualityController.text) ?? 30
-        );
+        fontFamily: selectedFont,
+        pdfFont: selectedPdfFont,
+        backupDirectory: backupDirectory,
+        imageQuality: int.tryParse(imageQualityController.text) ?? 30);
     provider.getData(dbShop);
     HiveBoxes.getShopInfo().putAt(0, dbShop);
   }
@@ -67,7 +66,7 @@ class _SettingScreenState extends State<SettingScreen> {
     selectedFont = provider.fontFamily;
     selectedPdfFont = provider.pdfFont;
     backupDirectory = provider.backupDirectory;
-    imageQualityController.text=provider.imageQuality.toString();
+    imageQualityController.text = provider.imageQuality.toString();
     setState(() {});
   }
 
@@ -120,62 +119,68 @@ class _SettingScreenState extends State<SettingScreen> {
                                 buttonLabel: "پشتیبان گیری",
                                 image: "assets/icons/full-backup.png",
                                 icon: Icons.backup,
-                                colors: [Colors.purpleAccent,Colors.pink],
+                                colors: [Colors.purpleAccent, Colors.pink],
                                 onPress: () async {
                                   await BackupTools().createBackup(context,
                                       directory: backupDirectory);
                                 },
+
                                 ///share backup
-                                extra:Platform.isAndroid || Platform.isIOS
+                                extra: Platform.isAndroid || Platform.isIOS
                                     ? DynamicButton(
-                                  label: "اشتراک گذاری",
-                                  height: 18,
-                                  borderRadius: 5,
-                                  icon: Icons.share_rounded,
-                                  bgColor: Colors.black38,
-                                  iconColor: Colors.blueAccent,
-                                  labelStyle: TextStyle(
-                                      fontSize: 9, color: Colors.white),
-                                  onPress: () async {
-                                    await BackupTools().createBackup(context,
-                                        directory: backupDirectory,
-                                        isSharing: true);
-                                  },
-                                )
-                                :null,
+                                        label: "اشتراک گذاری",
+                                        height: 18,
+                                        borderRadius: 5,
+                                        icon: Icons.share_rounded,
+                                        bgColor: Colors.black38,
+                                        iconColor: Colors.blueAccent,
+                                        labelStyle: TextStyle(
+                                            fontSize: 9, color: Colors.white),
+                                        onPress: () async {
+                                          await BackupTools().createBackup(
+                                              context,
+                                              directory: backupDirectory,
+                                              isSharing: true);
+                                        },
+                                      )
+                                    : null,
                               ),
+
                               ///create backup database
                               FancyButtonTileVertical(
                                 label: "پشتیبان گیری دیتابیس",
-                                subTitle: "پشتیبانگیری فقط از داده ها، بدون فایل های گرافیکی",
+                                subTitle:
+                                    "پشتیبانگیری فقط از داده ها، بدون فایل های گرافیکی",
                                 buttonLabel: "پشتیبان گیری",
                                 image: "assets/icons/db-backup.png",
                                 icon: FontAwesomeIcons.database,
-
                                 onPress: () async {
-                                  await BackupTools(quickBackup: true).createBackup(context,
-                                      directory: backupDirectory);
+                                  await BackupTools(quickBackup: true)
+                                      .createBackup(context,
+                                          directory: backupDirectory);
                                 },
-                                extra:(Platform.isAndroid || Platform.isIOS)
-                                    ?DynamicButton(
-                                  label: "اشتراک گذاری",
-                                  height: 18,
-                                  borderRadius: 5,
-                                  icon: Icons.share_rounded,
-                                  bgColor: Colors.black38,
-                                  iconColor: Colors.blueAccent,
-                                  labelStyle: TextStyle(
-                                      fontSize: 9, color: Colors.white),
-                                  onPress: () async {
-                                    await BackupTools(quickBackup: true).createBackup(context,
-                                        directory: backupDirectory,
-                                        isSharing: true);
-                                  },
-                                )
-                                :null,
+                                extra: (Platform.isAndroid || Platform.isIOS)
+                                    ? DynamicButton(
+                                        label: "اشتراک گذاری",
+                                        height: 18,
+                                        borderRadius: 5,
+                                        icon: Icons.share_rounded,
+                                        bgColor: Colors.black38,
+                                        iconColor: Colors.blueAccent,
+                                        labelStyle: TextStyle(
+                                            fontSize: 9, color: Colors.white),
+                                        onPress: () async {
+                                          await BackupTools(quickBackup: true)
+                                              .createBackup(context,
+                                                  directory: backupDirectory,
+                                                  isSharing: true);
+                                        },
+                                      )
+                                    : null,
                               ),
                             ],
                           ),
+
                           ///load backup
                           Padding(
                             padding: const EdgeInsets.all(15),
@@ -189,8 +194,8 @@ class _SettingScreenState extends State<SettingScreen> {
                                   buttonLabel: "انتخاب",
                                   icon: FontAwesomeIcons.fileArrowUp,
                                   image: "assets/icons/folder.png",
-                                  colors: [Colors.teal,Colors.cyan],
-                                  onPress:  () async {
+                                  colors: [Colors.teal, Colors.cyan],
+                                  onPress: () async {
                                     await storagePermission(
                                         context, Allow.storage);
                                     if (context.mounted) {
@@ -202,7 +207,6 @@ class _SettingScreenState extends State<SettingScreen> {
                                     }
                                   },
                                 ),
-
                               ],
                             ),
                           ),
@@ -307,29 +311,30 @@ class _SettingScreenState extends State<SettingScreen> {
                                     await ExcelTools.readExcel(context);
                                   },
                                 ),
-                                if(Platform.isAndroid || Platform.isIOS)
-                                DynamicButton(
-                                  label: "share",
-                                  height: 20,
-                                  borderRadius: 5,
-                                  icon: Icons.share_rounded,
-                                  bgColor: Colors.black,
-                                  iconColor: Colors.blueAccent,
-                                  labelStyle: TextStyle(
-                                      fontSize: 10, color: Colors.white),
-                                  onPress: () async {
-                                    String? path = await ExcelTools.createExcel(
-                                        context, backupDirectory);
-                                    if (path != null &&
-                                        backupDirectory != null) {
+                                if (Platform.isAndroid || Platform.isIOS)
+                                  DynamicButton(
+                                    label: "share",
+                                    height: 20,
+                                    borderRadius: 5,
+                                    icon: Icons.share_rounded,
+                                    bgColor: Colors.black,
+                                    iconColor: Colors.blueAccent,
+                                    labelStyle: TextStyle(
+                                        fontSize: 10, color: Colors.white),
+                                    onPress: () async {
+                                      String? path =
+                                          await ExcelTools.createExcel(
+                                              context, backupDirectory);
+                                      if (path != null &&
+                                          backupDirectory != null) {
                                         await Share.shareXFiles([XFile(path)]);
-                                    } else {
-                                      showSnackBar(context,
-                                          "مسیر ذخیره سازی انتخاب نشده است!",
-                                          type: SnackType.warning);
-                                    }
-                                  },
-                                ),
+                                      } else {
+                                        showSnackBar(context,
+                                            "مسیر ذخیره سازی انتخاب نشده است!",
+                                            type: SnackType.warning);
+                                      }
+                                    },
+                                  ),
                               ],
                             ),
                           ),
@@ -370,7 +375,11 @@ class _SettingScreenState extends State<SettingScreen> {
                               setState(() {});
                             },
                           ),
-                          NumberInputItem(controller: imageQualityController, label: "کیفیت تصویر", inputLabel: "1 تا 100"),
+                          NumberInputItem(
+                              controller: imageQualityController,
+                              label: "کیفیت تصویر",
+                              inputLabel: "1 تا 100"),
+
                           ///developer section
                           const CText(
                             "توسعه دهنده",
@@ -392,8 +401,9 @@ class _SettingScreenState extends State<SettingScreen> {
                                   builder: (_) => CustomAlert(
                                       title:
                                           "آیا از حذف تمام کالا ها مطمئن هستید؟",
-                                      onYes: () async{
-                                        deleteDirectory(await Address.waresImage());
+                                      onYes: () async {
+                                        deleteDirectory(
+                                            await Address.waresImage());
                                         HiveBoxes.getWares().clear();
                                         showSnackBar(
                                             context, "انبار کالا خالی شد!",
@@ -528,15 +538,15 @@ class DropListItem extends StatelessWidget {
 
 ///text field
 class PriceInputItem extends StatelessWidget {
-  const PriceInputItem(
-      {Key? key,
-      required this.controller,
-      this.onChange,
-      this.width = 150,
-      required this.label,
-      required this.inputLabel,
-        this.showCurrency=true,})
-      : super(key: key);
+  const PriceInputItem({
+    Key? key,
+    required this.controller,
+    this.onChange,
+    this.width = 150,
+    required this.label,
+    required this.inputLabel,
+    this.showCurrency = true,
+  }) : super(key: key);
 
   final String label;
   final String inputLabel;
@@ -568,24 +578,26 @@ class PriceInputItem extends StatelessWidget {
       ),
     );
   }
-}///text field
+}
+
+///text field
 class NumberInputItem extends StatelessWidget {
-  const NumberInputItem(
-      {Key? key,
-      required this.controller,
-      this.onChange,
-      this.width = 150,
-      required this.label,
-      required this.inputLabel,
-      })
-      : super(key: key);
+  const NumberInputItem({
+    Key? key,
+    required this.controller,
+    this.onChange,
+    this.width = 150,
+    required this.label,
+    required this.inputLabel, this.min=1, this.max=100,
+  }) : super(key: key);
 
   final String label;
   final String inputLabel;
   final TextEditingController controller;
   final double width;
   final Function(String val)? onChange;
-  
+  final double min;
+  final double max;
 
   @override
   Widget build(BuildContext context) {
@@ -598,12 +610,13 @@ class NumberInputItem extends StatelessWidget {
           children: [
             Flexible(child: Text(label)),
             CounterTextfield(
-                label: inputLabel,
-                controller: controller,
-                width: width,
-            decimal: false,
-            minNum: 1,
-            maxNum: 100,)
+              label: inputLabel,
+              controller: controller,
+              width: width,
+              decimal: false,
+              minNum: min,
+              maxNum: max,
+            )
           ],
         ),
       ),
@@ -662,21 +675,21 @@ class FancyButtonTile extends StatelessWidget {
     required this.buttonLabel,
     this.extra,
     this.icon,
-    this.bgColor=Colors.black54,
+    this.bgColor = Colors.black54,
     this.iconColor,
-    this.height=70,
+    this.height = 70,
     this.iconSize,
-    this.borderRadius=10,
-    this.direction=TextDirection.ltr,
-    this.margin=const EdgeInsets.symmetric(vertical: 2),
-    this.padding=const EdgeInsets.only(left: 10),
-    this.disable=false,
+    this.borderRadius = 10,
+    this.direction = TextDirection.ltr,
+    this.margin = const EdgeInsets.symmetric(vertical: 2),
+    this.padding = const EdgeInsets.only(left: 10),
+    this.disable = false,
     this.labelStyle,
     this.borderColor,
-    this.colors=const[Colors.blue,Colors.deepPurpleAccent],
+    this.colors = const [Colors.blue, Colors.deepPurpleAccent],
     this.image,
     this.subTitle,
-    this.imagePadding=const EdgeInsets.all(8),
+    this.imagePadding = const EdgeInsets.all(8),
   }) : super(key: key);
 
   final String label;
@@ -711,25 +724,30 @@ class FancyButtonTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(borderRadius),
       ),
       child: Row(
-
         children: [
-          if(image!=null)
-          Container(
-              height: height,
-              padding: imagePadding,
-              child: Image(
-                image:
-                AssetImage(image!),
-              )),
+          if (image != null)
+            Container(
+                height: height,
+                padding: imagePadding,
+                child: Image(
+                  image: AssetImage(image!),
+                )),
           Gap(10),
           Expanded(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CText(label,color: Colors.white,),
-              if(subTitle!=null)
-              CText(subTitle,color: Colors.white54,fontSize: 10,),
+              CText(
+                label,
+                color: Colors.white,
+              ),
+              if (subTitle != null)
+                CText(
+                  subTitle,
+                  color: Colors.white54,
+                  fontSize: 10,
+                ),
             ],
           )),
           SizedBox(),
@@ -741,12 +759,12 @@ class FancyButtonTile extends StatelessWidget {
                 label: buttonLabel,
                 padding: EdgeInsets.symmetric(horizontal: 8),
                 borderRadius: borderRadius,
-                bgColor: bgColor ,
+                bgColor: bgColor,
                 icon: icon,
                 iconSize: iconSize,
                 iconColor: iconColor ?? colors.last,
                 borderColor: borderColor ?? colors.last,
-                labelStyle: TextStyle(fontSize: 13,color: Colors.white),
+                labelStyle: TextStyle(fontSize: 13, color: Colors.white),
               ),
               SizedBox(
                 child: extra,
@@ -759,7 +777,6 @@ class FancyButtonTile extends StatelessWidget {
   }
 }
 
-
 ///Fancy Button Tile vertical
 class FancyButtonTileVertical extends StatelessWidget {
   const FancyButtonTileVertical({
@@ -769,19 +786,19 @@ class FancyButtonTileVertical extends StatelessWidget {
     required this.buttonLabel,
     this.extra,
     this.icon,
-    this.bgColor=Colors.black54,
+    this.bgColor = Colors.black54,
     this.iconColor,
-    this.height=200,
+    this.height = 200,
     this.width = 150,
     this.iconSize,
-    this.borderRadius=10,
-    this.direction=TextDirection.ltr,
-    this.margin=const EdgeInsets.symmetric(vertical: 2,horizontal: 4),
-    this.padding=const EdgeInsets.all(8),
-    this.disable=false,
+    this.borderRadius = 10,
+    this.direction = TextDirection.ltr,
+    this.margin = const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+    this.padding = const EdgeInsets.all(8),
+    this.disable = false,
     this.labelStyle,
     this.borderColor,
-    this.colors=const[Colors.blue,Colors.deepPurpleAccent],
+    this.colors = const [Colors.blue, Colors.deepPurpleAccent],
     this.image,
     this.subTitle,
   }) : super(key: key);
@@ -820,23 +837,29 @@ class FancyButtonTileVertical extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if(image!=null)
-          SizedBox(
-            height: 100,
-              child: Image(
-                image:
-                AssetImage(image!),
-              )),
+          if (image != null)
+            SizedBox(
+                height: 100,
+                child: Image(
+                  image: AssetImage(image!),
+                )),
           const Gap(10),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-          CText(label,color: Colors.white,),
-          if(subTitle!=null)
-          CText(subTitle,color: Colors.white54,fontSize: 10,),
-                      ],
-                    ),
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CText(
+                label,
+                color: Colors.white,
+              ),
+              if (subTitle != null)
+                CText(
+                  subTitle,
+                  color: Colors.white54,
+                  fontSize: 10,
+                ),
+            ],
+          ),
           const Gap(10),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -846,11 +869,11 @@ class FancyButtonTileVertical extends StatelessWidget {
                 label: buttonLabel,
                 padding: EdgeInsets.symmetric(horizontal: 8),
                 borderRadius: borderRadius,
-                bgColor: bgColor ,
+                bgColor: bgColor,
                 icon: icon,
                 iconColor: iconColor ?? colors.last,
                 borderColor: borderColor ?? colors.last,
-                labelStyle: TextStyle(fontSize: 13,color: Colors.white),
+                labelStyle: TextStyle(fontSize: 13, color: Colors.white),
               ),
               SizedBox(
                 child: extra,
