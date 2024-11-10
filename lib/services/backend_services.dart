@@ -392,10 +392,10 @@ class BackendServices {
               "fetch date has not been updated after fetch subscription");
         }
       });
-    } catch (e) {
+    } catch (e,stacktrace) {
       subs.fetchDate = startDate;
       subs.startDate ??= startDate;
-      ErrorHandler.errorManger(null, e,
+      ErrorHandler.errorManger(null, e,stacktrace: stacktrace,
           title: "backendServices updateFetchDate error");
     }
   }

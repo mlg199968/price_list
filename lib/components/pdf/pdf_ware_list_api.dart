@@ -20,15 +20,19 @@ class PdfWareListApi {
     required this.show,
     this.showHeader = true,
     this.showFooter = true,
+    this.showCategory = true,
     required this.pdfFont,
+        this.textDirection=pw.TextDirection.rtl
   });
   final mat.BuildContext context;
   final List<Ware> wareList;
   final bool showHeader;
   final bool showFooter;
+  final bool showCategory;
   final double scale;
   final String pdfFont;
   final Map<String, bool> show;
+  final pw.TextDirection textDirection;
   UserProvider get shopData =>
       Provider.of<UserProvider>(context, listen: false);
   String get currency =>
@@ -134,7 +138,7 @@ class PdfWareListApi {
   ///generate custom ware list
   Future<File> generateCustomWareList() async {
     final pdf = Document(theme: await _customTheme());
-    final invoicePart = await customList();
+    final invoicePart =showCategory? await customListSeparated():await customList();
     final invoiceHeader = await buildTitle();
     pdf.addPage(
       MultiPage(
@@ -216,41 +220,82 @@ class PdfWareListApi {
       );
 
   /// print simple ware list
-  Future<Widget> simpleList() async {
-    final data = wareList.map((item) {
-      return Directionality(
-          textDirection: TextDirection.rtl,
-          child: pw.Container(
-            width: 80 * PdfPageFormat.mm,
-            // margin: const EdgeInsets.all(2 * PdfPageFormat.mm),
-            padding: const EdgeInsets.all(2 * PdfPageFormat.mm),
-            decoration: BoxDecoration(
-              border: Border.all(color: PdfColors.black, width: .5),
-            ),
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  pw.Text(
-                    addSeparator(item.saleConverted),
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 14 * scale),
-                  ),
-                  //ware name text
-                  Flexible(
-                    flex: 7,
-                    child: Text(
-                      item.wareName,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 14 * scale),
-                      maxLines: 4,
-                    ),
-                  ),
-                ].reversed.toList()),
-          ));
-    }).toList();
-    return Wrap(children: data);
-  }
+  Future<pw.Widget> simpleList() async {
+    // گروه‌بندی کالاها براساس نام گروه
+    final Map<String, List<Ware>> groupedItems = {};
+    for (var item in wareList) {
+      if (!groupedItems.containsKey(item.groupName)) {
+        groupedItems[item.groupName] = [];
+      }
+      groupedItems[item.groupName]!.add(item);
+    }
 
+    final List<pw.Widget> catalogWidgets = [];
+
+    groupedItems.forEach((groupName, items) {
+      // افزودن سرگروه در صورت فعال بودن showGroupHeader
+      if (showCategory) {
+        catalogWidgets.add(
+          pw.Container(
+            width: double.infinity,
+            padding: const pw.EdgeInsets.symmetric(vertical: 8),
+            color: PdfColors.grey300,
+            child: pw.Text(
+              groupName,
+              style: pw.TextStyle(
+                fontSize: 16 * scale,
+                fontWeight: pw.FontWeight.bold,
+                color: PdfColors.blue,
+              ),
+              textAlign: pw.TextAlign.center,
+              textDirection: textDirection,
+            ),
+          ),
+        );
+      }
+
+      // ساخت ردیف ‌های کالا ها
+      final data = items.map((item) {
+        return pw.Directionality(
+          textDirection: textDirection,
+        child:pw.Container(
+          width: 84 * PdfPageFormat.mm,
+          padding: const pw.EdgeInsets.all(2 * PdfPageFormat.mm),
+          decoration: pw.BoxDecoration(
+            border: pw.Border.all(color: PdfColors.black, width: .5),
+          ),
+          child: pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+            children: [
+              pw.Text(
+                addSeparator(item.saleConverted),
+                style: pw.TextStyle(
+                    fontWeight: pw.FontWeight.bold, fontSize: 14 * scale),
+              ),
+              // نام کالا
+              pw.Expanded(
+                child: pw.Text(
+                  item.wareName,
+                  style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold, fontSize: 14 * scale),
+                  maxLines: 4,
+                ),
+              ),
+            ].reversed.toList(),
+          ),
+        ));
+      }).toList();
+
+      // افزودن داده‌های کالا ها به لیست ویجت‌ها
+      catalogWidgets.addAll(data);
+    });
+
+    return pw.Wrap(
+      alignment: pw.WrapAlignment.start,
+      runAlignment: pw.WrapAlignment.start,
+      children: catalogWidgets,
+    );
+  }
   /// print custom ware list
   Future<Widget> customList() async {
     final headers = [
@@ -308,6 +353,104 @@ class PdfWareListApi {
     );
   }
 
+  /// print custom ware list with separated groups
+  Future<pw.Widget> customListSeparated() async {
+    // تنظیم هدرها براساس مقادیر show
+    final headers = [
+      '#',
+      'نام محصول',
+      if (show["serial"]!) 'سریال',
+      if (show["count"]!) 'تعداد',
+      if (show["cost"]!) 'قیمت خرید ($currency)',
+      if (show["sale"]!) 'قیمت فروش ($currency)',
+      if (show["sale2"]!) 'قیمت فروش2 ($currency)',
+      if (show["sale3"]!) 'قیمت فروش3 ($currency)',
+      if (show["des"]!) 'توضیحات',
+    ].reversed.toList();
+
+    // گروه‌بندی کالاها براساس نام گروه
+    final Map<String, List<Ware>> groupedItems = {};
+    for (var item in wareList) {
+      if (!groupedItems.containsKey(item.groupName)) {
+        groupedItems[item.groupName] = [];
+      }
+      groupedItems[item.groupName]!.add(item);
+    }
+
+    final List<pw.Widget> catalogWidgets = [];
+
+    groupedItems.forEach((groupName, items) {
+      // افزودن سرگروه در صورت فعال بودن showGroupHeader
+      if (showCategory) {
+        catalogWidgets.add(
+          pw.Container(
+            width: double.infinity,
+            padding: const pw.EdgeInsets.symmetric(vertical: 4),
+            decoration: pw.BoxDecoration(
+                color: PdfColors.blueGrey,
+                borderRadius: pw.BorderRadius.circular(8),
+                border: pw.Border.all(color: PdfColors.black)
+            ),
+            child: pw.Text(
+                groupName,
+                style: pw.TextStyle(fontSize: 18 * scale, fontWeight: pw.FontWeight.bold, color: PdfColors.white),
+                textAlign: pw.TextAlign.center,
+                textDirection: textDirection
+            ),
+          ),
+        );
+      }
+
+      // ساخت ردیف‌های جدول برای هر کالا
+      final data = items.map((item) {
+        return [
+          "${wareList.indexOf(item) + 1}".toPersianDigit(),
+          item.wareName.toPersianDigit(),
+          if (show["serial"]!) item.wareSerial,
+          if (show["count"]!) '${item.quantity}'.toPersianDigit(),
+          if (show["cost"]!) addSeparator(item.cost),
+          if (show["sale"]!) addSeparator(item.sale),
+          if (show["sale2"]!) addSeparator(item.sale2 ?? 0),
+          if (show["sale3"]!) addSeparator(item.sale3 ?? 0),
+          if (show["des"]!) item.description,
+        ].reversed.toList();
+      }).toList();
+
+      // افزودن جدول به لیست ویجت‌ها
+      catalogWidgets.add(
+        pw.Directionality(
+          textDirection: textDirection,
+          child: pw.Table.fromTextArray(
+            headers: headers,
+            data: data,
+            headerStyle: pw.TextStyle(fontSize: 12 * scale, fontWeight: pw.FontWeight.bold),
+            headerDecoration: const pw.BoxDecoration(color: PdfColors.grey300),
+            cellHeight: 30,
+            cellStyle: pw.TextStyle(fontSize: 12 * scale),
+            headerAlignment: pw.Alignment.center,
+            cellAlignments: {
+              0: pw.Alignment.center,
+              1: pw.Alignment.centerRight,
+              2: pw.Alignment.centerRight,
+              3: pw.Alignment.centerRight,
+              4: pw.Alignment.centerRight,
+              5: pw.Alignment.centerRight,
+              6: pw.Alignment.centerRight,
+              7: pw.Alignment.centerRight,
+              8: pw.Alignment.centerRight,
+            },
+          ),
+        ),
+      );
+    });
+
+    return pw.Wrap(
+      alignment: pw.WrapAlignment.start,
+      runAlignment: pw.WrapAlignment.start,
+      children: catalogWidgets,
+    );
+  }
+
   ///ticket type model for print price ware list
   Future<Widget> ticketTypeList() async {
     final data = wareList.map((item) {
@@ -362,214 +505,291 @@ class PdfWareListApi {
   }
 
   ///catalog type print with image
-  Future<Widget> catalogType() async {
-    final emptyImage = (await rootBundle.load("assets/images/empty-image.jpg"))
-        .buffer
-        .asUint8List();
-    final data = wareList.map((item) {
-      File? itemImage;
-      if (item.imagePath != null) {
-        itemImage = File(item.imagePath!);
+  Future<pw.Widget> catalogType() async {
+    final emptyImage = (await rootBundle.load("assets/images/empty-image.jpg")).buffer.asUint8List();
+
+    // گروه‌بندی کالا ها براساس نام گروه
+    final Map<String, List<Ware>> groupedItems = {};
+    for (var item in wareList) {
+      if (!groupedItems.containsKey(item.groupName)) {
+        groupedItems[item.groupName] = [];
+      }
+      groupedItems[item.groupName]!.add(item);
+    }
+
+    // ساخت ویجت‌های PDF
+    final List<pw.Widget> catalogWidgets = [];
+
+    groupedItems.forEach((groupName, items) {
+      // اگر نمایش سرگروه فعال است، افزودن نام گروه به لیست ویجت‌ها
+      if(showCategory) {
+        catalogWidgets.add(
+          pw.Container(
+            width: double.infinity,
+            padding: const pw.EdgeInsets.symmetric(vertical: 4),
+            decoration: pw.BoxDecoration(
+                color: PdfColors.blueGrey,
+                borderRadius: pw.BorderRadius.circular(8),
+                border: pw.Border.all(color: PdfColors.black)),
+            child: pw.Text(groupName,
+                style: pw.TextStyle(
+                    fontSize: 18 * scale,
+                    fontWeight: pw.FontWeight.bold,
+                    color: PdfColors.white),
+                textAlign: pw.TextAlign.center,
+                textDirection: textDirection),
+          ),
+        );
       }
 
-      return Directionality(
-          textDirection: TextDirection.rtl,
-          child: pw.Container(
-            width: 95 * PdfPageFormat.mm,
-            margin: const EdgeInsets.all(2 * PdfPageFormat.mm),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              border: Border.all(color: PdfColors.black, width: 0.8),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(
-                    child: Padding(
-                  padding: const EdgeInsets.all(2 * PdfPageFormat.mm),
-                  child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ///ware name text
-                        Flexible(
-                          child: Text(
-                            item.wareName.toPersianDigit(),
-                            style: TextStyle(fontSize: 15 * scale),
+      // افزودن لیست کالا های مرتبط با آن گروه
+      items.forEach((item) {
+        File? itemImage;
+
+        // بارگذاری تصویر اصلی
+        if (item.imagePath != null) {
+          itemImage = File(item.imagePath!);
+        }
+
+        catalogWidgets.add(
+          pw.Directionality(
+            textDirection: textDirection, // استفاده از جهت متن مشخص شده
+            child: pw.Container(
+              width: 95 * PdfPageFormat.mm,
+              margin: const pw.EdgeInsets.all(2 * PdfPageFormat.mm),
+              decoration: pw.BoxDecoration(
+                borderRadius: pw.BorderRadius.circular(5),
+                border: pw.Border.all(color: PdfColors.black, width: 0.8),
+              ),
+              child: pw.Row(
+                mainAxisAlignment: textDirection == pw.TextDirection.rtl
+                    ? pw.MainAxisAlignment.spaceBetween
+                    : pw.MainAxisAlignment.start,
+                children: [
+                  pw.Expanded(
+                    child: pw.Padding(
+                      padding: const pw.EdgeInsets.all(2 * PdfPageFormat.mm),
+                      child: pw.Column(
+                        mainAxisSize: pw.MainAxisSize.min,
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          // نمایش نام کالا
+                          pw.Text(
+                            item.wareName,
+                            style: pw.TextStyle(fontSize: 15 * scale),
                             maxLines: 4,
                           ),
-                        ),
-                        SizedBox(height: 3 * PdfPageFormat.mm),
+                          pw.SizedBox(height: 3 * PdfPageFormat.mm),
 
-                        ///catalog description
-                        if (show["des"]!)
-                          Flexible(
-                            child: Text(
-                              item.description.toPersianDigit(),
-                              style: TextStyle(
-                                  fontSize: 10 * scale,
-                                  color: PdfColors.blueGrey),
+                          // توضیحات کالا
+                          if (show["des"] ?? false)
+                            pw.Text(
+                              item.description,
+                              style: pw.TextStyle(fontSize: 10 * scale, color: PdfColors.blueGrey),
                               maxLines: 4,
                             ),
-                          ),
-                        SizedBox(height: 3 * PdfPageFormat.mm),
-                        if (show["sale"]!)
+                          pw.SizedBox(height: 3 * PdfPageFormat.mm),
 
-                          ///sale price text
-                          priceHolder(item),
-                      ]),
-                )),
-
-                ///catalog image holder
-                Container(
-                  alignment: Alignment.center,
-                  height: 40 * PdfPageFormat.mm,
-                  width: 40 * PdfPageFormat.mm,
-                  decoration: BoxDecoration(
-                    color: PdfColors.white,
-                    borderRadius: BorderRadius.circular(5),
-                    image: DecorationImage(
-                      image: itemImage == null
-                          ? MemoryImage(emptyImage)
-                          : MemoryImage(itemImage.readAsBytesSync()),
+                          // نمایش قیمت فروش
+                          if (show["sale"] ?? false) priceHolder(item),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ));
-    }).toList();
-    return Center(
-      child: Wrap(
-          alignment: WrapAlignment.end,
-          runAlignment: WrapAlignment.end,
-          children: data),
-    );
-  }
 
-  ///catalog type 2 print with image
-  Future<Widget> catalogType2() async {
-    final emptyImage = (await rootBundle.load("assets/images/empty-image.jpg"))
-        .buffer
-        .asUint8List();
-    final data = wareList.map((item) {
-      File? itemImage;
-      List<File>? images;
-      if (item.imagePath != null) {
-        itemImage = File(item.imagePath!);
-      }
-      if (item.images != null && item.images!.isNotEmpty) {
-        List<String> copyList = List<String>.from(item.images!);
-        copyList.removeWhere((element) => element == item.imagePath);
-
-        images = copyList.map((e) => File(e)).toList();
-      }
-
-      return Directionality(
-          textDirection: TextDirection.rtl,
-          child: Column(children: [
-            Container(
-              height: 55 * PdfPageFormat.mm,
-              width: 190 * PdfPageFormat.mm,
-              margin: const EdgeInsets.all(2 * PdfPageFormat.mm),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                // border: Border.all(color: PdfColors.black, width: 0.8),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Flexible(
-                      child: Padding(
-                    padding: const EdgeInsets.all(2 * PdfPageFormat.mm),
-                    child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ///ware name text
-                          Flexible(
-                            child: Text(
-                              item.wareName.toPersianDigit(),
-                              style: TextStyle(fontSize: 15 * scale),
-                              maxLines: 4,
-                            ),
-                          ),
-                          SizedBox(height: 3 * PdfPageFormat.mm),
-
-                          ///catalog description
-                          if (show["des"]!)
-                            Flexible(
-                              child: Text(
-                                item.description.toPersianDigit(),
-                                style: TextStyle(
-                                    fontSize: 10 * scale,
-                                    color: PdfColors.blueGrey),
-                                maxLines: 4,
-                              ),
-                            ),
-                          SizedBox(height: 3 * PdfPageFormat.mm),
-                          if (show["sale"]!)
-
-                            ///sale price text
-                            priceHolder(item),
-                        ]),
-                  )),
-                  Row(children: [
-                    if (images != null)
-                      Wrap(
-                        direction: Axis.vertical,
-                        children: images
-                            .map(
-                              (image) => Container(
-                                margin: EdgeInsets.all(1),
-                                alignment: Alignment.center,
-                                height: 17 * PdfPageFormat.mm,
-                                width: 17 * PdfPageFormat.mm,
-                                decoration: BoxDecoration(
-                                  color: PdfColors.white,
-                                  borderRadius: BorderRadius.circular(5),
-                                  image: DecorationImage(
-                                    image: image == ""
-                                        ? MemoryImage(emptyImage)
-                                        : MemoryImage(image.readAsBytesSync()),
-                                  ),
-                                ),
-                              ),
-                            )
-                            .toList(),
-                      ),
-
-                    ///catalog image holder
-                    Container(
-                      alignment: Alignment.center,
-                      height: 60 * PdfPageFormat.mm,
-                      width: 60 * PdfPageFormat.mm,
-                      decoration: BoxDecoration(
-                        color: PdfColors.white,
-                        borderRadius: BorderRadius.circular(5),
-                        image: DecorationImage(
-                          image: itemImage == null
-                              ? MemoryImage(emptyImage)
-                              : MemoryImage(itemImage.readAsBytesSync()),
-                        ),
+                  // بخش نمایش تصویر
+                  pw.Container(
+                    alignment: pw.Alignment.center,
+                    height: 40 * PdfPageFormat.mm,
+                    width: 40 * PdfPageFormat.mm,
+                    decoration: pw.BoxDecoration(
+                      color: PdfColors.white,
+                      borderRadius: pw.BorderRadius.circular(5),
+                      image: pw.DecorationImage(
+                        image: itemImage == null
+                            ? pw.MemoryImage(emptyImage)
+                            : pw.MemoryImage(itemImage.readAsBytesSync()),
                       ),
                     ),
-                  ])
+                  ),
                 ],
               ),
             ),
-            pw.Divider(thickness: .5,color: PdfColors.blueGrey,height: 2),
-          ],),);
-    }).toList();
-    return Center(
-      child: Wrap(
-          alignment: WrapAlignment.end,
-          runAlignment: WrapAlignment.end,
-          children: data),
+          ),
+        );
+      });
+    });
+
+    // بازگرداندن لیست کالاها به صورت Wrap
+    return pw.Wrap(
+      alignment: pw.WrapAlignment.end,
+      runAlignment: pw.WrapAlignment.end,
+      children: catalogWidgets,
+    );
+  }
+  ///catalog type 2 print with image
+  Future<pw.Widget> catalogType2() async {
+    final emptyImage = (await rootBundle.load("assets/images/empty-image.jpg")).buffer.asUint8List();
+
+    // گروه‌بندی کالا ها براساس نام گروه
+    final Map<String, List<Ware>> groupedItems = {};
+    for (var item in wareList) {
+      if (!groupedItems.containsKey(item.groupName)) {
+        groupedItems[item.groupName] = [];
+      }
+      groupedItems[item.groupName]!.add(item);
+    }
+
+    // ساخت ویجت‌های PDF
+    final List<pw.Widget> catalogWidgets = [];
+
+    groupedItems.forEach((groupName, items) {
+      // افزودن نام گروه به لیست ویجت‌ها
+      if(showCategory)
+      catalogWidgets.add(
+        pw.Container(
+          width: double.infinity,
+          padding: const pw.EdgeInsets.symmetric(vertical: 4),
+          decoration: pw.BoxDecoration(
+            color: PdfColors.blueGrey,
+            borderRadius: pw.BorderRadius.circular(8),
+            border: pw.Border.all(color: PdfColors.black)
+          ),
+          child: pw.Text(
+            groupName,
+            style: pw.TextStyle(fontSize: 18 * scale, fontWeight: pw.FontWeight.bold, color: PdfColors.white),
+            textAlign: pw.TextAlign.center,
+            textDirection: textDirection
+          ),
+        ),
+      );
+
+      // افزودن لیست کالاهای مرتبط با آن گروه
+      items.forEach((item) {
+        File? itemImage;
+        List<File>? images;
+
+        // بارگذاری تصویر اصلی
+        if (item.imagePath != null) {
+          itemImage = File(item.imagePath!);
+        }
+
+        // بارگذاری تصاویر اضافی
+        if (item.images != null && item.images!.isNotEmpty) {
+          List<String> copyList = List<String>.from(item.images!);
+          copyList.removeWhere((element) => element == item.imagePath);
+          images = copyList.map((e) => File(e)).toList();
+        }
+
+        catalogWidgets.add(
+          pw.Directionality(
+            textDirection: textDirection, // استفاده از جهت متن مشخص شده
+            child: pw.Container(
+              height: 55 * PdfPageFormat.mm,
+              width: 190 * PdfPageFormat.mm,
+              margin: const pw.EdgeInsets.all(2 * PdfPageFormat.mm),
+              decoration: pw.BoxDecoration(
+                borderRadius: pw.BorderRadius.circular(5),
+              ),
+              child: pw.Row(
+                mainAxisAlignment: textDirection == pw.TextDirection.rtl
+                    ? pw.MainAxisAlignment.spaceBetween
+                    : pw.MainAxisAlignment.start,
+                children: [
+                  pw.Expanded(
+                    child: pw.Padding(
+                      padding: const pw.EdgeInsets.all(2 * PdfPageFormat.mm),
+                      child: pw.Column(
+                        mainAxisSize: pw.MainAxisSize.min,
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          // نمایش نام کالا
+                          pw.Text(
+                            item.wareName,
+                            style: pw.TextStyle(fontSize: 15 * scale),
+                            maxLines: 4,
+                          ),
+                          pw.SizedBox(height: 3 * PdfPageFormat.mm),
+
+                          // توضیحات کالا
+                          if (show["des"] ?? false)
+                            pw.Text(
+                              item.description,
+                              style: pw.TextStyle(fontSize: 10 * scale, color: PdfColors.blueGrey),
+                              maxLines: 4,
+                            ),
+                          pw.SizedBox(height: 3 * PdfPageFormat.mm),
+
+                          // نمایش قیمت فروش
+                          if (show["sale"] ?? false) priceHolder(item),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // بخش نمایش تصاویر
+                  pw.Row(
+                    mainAxisAlignment: textDirection == pw.TextDirection.rtl
+                        ? pw.MainAxisAlignment.end
+                        : pw.MainAxisAlignment.start,
+                    children: [
+                      if (images != null)
+                        pw.Wrap(
+                          direction: pw.Axis.vertical,
+                          children: images.map((image) {
+                            final bytes = image.readAsBytesSync();
+                            return pw.Container(
+                              margin: const pw.EdgeInsets.all(1),
+                              alignment: pw.Alignment.center,
+                              height: 17 * PdfPageFormat.mm,
+                              width: 17 * PdfPageFormat.mm,
+                              decoration: pw.BoxDecoration(
+                                color: PdfColors.white,
+                                borderRadius: pw.BorderRadius.circular(5),
+                                image: pw.DecorationImage(
+                                  image: pw.MemoryImage(bytes),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+
+                      // نمایش تصویر اصلی کالا
+                      pw.Container(
+                        alignment: pw.Alignment.center,
+                        height: 60 * PdfPageFormat.mm,
+                        width: 60 * PdfPageFormat.mm,
+                        decoration: pw.BoxDecoration(
+                          color: PdfColors.white,
+                          borderRadius: pw.BorderRadius.circular(5),
+                          image: pw.DecorationImage(
+                            image: itemImage == null
+                                ? pw.MemoryImage(emptyImage)
+                                : pw.MemoryImage(itemImage.readAsBytesSync()),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+
+        // افزودن خط جداکننده
+        catalogWidgets.add(pw.Divider(thickness: 0.5, color: PdfColors.blueGrey, height: 2));
+      });
+    });
+
+    // بازگرداندن لیست کالاها به صورت Wrap
+    return pw.Wrap(
+      alignment: pw.WrapAlignment.end,
+      runAlignment: pw.WrapAlignment.end,
+      children: catalogWidgets,
     );
   }
 
-  ///
+  ///legacy list
   Future<Widget> legacyList() async {
     String currency = shopData.currency;
     final headers =

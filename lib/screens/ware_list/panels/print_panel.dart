@@ -72,6 +72,7 @@ class _PrintPanelState extends State<PrintPanel> {
         show: showMap,
         showFooter: showFooter,
         showHeader: showHeader,
+        showCategory: separateGroups,
         pdfFont: pdfFont);
     late File file;
     if (printType == "اتیکت") {
