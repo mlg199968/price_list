@@ -55,11 +55,13 @@ class _WareListScreenState extends State<WareListScreen> {
   late final SharedPreferences prefs;
   late final WareProvider provider;
   String selectedDropListGroup = "همه";
+  bool invertSort = false;
   int? listLength = 0;
   String sortItem = kSortList[0];
   String? keyWord;
   List<Ware> waresList = [];
   bool showAlertNotice = true;
+
 
   @override
   void initState() {

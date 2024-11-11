@@ -1,5 +1,6 @@
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 import 'package:flutter/material.dart';
+import 'package:price_list/components/check_button.dart';
 import 'package:price_list/components/custom_float_action_button.dart';
 import 'package:price_list/components/drop_list_model.dart';
 import 'package:price_list/screens/ware_list/services/ware_tools.dart';
@@ -20,10 +21,11 @@ class _SortWareScreenState extends State<SortWareScreen> {
   late List<DragAndDropList> _contents;
   String sortItem = kSortList[4];
   bool _groupSortEnabled = false; // متغیر برای چک‌باکس
-late List<Ware> updatedList;
+  late List<Ware> updatedList;
+
   @override
   void initState() {
-    updatedList=WareTools.filterList(widget.wareList, "", sortItem, "همه");
+    updatedList = WareTools.filterList(widget.wareList, "", sortItem, "همه");
     super.initState();
     _contents = createContents();
   }
@@ -31,45 +33,107 @@ late List<Ware> updatedList;
   // ایجاد محتوا برای Drag and Drop
   List<DragAndDropList> createContents({String? sort}) {
     updatedList = sort != null
-        ? WareTools.filterList(updatedList, "", sort, "همه")
+        ? WareTools.filterList(widget.wareList, "", sort, "همه")
         : updatedList;
 
     // مرتب‌سازی بر اساس گروه در صورت فعال بودن چک‌باکس
     if (_groupSortEnabled) {
-      updatedList.sort((a, b) => a.groupName.compareTo(b.groupName));
-    }
+      // updatedList.sort((a, b) => a.groupName.compareTo(b.groupName));
 
-    return [
-      DragAndDropList(
-        children: updatedList
-            .map((ware) => DragAndDropItem(
-          child: Container(
-            padding: EdgeInsets.all(10).copyWith(right: 50),
+      // دسته‌بندی کالاها بر اساس گروه
+      Map<String, List<Ware>> groupedItems = {};
+      for (Ware ware in updatedList) {
+        groupedItems.putIfAbsent(ware.groupName, () => []).add(ware);
+      }
+
+      // ایجاد DragAndDropList برای هر گروه
+      List<DragAndDropList> groupLists = groupedItems.entries.map((entry) {
+        return DragAndDropList(
+          header: Container(
+            padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(8),
             ),
-            child: Row(
-              textDirection: TextDirection.rtl,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(
-                  child: Text(
-                    ware.wareName,
-                    textDirection: TextDirection.rtl,
-                    style: TextStyle(color: Colors.black, fontSize: 12),
-                  ),
-                ),
-                Text(
-                  ware.groupName,
-                  style: TextStyle(color: Colors.blueGrey, fontSize: 9),
-                ),
-              ],
+            child: Text(
+              entry.key,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
             ),
           ),
-        ))
-            .toList(),
-      )
-    ];
+          children: entry.value
+              .map((ware) => DragAndDropItem(
+            canDrag: false,
+                    key: ValueKey(ware.wareID ?? "0"),
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.9),
+                        gradient: kBlackWhiteGradiant,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Row(
+                        textDirection: TextDirection.rtl,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              ware.wareName,
+                              textDirection: TextDirection.rtl,
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 12),
+                            ),
+                          ),
+                          Text(
+                            ware.groupName,
+                            style:
+                                TextStyle(color: Colors.blueGrey, fontSize: 9),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ))
+              .toList(),
+        );
+      }).toList();
+
+      return groupLists;
+    } else {
+      // نمایش به صورت لیست ساده بدون دسته‌بندی
+      return [
+        DragAndDropList(
+          children: updatedList
+              .map((ware) => DragAndDropItem(
+                    child: Container(
+                      padding: EdgeInsets.all(10).copyWith(right: 25),
+                      decoration: BoxDecoration(
+                        gradient: kBlackWhiteGradiant,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Row(
+                        textDirection: TextDirection.rtl,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              ware.wareName,
+                              textDirection: TextDirection.rtl,
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 12),
+                            ),
+                          ),
+                          Text(
+                            ware.groupName,
+                            style:
+                                TextStyle(color: Colors.blueGrey, fontSize: 9),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ))
+              .toList(),
+        )
+      ];
+    }
   }
 
   @override
@@ -92,38 +156,41 @@ late List<Ware> updatedList;
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         title: const Text('ویرایش ترتیب'),
+        bottom: PreferredSize(preferredSize: Size(400, 30),
+            child: Container(
+              decoration: BoxDecoration(color: Colors.grey.shade100.withOpacity(.9)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CheckButton(
+                    label:'مرتب‌سازی بر اساس گروه' ,
+                    value: _groupSortEnabled,
+                    onChange: (bool? value) {
+                      setState(() {
+                        _groupSortEnabled = value ?? false;
+                        _contents = createContents(sort: sortItem);
+                      });
+                    },
+                  ),
+                  Flexible(
+                    child: DropListModel(
+                      height: 25,
+                      listItem: kSortList,
+                      selectedValue: sortItem,
+                      onChanged: (val) {
+                        setState(() {
+                          sortItem = val;
+                          _contents = createContents(sort: sortItem);
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),),
         actions: [
-          // DropListModel برای مرتب‌سازی
-          Flexible(
-            child: DropListModel(
-              listItem: kSortList,
-              selectedValue: sortItem,
-              onChanged: (val) {
-                setState(() {
-                  sortItem = val;
-                  _contents = createContents(sort: sortItem);
-                });
-              },
-            ),
-          ),
-          // چک‌باکس برای مرتب‌سازی بر اساس گروه
-          Row(
-            children: [
-              const Text(
-                'مرتب‌سازی بر اساس گروه',
-                style: TextStyle(fontSize: 12),
-              ),
-              Checkbox(
-                value: _groupSortEnabled,
-                onChanged: (bool? value) {
-                  setState(() {
-                    _groupSortEnabled = value ?? false;
-                    _contents = createContents(sort: sortItem);
-                  });
-                },
-              ),
-            ],
-          ),
+
+
         ],
       ),
       body: Container(
@@ -136,11 +203,17 @@ late List<Ware> updatedList;
             children: _contents,
             onItemReorder: _onItemReorder,
             onListReorder: _onListReorder,
-            listPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-            itemDivider: Divider(
-              thickness: 2,
-              height: 2,
-            ),
+            listPadding:
+                const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+            itemDivider: Divider(thickness: 0, height: 2),
+            listDragHandle: DragHandle(
+                child: Icon(
+                  Icons.menu_rounded,
+                  size: 30,
+                  color: Colors.white70,
+                ),
+                verticalAlignment: DragHandleVerticalAlignment.top),
+            itemDragHandle: DragHandle(child: Icon(Icons.drag_handle_rounded)),
             itemDecorationWhileDragging: BoxDecoration(
               color: kMainColor[100],
               boxShadow: [
@@ -152,50 +225,19 @@ late List<Ware> updatedList;
                 ),
               ],
             ),
-            listInnerDecoration: BoxDecoration(
-              color: Theme.of(context).canvasColor,
-              borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-            ),
-            lastItemTargetHeight: 8,
-            addLastItemTargetHeightToTop: true,
-            lastListTargetSize: 40,
-            listDragHandle: const DragHandle(
-              verticalAlignment: DragHandleVerticalAlignment.top,
-              child: Padding(
-                padding: EdgeInsets.only(right: 10),
-                child: Icon(
-                  Icons.menu,
-                  color: Colors.black26,
-                ),
-              ),
-            ),
-            itemDragHandle: const DragHandle(
-              child: Padding(
-                padding: EdgeInsets.only(right: 10),
-                child: Icon(
-                  Icons.menu,
-                  color: Colors.blueGrey,
-                ),
-              ),
-            ),
           ),
         ),
       ),
     );
   }
 
-  // متد برای جابه‌جایی آیتم‌ها
   _onItemReorder(
       int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
     setState(() {
       var movedItem = _contents[oldListIndex].children.removeAt(oldItemIndex);
       _contents[newListIndex].children.insert(newItemIndex, movedItem);
-print("old");
-print(updatedList[oldItemIndex].wareName);
       Ware movedWare = updatedList.removeAt(oldItemIndex);
       updatedList.insert(newItemIndex, movedWare);
-      print("new");
-      print(updatedList[newItemIndex].wareName);
       // بروزرسانی sortIndex برای هر Ware
       for (int i = 0; i < updatedList.length; i++) {
         updatedList[i].sortIndex = i;
@@ -203,11 +245,26 @@ print(updatedList[oldItemIndex].wareName);
     });
   }
 
-  // متد برای جابه‌جایی لیست‌ها
   _onListReorder(int oldListIndex, int newListIndex) {
-    setState(() {
-      var movedList = _contents.removeAt(oldListIndex);
-      _contents.insert(newListIndex, movedList);
-    });
+   int indexLocation=0;
+
+    var movedList = _contents.removeAt(oldListIndex);
+    _contents.insert(newListIndex, movedList);
+
+
+   for (int i = 0; i < newListIndex; i++){
+     indexLocation+= _contents[i].children.length;
+     print(indexLocation);
+   }
+
+    List<Ware> movedItems = _contents[newListIndex].children.map((item) => updatedList.firstWhere((element) => element.wareID==(item.key as ValueKey).value)).toList();
+   updatedList.removeWhere((ware) => movedItems.map((movedWare) => movedWare.wareID).contains(ware.wareID));
+    updatedList.insertAll(indexLocation, movedItems);
+
+   // بروزرسانی sortIndex برای هر Ware
+   for (int i = 0; i < updatedList.length; i++) {
+     updatedList[i].sortIndex = i;
+   }
+    setState(() {});
   }
 }
