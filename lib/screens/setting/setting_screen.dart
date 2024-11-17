@@ -1,9 +1,10 @@
 import 'dart:io';
-
 import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
+import 'package:persian_datetime_picker/persian_datetime_picker.dart';
+import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:price_list/components/action_button.dart';
 import 'package:price_list/components/counter_textfield.dart';
 import 'package:price_list/components/dynamic_button.dart';
@@ -17,17 +18,24 @@ import 'package:price_list/constants/enums.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/model/shop.dart';
 import 'package:price_list/constants/permission_handler.dart';
+import 'package:price_list/model/ware_bool.dart';
+import 'package:price_list/providers/ware_provider.dart';
 import 'package:price_list/screens/bug_screen/bug_list_screen.dart';
 import 'package:price_list/screens/setting/services/backup_tools.dart';
 import 'package:price_list/screens/setting/services/excel_tools.dart';
 import 'package:price_list/screens/setting/currency_screen/currency_screen.dart';
 import 'package:price_list/screens/side_bar/sidebar_panel.dart';
+import 'package:price_list/screens/ware_list/services/ware_tools.dart';
 import 'package:price_list/services/hive_boxes.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../components/check_button.dart';
 import '../../components/custom_alert.dart';
+import '../../components/time/time.dart';
+import '../../components/title_button.dart';
+import '../../model/ware.dart';
 import '../../providers/user_provider.dart';
 
 class SettingScreen extends StatefulWidget {
@@ -51,7 +59,16 @@ class _SettingScreenState extends State<SettingScreen> {
   String selectedFont = kFonts[0];
   String selectedPdfFont = kPdfFonts[0];
   String? backupDirectory;
-
+  ///filter declaration
+  WareBool exportMap = WareBool(des: true, cost: true, sale: true, sale2: true, sale3: true, count: true, serial: true);
+  late final List<Ware> wareList;
+  List<Ware>? exportList;
+  DateTime? modifiedDate;
+  DateTime? createdDate;
+  bool activeExportFilter=false;
+  bool activeImportFilter=false;
+  String selectedCategory = "همه";
+  ///save
   void storeInfoShop() {
     Shop dbShop = HiveBoxes.getShopInfo().values.first.copyWith(
         fontFamily: selectedFont,
@@ -72,11 +89,39 @@ class _SettingScreenState extends State<SettingScreen> {
 
   @override
   void initState() {
+    wareList=HiveBoxes.getWares().values.toList();
     provider = Provider.of<UserProvider>(context, listen: false);
     getData();
     super.initState();
   }
+  ///update export list
+  void updateExportList() {
+    if (activeExportFilter) {
+      exportList = WareTools.filterForExport(wareList,
+          exportMap: exportMap,
+          category: selectedCategory,
+          modifiedDate: modifiedDate,
+          createDate: createdDate);
+    }else{
+      exportList=wareList;
+    }
+    setState(() {});
+  }
 
+  ///custom check box model
+  Widget cCheckBox(String label, bool isCheck, Function(bool val) onChange) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 2.0),
+      child: CheckButton(
+          label: label,
+          value: isCheck,
+          onChange: (val) {
+            onChange(val!);
+            updateExportList();
+            setState(() {});
+          }),
+    );
+  }
   @override
   void dispose() {
     storeInfoShop();
@@ -108,6 +153,112 @@ class _SettingScreenState extends State<SettingScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          ///create backup customization
+                          AnimatedContainer(
+                            duration: Duration(milliseconds: 300),
+                            curve: Curves.decelerate,
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.all(10),
+                            padding: EdgeInsets.symmetric(horizontal: 8),
+                            decoration: BoxDecoration(
+                              color:activeExportFilter? Colors.white.withOpacity(0.8):Colors.transparent,
+                              gradient: kBlackWhiteGradiant,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.white60),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ///filter section header
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Icon(FontAwesomeIcons.filter,size: 19,color: activeExportFilter?Colors.teal:Colors.white70,),
+                                    Flexible(
+                                      child: CText(
+                                        "فیلتر فایل خروجی پشتیبان",
+                                        fontSize: 14,
+                                        color: activeExportFilter?null:Colors.white,
+                                      ),
+                                    ),
+                                    Transform.scale(
+                                      scale: 0.7,
+                                      child: Switch(
+                                        value: activeExportFilter,
+                                        onChanged: (bool value) {
+                                          setState(() {
+                                            activeExportFilter = value;
+                                            updateExportList();
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                if (activeExportFilter) ...[
+                                  Divider(),
+                                  Row(
+                                    children: [
+                                      CText("انتخاب گروه:",),
+                                      DropListModel(
+                                        width: 200,
+                                        height: 25,
+                                        elevation: .2,
+                                        selectedValue: selectedCategory,
+                                        listItem: ["همه",...context.watch<WareProvider>().groupList],
+                                        onChanged: (value) {
+                                          selectedCategory= value;
+                                          updateExportList();
+                                          setState(() {});
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  ///create date filter
+                                  TitleButton(
+                                    title: "این تاریخ ثبت به بعد:",
+                                    value: createdDate != null ? createdDate!.toPersianDate() : "مشخص نشده",
+                                    onPress: () async {
+                                      Jalali? picked = await PickTime.chooseDate(context);
+                                      if (picked != null) {
+                                        setState(() {
+                                          createdDate = picked.toDateTime();
+                                          updateExportList();
+                                        });
+                                      }
+                                    },
+                                  ),
+                                  ///modified date filter
+                                  TitleButton(
+                                    title: "این تاریخ ویرایش به بعد:",
+                                    value: modifiedDate != null ? modifiedDate!.toPersianDate() : "مشخص نشده",
+                                    onPress: () async {
+                                      Jalali? picked = await PickTime.chooseDate(context);
+                                      if (picked != null) {
+                                        setState(() {
+                                          modifiedDate = picked.toDateTime();
+                                          updateExportList();
+                                        });
+                                      }
+                                    },
+                                  ),
+                                  Gap(20),
+                                  Wrap(
+                                    direction: Axis.horizontal,
+                                    children: [
+                                      cCheckBox("قیمت خرید", exportMap.cost, (val) => exportMap.cost = val),
+                                      cCheckBox("قیمت فروش", exportMap.sale, (val) => exportMap.sale = val),
+                                      cCheckBox("قیمت فروش2", exportMap.sale2, (val) => exportMap.sale2 = val),
+                                      cCheckBox("قیمت فروش3", exportMap.sale3, (val) => exportMap.sale3 = val),
+                                      cCheckBox("تعداد", exportMap.count, (val) => exportMap.count = val),
+                                      cCheckBox("توضیحات", exportMap.des, (val) => exportMap.des = val),
+                                      cCheckBox("سریال", exportMap.serial, (val) => exportMap.serial = val),
+                                    ],
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
                           ///create backup
                           Wrap(
                             spacing: 3,
@@ -122,6 +273,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                 colors: [Colors.purpleAccent, Colors.pink],
                                 onPress: () async {
                                   await BackupTools().createBackup(context,
+                                      wareList: exportList,
                                       directory: backupDirectory);
                                 },
 
@@ -139,6 +291,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                         onPress: () async {
                                           await BackupTools().createBackup(
                                               context,
+                                              wareList: exportList,
                                               directory: backupDirectory,
                                               isSharing: true);
                                         },
@@ -157,6 +310,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                 onPress: () async {
                                   await BackupTools(quickBackup: true)
                                       .createBackup(context,
+                                          wareList: exportList,
                                           directory: backupDirectory);
                                 },
                                 extra: (Platform.isAndroid || Platform.isIOS)
@@ -172,6 +326,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                         onPress: () async {
                                           await BackupTools(quickBackup: true)
                                               .createBackup(context,
+                                                  wareList: exportList,
                                                   directory: backupDirectory,
                                                   isSharing: true);
                                         },
@@ -180,7 +335,6 @@ class _SettingScreenState extends State<SettingScreen> {
                               ),
                             ],
                           ),
-
                           ///load backup
                           Padding(
                             padding: const EdgeInsets.all(15),
@@ -212,53 +366,47 @@ class _SettingScreenState extends State<SettingScreen> {
                           ),
 
                           ///choose directory
-                          Container(
-                              alignment: Alignment.centerRight,
-                              padding: EdgeInsets.all(10),
-                              child: CText(
-                                "انتخاب مسیر ذخیره سازی فایل پشتیبان :",
-                                color: Colors.white,
-                                textDirection: TextDirection.rtl,
-                              )),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                                margin: EdgeInsets.all(5),
-                                padding: EdgeInsets.all(5),
-                                alignment: Alignment.centerRight,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                    gradient: kBlackWhiteGradiant,
-                                    borderRadius: BorderRadius.circular(20)),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Flexible(
-                                        child: CText(backupDirectory ??
-                                            "مسیری انتخاب نشده است")),
-                                    SizedBox(
-                                      width: 8,
-                                    ),
-                                    ActionButton(
-                                      label: "انتخاب",
-                                      icon: Icons.folder_open_rounded,
-                                      onPress: () async {
-                                        await storagePermission(
-                                            context, Allow.externalStorage);
-                                        await storagePermission(
-                                            context, Allow.storage);
-                                        String? newDir =
-                                            await BackupTools.chooseDirectory();
-                                        if (newDir != null) {
-                                          backupDirectory = newDir;
-                                        }
-                                        setState(() {});
-                                      },
-                                    ),
-                                  ],
-                                )),
+                          CText(
+                            "انتخاب مسیر ذخیره سازی فایل پشتیبان :",
+                            color: Colors.white,
+                            textDirection: TextDirection.rtl,
                           ),
+                          Container(
+                              margin: EdgeInsets.all(5),
+                              padding: EdgeInsets.all(5),
+                              alignment: Alignment.centerRight,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                  gradient: kBlackWhiteGradiant,
+                                  borderRadius: BorderRadius.circular(20)),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Flexible(
+                                      child: CText(backupDirectory ??
+                                          "مسیری انتخاب نشده است")),
+                                  SizedBox(
+                                    width: 8,
+                                  ),
+                                  ActionButton(
+                                    label: "انتخاب",
+                                    icon: Icons.folder_open_rounded,
+                                    onPress: () async {
+                                      await storagePermission(
+                                          context, Allow.externalStorage);
+                                      await storagePermission(
+                                          context, Allow.storage);
+                                      String? newDir =
+                                          await BackupTools.chooseDirectory();
+                                      if (newDir != null) {
+                                        backupDirectory = newDir;
+                                      }
+                                      setState(() {});
+                                    },
+                                  ),
+                                ],
+                              )),
                           const Gap(10),
 
                           ///excel import an export part

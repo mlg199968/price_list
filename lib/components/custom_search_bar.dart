@@ -1,11 +1,15 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:price_list/components/action_button.dart';
+import 'package:price_list/components/check_button.dart';
 import 'package:price_list/components/drop_list_model.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/enums.dart';
+import 'package:price_list/providers/value_provider.dart';
 import 'package:price_list/screens/ware_list/services/ware_tools.dart';
 import 'package:price_list/screens/ware_list/sort_ware_screen.dart';
 import 'package:price_list/services/hive_boxes.dart';
+import 'package:provider/provider.dart';
 
 import '../model/ware.dart';
 
@@ -25,10 +29,11 @@ class CustomSearchBar extends StatelessWidget {
   final String hint;
   final Function onChange;
   final String selectedSort;
-  final Function onSort;
+  final Function(String val) onSort;
   final List sortList;
   final FocusNode? focusNode;
   final Color iconColor;
+
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -37,34 +42,39 @@ class CustomSearchBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.min,
         children: [
-          DropListModel(
-              icon: Icon(
-                Icons.sort_rounded,
-                size: 35,
-                color: iconColor,
-                shadows: [kShadow],
-              ),
-              width: 200,
-              listItem: sortList,
-              selectedValue: selectedSort,
-              valueSubWidget: SortItem.custom.value,
-              onChanged: (val) {
-                onSort(val);
-              },
-            subWidget: ActionButton(
-              label: "ویرایش",
-              height: 20,
-              borderRadius: 5,
-              padding: EdgeInsets.zero,
-              labelStyle: TextStyle(fontSize: 9,color: Colors.white),
-              bgColor: kSecondaryColor,
-              icon: Icons.settings,
-              iconSize: 10,
-              onPress: (){
-                List<Ware>? wareList=HiveBoxes.getWares().values.toList();
-                WareTools.filterList(wareList, "", SortItem.custom.value, "all");
-                  Navigator.pushNamed(context, SortWareScreen.id,arguments:wareList);
-              },),
+          Consumer<ValueProvider>(
+            builder: (context,valProvider,child) {
+              return DropListModel(
+                showInvertSortCheckBox: true,
+                  icon: Icon(
+                    Icons.sort_rounded,
+                    size: 35,
+                    color: iconColor,
+                    shadows: [kShadow],
+                  ),
+                  width: 200,
+                  listItem: sortList,
+                  selectedValue: selectedSort,
+                  valueSubWidget: SortItem.custom.value,
+                  onChanged: (val) {
+                    onSort(val);
+                  },
+                subWidget: ActionButton(
+                  label: "ویرایش",
+                  height: 20,
+                  borderRadius: 5,
+                  padding: EdgeInsets.zero,
+                  labelStyle: TextStyle(fontSize: 9,color: Colors.white),
+                  bgColor: kSecondaryColor,
+                  icon: Icons.settings,
+                  iconSize: 10,
+                  onPress: (){
+                    List<Ware>? wareList=HiveBoxes.getWares().values.toList();
+                    WareTools.filterList(wareList, "", SortItem.custom.value, "all");
+                      Navigator.pushNamed(context, SortWareScreen.id,arguments:wareList);
+                  },),
+              );
+            }
           ),
           Flexible(
             child: SizedBox(

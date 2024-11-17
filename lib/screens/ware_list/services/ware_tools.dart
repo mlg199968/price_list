@@ -1,5 +1,6 @@
 import 'package:price_list/constants/global_task.dart';
 import 'package:price_list/model/ware.dart';
+import 'package:price_list/model/ware_bool.dart';
 import 'package:price_list/providers/ware_provider.dart';
 import 'package:price_list/services/hive_boxes.dart';
 import 'package:provider/provider.dart';
@@ -7,7 +8,7 @@ import 'package:provider/provider.dart';
 class WareTools {
   /// search and sort the ware List
   static List<Ware> filterList(
-      List<Ware> list, String? keyWord, String sort, String category) {
+      List<Ware> list, String? keyWord, String sort, String category,{bool reversed=false}) {
     list = list
         .where((ware) => category == ware.groupName || category == "همه"|| category == "selected")
         .toList();
@@ -69,8 +70,80 @@ class WareTools {
         });
         break;
     }
-    return list;
+    return reversed?list.reversed.toList():list;
   }
+
+  static List<Ware> filterForExport(
+      List<Ware> list, {
+        DateTime? modifiedDate,
+        DateTime? createDate,
+        WareBool? exportMap,
+        String? category,
+      }) {
+    List<Ware> result = list;
+    if(category!= null) {
+      result = result
+          .where((ware) =>
+              category == ware.groupName ||
+              category == "همه" ||
+              category == "selected")
+          .toList();
+    }
+    // فیلتر بر اساس تاریخ اصلاح
+    if (modifiedDate != null) {
+      result = result.where((ware) => ware.modifyDate != null && modifiedDate.isBefore(ware.modifyDate!)).toList();
+    }
+
+    // فیلتر بر اساس تاریخ ایجاد
+    if (createDate != null) {
+      result = result.where((ware) => createDate.isBefore(ware.date)).toList();
+    }
+
+    // فیلتر بر اساس WareBool
+    if (exportMap != null) {
+      result = result.map((ware) {
+        // اگر "cost" در WareBool فالس است، مقدار قیمت خرید را صفر قرار می‌دهیم
+        if (!exportMap.cost) {
+          ware.cost = 0;
+        }
+
+        // اگر "sale" در WareBool فالس است، قیمت فروش را صفر می‌کنیم
+        if (!exportMap.sale) {
+          ware.sale = 0;
+        }
+
+        // اگر "sale2" در WareBool فالس است، قیمت فروش2 را صفر می‌کنیم
+        if (!exportMap.sale2) {
+          ware.sale2 = 0;
+        }
+
+        // اگر "sale3" در WareBool فالس است، قیمت فروش3 را صفر می‌کنیم
+        if (!exportMap.sale3) {
+          ware.sale3 = 0;
+        }
+
+        // اگر "count" در WareBool فالس است، تعداد را صفر می‌کنیم
+        if (!exportMap.count) {
+          ware.quantity = 0;
+        }
+
+        // اگر "des" در WareBool فالس است، توضیحات را null می‌کنیم
+        if (!exportMap.des) {
+          ware.description = "";
+        }
+
+        // اگر "serial" در WareBool فالس است، سریال را null می‌کنیم
+        if (!exportMap.serial) {
+          ware.wareSerial = null;
+        }
+
+        return ware;
+      }).toList();
+    }
+
+    return result;
+  }
+
 ///sort ware list with group sort
 static List<Ware> sortGroups(List<Ware> wareList){
     List<Ware> sortedList=[];

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:price_list/components/check_button.dart';
@@ -14,6 +13,7 @@ import 'package:price_list/components/custom_float_action_button.dart';
 import 'package:price_list/components/custom_icon_button.dart';
 import 'package:price_list/components/custom_search_bar.dart';
 import 'package:price_list/components/custom_text.dart';
+import 'package:price_list/providers/value_provider.dart';
 import 'package:price_list/screens/purchase_screen/widgets/subscription_timer.dart';
 import 'package:price_list/screens/ware_list/panels/ware_info_panel.dart';
 import 'package:price_list/screens/ware_list/widgets/ware_tile.dart';
@@ -54,7 +54,7 @@ class _WareListScreenState extends State<WareListScreen> {
   GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   late final SharedPreferences prefs;
   late final WareProvider provider;
-  String selectedDropListGroup = "همه";
+  String selectedCategory = "همه";
   bool invertSort = false;
   int? listLength = 0;
   String sortItem = kSortList[0];
@@ -94,7 +94,7 @@ class _WareListScreenState extends State<WareListScreen> {
                             context: context,
                             builder: (context) => PrintPanel(
                                   wares: waresList,
-                                  subGroup: selectedDropListGroup,
+                                  subGroup: selectedCategory,
                                 ));
                       },
                       icon: Icon(CupertinoIcons.printer,
@@ -107,7 +107,7 @@ class _WareListScreenState extends State<WareListScreen> {
                             context: context,
                             builder: (context) => WareActionsPanel(
                                   wares: waresList,
-                                  subGroup: selectedDropListGroup,
+                                  subGroup: selectedCategory,
                                 ));
                       },
                       icon: Icon(Icons.more_vert_rounded,
@@ -138,8 +138,12 @@ class _WareListScreenState extends State<WareListScreen> {
                       const Gap(5),
                       Flexible(
                           child: Text(
-                        "Price List",
-                        style: GoogleFonts.bebasNeue(fontSize: 25),
+                        "PRICE LIST",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+
                       )),
                     ],
                   ),
@@ -171,11 +175,11 @@ class _WareListScreenState extends State<WareListScreen> {
                                     activeColor: Colors.teal,
                                     disableColor: Colors.blueGrey,
                                     elevation: 0,
-                                    disable: selectedDropListGroup != group,
+                                    disable: selectedCategory != group,
                                     fontSize: 11,
                                     label: group,
                                     onTap: () {
-                                      selectedDropListGroup = group;
+                                      selectedCategory = group;
                                       setState(() {});
                                     },
                                   );
@@ -262,7 +266,8 @@ class _WareListScreenState extends State<WareListScreen> {
                               productList,
                               keyWord,
                               sortItem,
-                              selectedDropListGroup);
+                              selectedCategory,
+                            reversed: context.watch<ValueProvider>().invertSort);
                           listLength = filteredList.length;
                           if (filteredList.isEmpty) {
                             return Expanded(
@@ -275,7 +280,7 @@ class _WareListScreenState extends State<WareListScreen> {
                           }
                           return ListPart(
                             key: widget.key,
-                            category: selectedDropListGroup,
+                            category: selectedCategory,
                             wareList: filteredList,
                           );
                         }),
@@ -362,6 +367,7 @@ class _ListPartState extends State<ListPart> {
                               ///list mode show
                               if (userProvider.listViewMode==ListViewMode.list.value)
                                 ListView.builder(
+                                  padding: EdgeInsets.zero,
                                     itemCount: widget.wareList.length,
                                     itemBuilder: (context, index) {
                                       Ware ware = widget.wareList[index];

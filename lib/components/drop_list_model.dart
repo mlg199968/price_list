@@ -1,6 +1,10 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:price_list/constants/constants.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/value_provider.dart';
+import 'check_button.dart';
 
 class DropListModel extends StatelessWidget {
   const DropListModel({
@@ -15,6 +19,8 @@ class DropListModel extends StatelessWidget {
     this.borderRadius = 10,
     this.subWidget,
     this.valueSubWidget,
+    this.headerWidget,
+    this.showInvertSortCheckBox=false,
   });
 
   final List listItem;
@@ -27,6 +33,8 @@ class DropListModel extends StatelessWidget {
   final double borderRadius;
   final Widget? subWidget;
   final String? valueSubWidget;
+  final Widget? headerWidget;
+  final bool  showInvertSortCheckBox;
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -76,7 +84,30 @@ class DropListModel extends StatelessWidget {
               'no item',
               style: TextStyle(fontSize: 20, color: Colors.black38),
             ),
-            items: listItem
+            items: [
+              if(showInvertSortCheckBox)
+              DropdownMenuItem(
+                child: StatefulBuilder(
+                  builder: (context,setState) {
+                    return Align(
+                      alignment: Alignment.center,
+                      child: CheckButton(
+                        label: "از پایین به بالا",
+                        value: context.watch<ValueProvider>().invertSort,
+                        onChange: (val){
+                          Provider.of<ValueProvider>(context,listen: false).setInvertSort(val!);
+                        },),
+                    );
+                  }
+                ),
+              ),
+              ///header widget
+              if(headerWidget!=null)
+              DropdownMenuItem(
+                child: headerWidget!,
+              ),
+              ///main list
+              ...listItem
                 .map((item) => DropdownMenuItem<String>(
                       alignment: Alignment.centerRight,
                       value: item,
@@ -117,8 +148,7 @@ class DropListModel extends StatelessWidget {
                           ],
                         ),
                       ),
-                    ))
-                .toList(),
+                    ),).toList(),],
             value: listItem.contains(selectedValue)?selectedValue:listItem.first,
             onChanged: (val) {
               onChanged(val);

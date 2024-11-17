@@ -109,7 +109,7 @@ class Ware extends HiveObject {
       ..wareName = map['wareName'] ?? ""
       ..wareSerial = map['wareSerial'] ?? ""
       ..unit = map['unit'] ?? ""
-      ..groupName = map['groupName'] ?? ""
+      ..groupName = map['groupName'] ?? map['category'] ?? "non group"
       ..description = map['description'] ?? ""
       ..cost = map['cost'] ?? 0
       ..sale = map['sale'] ?? 0

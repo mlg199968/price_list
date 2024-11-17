@@ -103,11 +103,9 @@ class BazaarApi {
   ///
   bool? checkSubscribe(BuildContext context, List<PurchaseInfo>? subscribes) {
     try {
-
       if (subscribes != null) {
         ///old purchase is for that people were purchased before new payment method
         // PurchaseInfo? oldPurchaseInfo =subscribes.firstWhere((subs) => subs.productId=="3");
-
         if (subscribes.isNotEmpty) {
           for (PurchaseInfo purchaseInfo in subscribes) {
             if (purchaseInfo.purchaseState == PurchaseState.PURCHASED) {

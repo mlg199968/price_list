@@ -38,8 +38,8 @@ class BackupTools {
     }
   }
   ///create backup
-   Future<void> createBackup(BuildContext context,{String? directory,bool isSharing=false}) async{
-    List<Ware> wares = HiveBoxes.getWares().values.toList();
+   Future<void> createBackup(BuildContext context,{List<Ware>? wareList,String? directory,bool isSharing=false}) async{
+    List<Ware> wares =wareList ?? HiveBoxes.getWares().values.toList();
    List wareListJson=wares.map((e) => e.toJson()).toList();
     try {
       if(directory!=null && directory!="") {
