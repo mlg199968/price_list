@@ -6,10 +6,8 @@ import 'package:gap/gap.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:price_list/components/action_button.dart';
-import 'package:price_list/components/counter_textfield.dart';
 import 'package:price_list/components/dynamic_button.dart';
 import 'package:price_list/components/custom_text.dart';
-import 'package:price_list/components/custom_textfield.dart';
 import 'package:price_list/components/drop_list_model.dart';
 import 'package:price_list/components/hide_keyboard.dart';
 import 'package:price_list/constants/constants.dart';
@@ -24,6 +22,8 @@ import 'package:price_list/screens/bug_screen/bug_list_screen.dart';
 import 'package:price_list/screens/setting/services/backup_tools.dart';
 import 'package:price_list/screens/setting/services/excel_tools.dart';
 import 'package:price_list/screens/setting/currency_screen/currency_screen.dart';
+import 'package:price_list/screens/setting/widgets/button_field.dart';
+import 'package:price_list/screens/setting/widgets/fancy_button.dart';
 import 'package:price_list/screens/side_bar/sidebar_panel.dart';
 import 'package:price_list/screens/ware_list/services/ware_tools.dart';
 import 'package:price_list/services/hive_boxes.dart';
@@ -37,6 +37,8 @@ import '../../components/time/time.dart';
 import '../../components/title_button.dart';
 import '../../model/ware.dart';
 import '../../providers/user_provider.dart';
+import 'widgets/drop_list_field.dart';
+import 'widgets/number_input_field.dart';
 
 class SettingScreen extends StatefulWidget {
   static const String id = "/SettingScreen";
@@ -68,6 +70,7 @@ class _SettingScreenState extends State<SettingScreen> {
   bool activeExportFilter=false;
   bool activeImportFilter=false;
   String selectedCategory = "همه";
+  bool justImportLatestWare = false;
   ///save
   void storeInfoShop() {
     Shop dbShop = HiveBoxes.getShopInfo().values.first.copyWith(
@@ -154,48 +157,15 @@ class _SettingScreenState extends State<SettingScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           ///create backup customization
-                          AnimatedContainer(
-                            duration: Duration(milliseconds: 300),
-                            curve: Curves.decelerate,
-                            alignment: Alignment.center,
-                            margin: EdgeInsets.all(10),
-                            padding: EdgeInsets.symmetric(horizontal: 8),
-                            decoration: BoxDecoration(
-                              color:activeExportFilter? Colors.white.withOpacity(0.8):Colors.transparent,
-                              gradient: kBlackWhiteGradiant,
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: Colors.white60),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ///filter section header
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Icon(FontAwesomeIcons.filter,size: 19,color: activeExportFilter?Colors.teal:Colors.white70,),
-                                    Flexible(
-                                      child: CText(
-                                        "فیلتر فایل خروجی پشتیبان",
-                                        fontSize: 14,
-                                        color: activeExportFilter?null:Colors.white,
-                                      ),
-                                    ),
-                                    Transform.scale(
-                                      scale: 0.7,
-                                      child: Switch(
-                                        value: activeExportFilter,
-                                        onChanged: (bool value) {
-                                          setState(() {
-                                            activeExportFilter = value;
-                                            updateExportList();
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                if (activeExportFilter) ...[
+                          FilterField(
+                            title: "فیلتر فایل خروجی پشتیبان",
+                            isActive: activeExportFilter,
+                            onChange: (value) {
+                              activeExportFilter = value;
+                              setState(() {});
+                              updateExportList();
+                            },
+                            children: [
                                   Divider(),
                                   Row(
                                     children: [
@@ -255,9 +225,8 @@ class _SettingScreenState extends State<SettingScreen> {
                                       cCheckBox("سریال", exportMap.serial, (val) => exportMap.serial = val),
                                     ],
                                   ),
-                                ],
                               ],
-                            ),
+
                           ),
                           ///create backup
                           Wrap(
@@ -342,12 +311,31 @@ class _SettingScreenState extends State<SettingScreen> {
                               mainAxisSize: MainAxisSize.min,
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
+                                ///import backup customization
+                                FilterField(
+                                  title: "فیلتر درون ریزی پشتیبان",
+                                  isActive: activeImportFilter,
+                                  onChange: (value) {
+                                    activeImportFilter = value;
+                                    setState(() {});
+                                    updateExportList();
+                                  },
+                                  children: [
+                                    cCheckBox("کالا هایی که تاریخ آن ها از تاریخ فعلی کالا بالاتر است را وارد کن", justImportLatestWare,
+                                            (val) {
+                                      justImportLatestWare=val;
+                                      setState(() {});
+
+                                    })
+                                  ],
+
+                                ),
                                 ///load backup
                                 FancyButtonTile(
                                   label: "بارگیری فایل پشتیبان",
                                   buttonLabel: "انتخاب",
                                   icon: FontAwesomeIcons.fileArrowUp,
-                                  image: "assets/icons/folder.png",
+                                  image: "assets/icons/import-file.png",
                                   colors: [Colors.teal, Colors.cyan],
                                   onPress: () async {
                                     await storagePermission(
@@ -357,7 +345,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                           context, Allow.externalStorage);
                                     }
                                     if (context.mounted) {
-                                      await BackupTools().readZipFile(context);
+                                      await BackupTools(justImportLatestWares:activeImportFilter && justImportLatestWare).readZipFile(context);
                                     }
                                   },
                                 ),
@@ -377,12 +365,14 @@ class _SettingScreenState extends State<SettingScreen> {
                               alignment: Alignment.centerRight,
                               height: 40,
                               decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.8),
                                   gradient: kBlackWhiteGradiant,
                                   borderRadius: BorderRadius.circular(20)),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
+                                  Image(image: AssetImage("assets/icons/folder.png")),
                                   Flexible(
                                       child: CText(backupDirectory ??
                                           "مسیری انتخاب نشده است")),
@@ -392,6 +382,9 @@ class _SettingScreenState extends State<SettingScreen> {
                                   ActionButton(
                                     label: "انتخاب",
                                     icon: Icons.folder_open_rounded,
+                                    bgColor: Colors.black38,
+                                    borderColor: Colors.orangeAccent,
+                                    iconColor: Colors.orangeAccent,
                                     onPress: () async {
                                       await storagePermission(
                                           context, Allow.externalStorage);
@@ -608,428 +601,66 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 }
 
-///switch field
-class SwitchItem extends StatelessWidget {
-  const SwitchItem({
-    super.key,
-    required this.title,
-    required this.onChange,
-    required this.value,
-  });
-
-  final String title;
-  final bool value;
-  final void Function(bool) onChange;
-
+///filter fields
+class FilterField extends StatelessWidget {
+  const FilterField({super.key,this.isActive=false, required this.onChange, required this.children, required this.title});
+ final String title;
+final bool isActive;
+final Function(bool value) onChange;
+final List<Widget> children;
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.all(5),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Flexible(child: Text(title)),
-            Switch(value: value, onChanged: onChange),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-///drop list field
-class DropListItem extends StatelessWidget {
-  const DropListItem({
-    super.key,
-    required this.title,
-    required this.selectedValue,
-    required this.listItem,
-    required this.onChange,
-    this.dropWidth = 80,
-  });
-
-  final String title;
-  final String selectedValue;
-  final List<String> listItem;
-  final void Function(String) onChange;
-  final double dropWidth;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.all(5),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Flexible(child: Text(title)),
-            Flexible(
-              child: DropListModel(
-                  elevation: 0,
-                  width: dropWidth,
-                  height: 30,
-                  listItem: listItem,
-                  selectedValue: selectedValue,
-                  onChanged: onChange),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-///text field
-class PriceInputItem extends StatelessWidget {
-  const PriceInputItem({
-    Key? key,
-    required this.controller,
-    this.onChange,
-    this.width = 150,
-    required this.label,
-    required this.inputLabel,
-    this.showCurrency = true,
-  }) : super(key: key);
-
-  final String label;
-  final String inputLabel;
-  final TextEditingController controller;
-  final double width;
-  final Function(String val)? onChange;
-  final bool showCurrency;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Flexible(child: Text(label)),
-            CustomTextField(
-                label: inputLabel,
-                controller: controller,
-                width: width,
-                height: 35,
-                textFormat: TextFormatter.price,
-                currency: "تومان",
-                onChange: onChange)
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-///text field
-class NumberInputItem extends StatelessWidget {
-  const NumberInputItem({
-    Key? key,
-    required this.controller,
-    this.onChange,
-    this.width = 150,
-    required this.label,
-    required this.inputLabel, this.min=1, this.max=100,
-  }) : super(key: key);
-
-  final String label;
-  final String inputLabel;
-  final TextEditingController controller;
-  final double width;
-  final Function(String val)? onChange;
-  final double min;
-  final double max;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Flexible(child: Text(label)),
-            CounterTextfield(
-              label: inputLabel,
-              controller: controller,
-              width: width,
-              decimal: false,
-              minNum: min,
-              maxNum: max,
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-///Button tile
-class ButtonTile extends StatelessWidget {
-  const ButtonTile({
-    Key? key,
-    required this.onPress,
-    this.width = 150,
-    required this.label,
-    required this.buttonLabel,
-    this.extra,
-  }) : super(key: key);
-
-  final String label;
-  final String buttonLabel;
-  final VoidCallback onPress;
-  final double width;
-  final Widget? extra;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Flexible(child: Text(label)),
-            SizedBox(
-              child: extra,
-            ),
-            ElevatedButton(
-              onPressed: onPress,
-              child: Text(buttonLabel),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-///Fancy Button Tile
-class FancyButtonTile extends StatelessWidget {
-  const FancyButtonTile({
-    Key? key,
-    required this.onPress,
-    this.width = 150,
-    required this.label,
-    required this.buttonLabel,
-    this.extra,
-    this.icon,
-    this.bgColor = Colors.black54,
-    this.iconColor,
-    this.height = 70,
-    this.iconSize,
-    this.borderRadius = 10,
-    this.direction = TextDirection.ltr,
-    this.margin = const EdgeInsets.symmetric(vertical: 2),
-    this.padding = const EdgeInsets.only(left: 10),
-    this.disable = false,
-    this.labelStyle,
-    this.borderColor,
-    this.colors = const [Colors.blue, Colors.deepPurpleAccent],
-    this.image,
-    this.subTitle,
-    this.imagePadding = const EdgeInsets.all(8),
-  }) : super(key: key);
-
-  final String label;
-  final String? subTitle;
-  final String buttonLabel;
-  final VoidCallback onPress;
-  final Widget? extra;
-  final IconData? icon;
-  final Color bgColor;
-  final List<Color> colors;
-  final Color? iconColor;
-  final double height;
-  final double? width;
-  final double? iconSize;
-  final double borderRadius;
-  final TextDirection direction;
-  final EdgeInsets? margin;
-  final EdgeInsets? padding;
-  final EdgeInsets? imagePadding;
-  final bool disable;
-  final TextStyle? labelStyle;
-  final Color? borderColor;
-  final String? image;
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: height,
-      margin: margin,
-      padding: padding,
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 300),
+      curve: Curves.decelerate,
+      alignment: Alignment.center,
+      margin: EdgeInsets.all(10),
+      padding: EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
-        gradient: LinearGradient(colors: colors),
-        borderRadius: BorderRadius.circular(borderRadius),
-      ),
-      child: Row(
-        children: [
-          if (image != null)
-            Container(
-                height: height,
-                padding: imagePadding,
-                child: Image(
-                  image: AssetImage(image!),
-                )),
-          Gap(10),
-          Expanded(
-              child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CText(
-                label,
-                color: Colors.white,
-              ),
-              if (subTitle != null)
-                CText(
-                  subTitle,
-                  color: Colors.white54,
-                  fontSize: 10,
-                ),
-            ],
-          )),
-          SizedBox(),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              DynamicButton(
-                onPress: onPress,
-                label: buttonLabel,
-                padding: EdgeInsets.symmetric(horizontal: 8),
-                borderRadius: borderRadius,
-                bgColor: bgColor,
-                icon: icon,
-                iconSize: iconSize,
-                iconColor: iconColor ?? colors.last,
-                borderColor: borderColor ?? colors.last,
-                labelStyle: TextStyle(fontSize: 13, color: Colors.white),
-              ),
-              SizedBox(
-                child: extra,
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-///Fancy Button Tile vertical
-class FancyButtonTileVertical extends StatelessWidget {
-  const FancyButtonTileVertical({
-    Key? key,
-    required this.onPress,
-    required this.label,
-    required this.buttonLabel,
-    this.extra,
-    this.icon,
-    this.bgColor = Colors.black54,
-    this.iconColor,
-    this.height = 200,
-    this.width = 150,
-    this.iconSize,
-    this.borderRadius = 10,
-    this.direction = TextDirection.ltr,
-    this.margin = const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
-    this.padding = const EdgeInsets.all(8),
-    this.disable = false,
-    this.labelStyle,
-    this.borderColor,
-    this.colors = const [Colors.blue, Colors.deepPurpleAccent],
-    this.image,
-    this.subTitle,
-  }) : super(key: key);
-
-  final String label;
-  final String? subTitle;
-  final String buttonLabel;
-  final VoidCallback onPress;
-  final Widget? extra;
-  final IconData? icon;
-  final Color bgColor;
-  final List<Color> colors;
-  final Color? iconColor;
-  final double height;
-  final double? width;
-  final double? iconSize;
-  final double borderRadius;
-  final TextDirection direction;
-  final EdgeInsets? margin;
-  final EdgeInsets? padding;
-  final bool disable;
-  final TextStyle? labelStyle;
-  final Color? borderColor;
-  final String? image;
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      // height: height,
-      width: width,
-      margin: margin,
-      padding: padding,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(colors: colors),
-        borderRadius: BorderRadius.circular(borderRadius),
+        color:isActive? Colors.white.withOpacity(0.8):Colors.transparent,
+        gradient: kBlackWhiteGradiant,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.white60),
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (image != null)
-            SizedBox(
-                height: 100,
-                child: Image(
-                  image: AssetImage(image!),
-                )),
-          const Gap(10),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
+          ///filter section header
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              CText(
-                label,
-                color: Colors.white,
-              ),
-              if (subTitle != null)
-                CText(
-                  subTitle,
-                  color: Colors.white54,
-                  fontSize: 10,
+              Icon(FontAwesomeIcons.filter,size: 19,color: isActive?Colors.teal:Colors.white70,),
+              Flexible(
+                child: CText(
+                  title,
+                  fontSize: 14,
+                  color: isActive?null:Colors.white,
                 ),
-            ],
-          ),
-          const Gap(10),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              DynamicButton(
-                onPress: onPress,
-                label: buttonLabel,
-                padding: EdgeInsets.symmetric(horizontal: 8),
-                borderRadius: borderRadius,
-                bgColor: bgColor,
-                icon: icon,
-                iconColor: iconColor ?? colors.last,
-                borderColor: borderColor ?? colors.last,
-                labelStyle: TextStyle(fontSize: 13, color: Colors.white),
               ),
-              SizedBox(
-                child: extra,
+              Transform.scale(
+                scale: 0.7,
+                child: Switch(
+                  value: isActive,
+                  onChanged: onChange,
+                ),
               ),
             ],
           ),
+          if (isActive)
+          Divider(),
+          if (isActive) ...children,
         ],
       ),
     );
   }
 }
+
+
+
+
+
+
+
+
+
+

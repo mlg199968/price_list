@@ -12,6 +12,7 @@ class CustomDialog extends StatelessWidget {
     this.title,
     required this.child,
     this.height,
+    this.width = 450,
     this.textDirection = TextDirection.rtl,
     this.opacity = .9,
     this.image,
@@ -25,7 +26,7 @@ class CustomDialog extends StatelessWidget {
   final Widget child;
   final Widget? topTrail;
   final double? height;
-  final double width = 450;
+  final double width;
   final TextDirection textDirection;
   final double opacity;
   final double borderRadius;

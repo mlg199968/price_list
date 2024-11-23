@@ -72,7 +72,7 @@ class WareTools {
     }
     return reversed?list.reversed.toList():list;
   }
-
+///filter list for export
   static List<Ware> filterForExport(
       List<Ware> list, {
         DateTime? modifiedDate,
@@ -141,6 +141,29 @@ class WareTools {
       }).toList();
     }
 
+    return result;
+  }
+  ///filter list for import
+  static List<Ware> filterForImport(
+      List<Ware> list, {
+        DateTime? modifiedDate,
+        DateTime? createDate,
+        WareBool? importMap,
+        String? category,
+        bool justNewWareImport = false,
+      }) {
+    List<Ware> result = list;
+    if(justNewWareImport){
+      result.clear();
+      for(Ware ware in list){
+        HiveBoxes.getWares().values.forEach((dbWare){
+          if (dbWare.wareID == ware.wareID && dbWare.modifyDate!=null && dbWare.modifyDate!.isBefore(ware.modifyDate!)){
+            print(ware.wareName);
+            result.add(ware);
+          }
+        });
+      }
+    }
     return result;
   }
 

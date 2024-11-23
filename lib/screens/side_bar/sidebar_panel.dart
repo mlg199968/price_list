@@ -15,10 +15,7 @@ import 'package:price_list/screens/setting/setting_screen.dart';
 import 'package:price_list/screens/shop_info_screen/shop_info_screen.dart';
 import 'package:provider/provider.dart';
 import '../../providers/user_provider.dart';
-import '../purchase_screen/authority_screen.dart';
 import '../purchase_screen/bazaar_subscription_screen.dart';
-import '../purchase_screen/purchase_screen.dart';
-import '../purchase_screen/subscription_screen.dart';
 
 
 class SideBarPanel extends StatelessWidget {

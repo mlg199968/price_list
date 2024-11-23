@@ -11,6 +11,7 @@ import 'package:price_list/constants/enums.dart';
 import 'package:price_list/constants/error_handler.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/providers/ware_provider.dart';
+import 'package:price_list/screens/ware_list/services/ware_tools.dart';
 import 'package:price_list/services/hive_boxes.dart';
 import 'package:price_list/model/ware.dart';
 import 'package:provider/provider.dart';
@@ -19,8 +20,13 @@ import 'package:share_plus/share_plus.dart';
 
 
 class BackupTools {
-  BackupTools({this.quickBackup = false});
+  BackupTools({
+    this.quickBackup = false,
+    this.justImportLatestWares = false
+
+  });
   final bool quickBackup;
+  final bool justImportLatestWares;
   static const String _outPutName = "data-file.mlg";
   final String formattedDate =
   intl.DateFormat('yyyyMMdd-kkmmss').format(DateTime.now());
@@ -55,15 +61,21 @@ class BackupTools {
     }
   }
 ///this triggered when just json file uploaded
-  static Future<void> restoreMlgFileBackup(context,String filePath) async {
+   Future<void> restoreMlgFileBackup(context,String filePath) async {
     try {
         File backupFile = File(filePath);
         String jsonFile = await backupFile.readAsString();
         Iterable l = json.decode(jsonFile);
         List<Ware> restoredDb = List<Ware>.from(
             l.map((e) => Ware().fromJson(e)));
+        //just update the wares are with new modifiedDate
+        restoredDb=WareTools.filterForImport(restoredDb,justNewWareImport: justImportLatestWares);
         for (Ware ware in restoredDb) {
-          HiveBoxes.getWares().put(ware.wareID, ware);
+
+
+            HiveBoxes.getWares().put(ware.wareID, ware);
+
+
         }
         Provider.of<WareProvider>(context,listen: false).loadGroupList();
           showSnackBar(context, "فایل پشتیبان با موفقیت بارگیری شد !",type: SnackType.success);
@@ -162,14 +174,14 @@ ErrorHandler.errorManger(
     return createdFile;
   }
   ///read json file in the zip file
-  static Future<void> _restoreJsonData(File jsonBack, context) async {
+   Future<void> _restoreJsonData(File jsonBack, context) async {
     try {
       String jsonFile = await jsonBack.readAsString();
       Iterable l = json.decode(jsonFile);
       List<Ware> restoredDb = List<Ware>.from(
           l.map((e) => Ware().fromJson(e)));
 
-
+      restoredDb=WareTools.filterForImport(restoredDb,justNewWareImport: justImportLatestWares);
       for (Ware ware in restoredDb) {
         HiveBoxes.getWares().put(ware.wareID, ware);
       }

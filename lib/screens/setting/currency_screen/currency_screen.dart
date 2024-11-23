@@ -5,12 +5,14 @@ import 'package:price_list/components/hide_keyboard.dart';
 import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/model/shop.dart';
-import 'package:price_list/screens/setting/setting_screen.dart';
 import 'package:price_list/services/hive_boxes.dart';
 
 import 'package:provider/provider.dart';
 
 import '../../../providers/user_provider.dart';
+import '../widgets/drop_list_field.dart';
+import '../widgets/price_input_field.dart';
+import '../widgets/switch_item.dart';
 
 class CurrencyScreen extends StatefulWidget {
   static const String id = "/CurrencyScreen";

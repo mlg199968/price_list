@@ -41,6 +41,14 @@ class _WareActionsPanelState extends State<WareActionsPanel> {
   final TextEditingController coefficientController =
       TextEditingController(text: "1");
   late String subGroup;
+  List<Ware> get selectedWares{
+    if(subGroup=="selected" || subGroup=="همه") {
+      return  widget.wares;
+    }
+    else{
+      return widget.wares.where((ware) => ware.groupName == subGroup).toList();
+    }
+  }
   bool isNegative = false;
   bool changeCost = false;
   bool changeSale = true;
@@ -57,7 +65,7 @@ class _WareActionsPanelState extends State<WareActionsPanel> {
 
   ///save button function
   void saveButtonFunction() {
-    for (Ware ware in widget.wares) {
+    for (Ware ware in selectedWares) {
       double fixPrice = fixAmountController.text == ""
           ? 0
           : stringToDouble(fixAmountController.text);
@@ -81,9 +89,6 @@ class _WareActionsPanelState extends State<WareActionsPanel> {
       }
 
       //
-      if (ware.groupName == subGroup ||
-          subGroup == "همه" ||
-          subGroup == "selected") {
         ware.sale = calculateFunc(ware.sale, changeSale, negative: isNegative);
         ware.sale2 =
             calculateFunc(ware.sale2, changeSale2, negative: isNegative);
@@ -96,7 +101,7 @@ class _WareActionsPanelState extends State<WareActionsPanel> {
         ware.saleIndex = int.parse(saleIndex) - 1;
         ware.modifyDate = DateTime.now();
         HiveBoxes.getWares().put(ware.wareID, ware);
-      }
+
     }
     Navigator.pop(context, false);
   }
@@ -119,7 +124,8 @@ class _WareActionsPanelState extends State<WareActionsPanel> {
   Widget build(BuildContext context) {
     return CustomDialog(
         vip: !Provider.of<UserProvider>(context, listen: false).isVip,
-        height: 500,
+        height: 700,
+        width: 550,
         title: "افزایش یا کاهش گروهی قیمت ها ",
         topTrail: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -342,7 +348,7 @@ class _WareActionsPanelState extends State<WareActionsPanel> {
                       showDialog(
                               context: context,
                               builder: (context) =>
-                                  GroupManagePanel(wares: widget.wares))
+                                  GroupManagePanel(wares: selectedWares))
                           .then((value) {
                         setState(() {});
                       });

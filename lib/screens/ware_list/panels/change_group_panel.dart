@@ -16,14 +16,14 @@ class GroupManagePanel extends StatelessWidget {
   GroupManagePanel({super.key, required this.wares});
 
   final List<Ware> wares;
-  final groupTextController = TextEditingController();
+ final TextEditingController groupTextController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    groupTextController.text=wares[0].groupName;
     return CustomDialog(
       title: 'ویرایش گروه',
       child: Consumer<WareProvider>(
-
           builder: (context,provider,child) {
             return Container(
               padding: const EdgeInsetsDirectional.all(20),
