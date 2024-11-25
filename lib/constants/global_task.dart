@@ -13,6 +13,7 @@ import 'package:price_list/services/hive_boxes.dart';
 import 'package:provider/provider.dart';
 import '../providers/user_provider.dart';
 import '../screens/notice_screen/services/notice_tools.dart';
+import '../screens/purchase_screen/services/myket_api.dart';
 import '../services/backend_services.dart';
 
 class GlobalTask {
@@ -40,8 +41,10 @@ class GlobalTask {
         if (check)
         {
           //TODO:bazaar fetch data
+          //TODO:myket fetch data
           if(Platform.isAndroid) {
             BazaarApi().fetchBazaarInfo(context);
+            MyketApi().fetchMyketInfo();
           }
           /// fetch subscription data
           BackendServices().fetchSubs(context);

@@ -19,16 +19,19 @@ class PurchaseTools{
         return {"title":"یک ساله","colors":[Colors.indigo, Colors.purple],"days":365};
       }
       else if(id == "free"){
-        return {"title":"رایگان","colors":[Colors.green, Colors.teal]};
+        return {"title":"رایگان","colors":[Colors.green, Colors.teal],"days":10};
       }
       else if(id == "p1"){
-        return {"title":"دائم","colors":[Colors.purpleAccent, Colors.deepPurple,]};
+        return {"title":"دائم","colors":[Colors.purpleAccent, Colors.deepPurple,],"days":1000};
       }
-      else if(id == "3"){
-        return {"title":"خرید قبل","colors":[Colors.deepOrange, Colors.orangeAccent,Colors.deepOrange]};
+      else if(id == "3" || id == "1"){
+        return {"title":"خرید قبل","colors":[Colors.deepOrange, Colors.orangeAccent,Colors.deepOrange],"days":400};
+      }
+      else if(id == "m0"){
+        return {"title":"آزمایشی","colors":[Colors.grey, Colors.black54,Colors.black12],"days":0,"sec":100};
       }
       else {
-        return {"title":"نامشخص","colors":[Colors.grey, Colors.blueGrey]};
+        return {"title":"نامشخص","colors":[Colors.grey, Colors.blueGrey],"days":0};
       }
   }
 }

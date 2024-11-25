@@ -52,27 +52,4 @@ class PayService {
     }
   }
 
-
-
-//TODO: myket connect function
-  static connectToMyket(BuildContext context) async {
-    try {
-      // Map result = await MyketIAP.launchPurchaseFlow(sku: "1", payload:"payload");
-      // IabResult purchaseResult = result[MyketIAP.RESULT];
-      // Purchase purchase = result[MyketIAP.PURCHASE];
-      // print("وضعیت خرید");
-      // print(purchase.toJson());
-      // print("وضعیت خرید از مایکت");
-      // print(purchaseResult.mMessage);
-      // print(purchaseResult.mResponse);
-      // if(purchaseResult.mMessage.toLowerCase().contains("success")){
-      //   Provider.of<UserProvider>(context,listen: false).setUserLevel(1);
-      //   Navigator.pushNamedAndRemoveUntil(context, WareListScreen.id,(route)=>false);
-      //   showSnackBar(context, "برنامه با موفقیت فعال شد!",type: SnackType.success,dialogMode: true);
-      // }
-    } catch (e) {
-      ErrorHandler.errorManger(context, e,
-          title: "روند پرداخت با مشکل مواجه شده است!", showSnackbar: true);
-    }
-  }
 }

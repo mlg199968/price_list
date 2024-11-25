@@ -350,30 +350,6 @@ class BazaarButton extends StatelessWidget {
   }
 }
 ///
-class MyketButton extends StatelessWidget {
-  const MyketButton({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: CustomButton(
-        fontSize: 18,
-        width: 200,
-        radius: 20,
-        color: Colors.blue,
-        text: "خرید از مایکت",
-        onPressed: ()async{
-         await PayService.connectToMyket(context);
-        },
-      ),
-    );
-  }
-}
-
-
-///
 class TextWithIcon extends StatelessWidget {
   const TextWithIcon({
     super.key,

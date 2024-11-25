@@ -61,6 +61,8 @@ class Shop extends HiveObject {
   int? imageSize;
   @HiveField(26)
   String? sortItem;
+  @HiveField(27)
+  DateTime? expirationDate;
 
 
 
@@ -92,6 +94,7 @@ class Shop extends HiveObject {
     int? imageQuality,
     int? imageSize,
     String? sortItem,
+    DateTime? expirationDate
   }) {
     Shop shop=Shop()
       ..shopName= shopName ?? this.shopName
@@ -120,6 +123,7 @@ class Shop extends HiveObject {
       ..imageQuality= imageQuality ?? this.imageQuality
       ..sortItem= sortItem ?? this.sortItem
       ..imageSize= imageSize ?? this.imageSize
+      ..expirationDate= expirationDate ?? this.expirationDate
       ..activeUser= activeUser ?? this.activeUser;
     return shop;
   }

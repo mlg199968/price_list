@@ -13,9 +13,19 @@ class UserProvider extends ChangeNotifier {
   bool get isVip=>userLevel==1?true:false;
   int _userLevel = 0;
   // int get userLevel =>_userLevel;
-  int get userLevel =>_subscription!=null?_subscription!.userLevel: _userLevel;
+  int get userLevel {
+    if(_subscription != null) return _subscription!.userLevel;
+    else if(_expirationDate != null && DateTime.now().isAfter(_expirationDate!)) return  0;
+        return _userLevel;
+  }
   Subscription? _subscription;
   Subscription? get subscription=>_subscription;
+
+  DateTime? _expirationDate;
+  DateTime? get expirationDate=>_subscription?.endDate!=null?_subscription!.endDate:_expirationDate;
+
+
+
   ///check current device match with saved device ,for safety for cracks
   Future<bool> get deviceAuthority async{
     if (_subscription != null){
@@ -135,6 +145,7 @@ class UserProvider extends ChangeNotifier {
     _appType = shop.appType;
     _userLevel = shop.userLevel;
     _subscription=shop.subscription;
+    _expirationDate=shop.expirationDate;
     _backupDirectory = shop.backupDirectory;
     if(shop.descriptionList!=null) {
       descriptionList=shop.descriptionList!;
@@ -157,6 +168,14 @@ class UserProvider extends ChangeNotifier {
     HiveBoxes.getShopInfo().putAt(0, shop);
     _subscription=subs;
     notifyListeners();
+  }
+
+  void setExpirationDate(DateTime? date) async {
+    _expirationDate = date;
+    notifyListeners();
+    Shop shop = HiveBoxes.getShopInfo().getAt(0)!;
+    shop.expirationDate = date;
+    HiveBoxes.getShopInfo().putAt(0, shop);
   }
   // void getUserLevel() async{
   //   SharedPreferences prefs= await SharedPreferences.getInstance();

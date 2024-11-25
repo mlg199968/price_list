@@ -3,6 +3,8 @@ import 'package:price_list/model/ware.dart';
 import 'package:price_list/screens/photo_screen/photo_view_screen.dart';
 import 'package:price_list/screens/purchase_screen/authority_screen.dart';
 import 'package:price_list/screens/purchase_screen/bazaar_subscription_screen.dart';
+import 'package:price_list/screens/purchase_screen/myket_purchase_screen.dart';
+import 'package:price_list/screens/purchase_screen/myket_subscription_screen.dart';
 import 'package:price_list/screens/purchase_screen/plan_screen.dart';
 import 'package:price_list/screens/purchase_screen/subscription_screen.dart';
 import 'package:price_list/screens/setting/currency_screen/currency_screen.dart';
@@ -83,6 +85,12 @@ Route generateRoute(RouteSettings routeSettings) {
 
     case BazaarSubscriptionScreen.id:
       return MaterialPageRoute(builder: (_) => BazaarSubscriptionScreen());
+
+    case MyketPurchaseScreen.id:
+      return MaterialPageRoute(builder: (_) => MyketPurchaseScreen());
+
+    case MyketSubscriptionScreen.id:
+      return MaterialPageRoute(builder: (_) => MyketSubscriptionScreen());
 
     case PlanScreen.id:
       Map? args = routeSettings.arguments as Map?;

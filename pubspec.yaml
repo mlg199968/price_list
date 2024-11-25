@@ -54,8 +54,8 @@ dependencies:
   excel: ^4.0.2
   mobile_scanner: ^4.0.1
 
-  flutter_poolakey: ^2.2.0
-#  myket_iap: ^1.1.5
+#  flutter_poolakey: ^2.2.0
+  myket_iap: ^1.1.6
 #  cafebazaar_flutter: ^1.0.2
 
   image_picker: ^1.0.7

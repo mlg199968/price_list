@@ -15,7 +15,10 @@ import 'package:price_list/screens/setting/setting_screen.dart';
 import 'package:price_list/screens/shop_info_screen/shop_info_screen.dart';
 import 'package:provider/provider.dart';
 import '../../providers/user_provider.dart';
+import '../purchase_screen/authority_screen.dart';
 import '../purchase_screen/bazaar_subscription_screen.dart';
+import '../purchase_screen/myket_subscription_screen.dart';
+import '../purchase_screen/subscription_screen.dart';
 
 
 class SideBarPanel extends StatelessWidget {
@@ -235,9 +238,11 @@ class PurchaseButton extends StatelessWidget {
               // }else{
               //   Navigator.pushNamed(context, SubscriptionScreen.id);
               // }
-              //TODO: bazaar purchases
               if(Platform.isAndroid) {
-                Navigator.pushNamed(context, BazaarSubscriptionScreen.id);
+                //TODO: bazaar purchases
+                // Navigator.pushNamed(context, BazaarSubscriptionScreen.id);
+                //TODO: Myket purchase
+                Navigator.pushNamed(context, MyketSubscriptionScreen.id);
               }
             },
             child: Container(

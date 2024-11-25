@@ -45,13 +45,14 @@ class ShopAdapter extends TypeAdapter<Shop> {
       ..listViewMode = fields[23] as String?
       ..imageQuality = fields[24] as int?
       ..imageSize = fields[25] as int?
-      ..sortItem = fields[26] as String?;
+      ..sortItem = fields[26] as String?
+      ..expirationDate = fields[27] as DateTime?;
   }
 
   @override
   void write(BinaryWriter writer, Shop obj) {
     writer
-      ..writeByte(27)
+      ..writeByte(28)
       ..writeByte(0)
       ..write(obj.shopName)
       ..writeByte(1)
@@ -105,7 +106,9 @@ class ShopAdapter extends TypeAdapter<Shop> {
       ..writeByte(25)
       ..write(obj.imageSize)
       ..writeByte(26)
-      ..write(obj.sortItem);
+      ..write(obj.sortItem)
+      ..writeByte(27)
+      ..write(obj.expirationDate);
   }
 
   @override
