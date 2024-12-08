@@ -170,7 +170,7 @@ class WareTools {
 ///sort ware list with group sort
 static List<Ware> sortGroups(List<Ware> wareList){
     List<Ware> sortedList=[];
-    List groupList=Provider.of<WareProvider>(GlobalTask.navigatorState.currentContext!,listen: false).groupList;
+    List groupList=wareList.map((e) => e.groupName).toSet().toList();
     for(String group in groupList){
       for(Ware ware in wareList){
         if(ware.groupName==group){

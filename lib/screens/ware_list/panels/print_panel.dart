@@ -17,6 +17,7 @@ import 'package:price_list/constants/constants.dart';
 import 'package:price_list/constants/enums.dart';
 import 'package:price_list/constants/utils.dart';
 import 'package:price_list/model/ware.dart';
+import 'package:price_list/providers/value_provider.dart';
 import 'package:price_list/providers/ware_provider.dart';
 import 'package:price_list/screens/setting/services/backup_tools.dart';
 import 'package:price_list/screens/ware_list/services/ware_tools.dart';
@@ -28,7 +29,7 @@ import 'package:path/path.dart' as path;
 import '../../../providers/user_provider.dart';
 
 class PrintPanel extends StatefulWidget {
-  static const String id = "/WareActionPanel";
+  static const String id = "/print-panel";
   const PrintPanel({Key? key, required this.wares, required this.subGroup})
       : super(key: key);
   final List<Ware> wares;
@@ -63,6 +64,11 @@ class _PrintPanelState extends State<PrintPanel> {
   Future<File> pdfTypeFile() async {
     List<Ware> filteredList =
         WareTools.filterList(widget.wares, "", sortItem, subGroup);
+    //reverse the list
+    if(Provider.of<ValueProvider>(context,listen: false).invertSort){
+     filteredList= filteredList.reversed.toList();
+      setState(() {});
+    }
     if (separateGroups) {
       filteredList = WareTools.sortGroups(filteredList);
     }
@@ -313,6 +319,7 @@ class _PrintPanelState extends State<PrintPanel> {
                     const Gap(10),
                     Flexible(
                       child: DropListModel(
+                          showInvertSortCheckBox: true,
                           listItem: kSortList,
                           selectedValue: sortItem,
                           onChanged: (val) {

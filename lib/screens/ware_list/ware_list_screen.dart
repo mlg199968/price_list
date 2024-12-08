@@ -61,6 +61,9 @@ class _WareListScreenState extends State<WareListScreen> {
   String? keyWord;
   List<Ware> waresList = [];
   bool showAlertNotice = true;
+  List<Ware> selectedItems = [];
+  Ware? selectedWare;
+  bool get isMobile => screenType(context) == ScreenType.mobile;
 
 
   @override
@@ -278,11 +281,7 @@ class _WareListScreenState extends State<WareListScreen> {
                               ),
                             );
                           }
-                          return ListPart(
-                            key: widget.key,
-                            category: selectedCategory,
-                            wareList: filteredList,
-                          );
+                          return _listPart(filteredList);
                         }),
                   ],
                 ),
@@ -293,26 +292,8 @@ class _WareListScreenState extends State<WareListScreen> {
       ),
     );
   }
-}
-
-///
-class ListPart extends StatefulWidget {
-  const ListPart({super.key, required this.wareList, required this.category});
-
-  final List<Ware> wareList;
-  final String category;
-
-  @override
-  State<ListPart> createState() => _ListPartState();
-}
-
-class _ListPartState extends State<ListPart> {
-  List<Ware> selectedItems = [];
-  Ware? selectedWare;
-
-  @override
-  Widget build(BuildContext context) {
-    bool isMobile = screenType(context) == ScreenType.mobile;
+///ware List Part ****************************************************************
+  Widget _listPart(List<Ware> wareList) {
 
     return PopScope(
       //if action bottom bar is shown,on will pop first close the action bar then on the second press close the screen
@@ -331,15 +312,16 @@ class _ListPartState extends State<ListPart> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
+                      ///subscribe deadline
                       SubscriptionDeadLine(
                         endDate:
-                            userProvider
-                                .subscription
-                                ?.endDate,
+                        userProvider
+                            .subscription
+                            ?.endDate,
                         showDays: false,
                       ),
                       CText(
-                        "تعداد کالا :${widget.wareList.length}"
+                        "تعداد کالا :${wareList.length}"
                             .toPersianDigit(),
                         color: Colors.white70,
                         textDirection: TextDirection.rtl,
@@ -354,11 +336,11 @@ class _ListPartState extends State<ListPart> {
                       ///windows mode side info panel
                       if (!isMobile && selectedWare!=null)
                         InfoPanelDesktop(
-                                ware: selectedWare!,
-                                onReload: () {
-                                  selectedWare = null;
-                                  setState(() {});
-                                }),
+                            ware: selectedWare!,
+                            onReload: () {
+                              selectedWare = null;
+                              setState(() {});
+                            }),
                       Flexible(
                         child: SizedBox(
                           width: 550,
@@ -367,10 +349,10 @@ class _ListPartState extends State<ListPart> {
                               ///list mode show
                               if (userProvider.listViewMode==ListViewMode.list.value)
                                 ListView.builder(
-                                  padding: EdgeInsets.zero,
-                                    itemCount: widget.wareList.length,
+                                    padding: EdgeInsets.zero,
+                                    itemCount: wareList.length,
                                     itemBuilder: (context, index) {
-                                      Ware ware = widget.wareList[index];
+                                      Ware ware = wareList[index];
                                       return InkWell(
                                         onLongPress: () {
                                           if (!selectedItems
@@ -390,18 +372,18 @@ class _ListPartState extends State<ListPart> {
                                               !isMobile
                                                   ? null
                                                   : showDialog(
-                                                      context: context,
-                                                      builder: (context) =>
-                                                          WareInfoPanel(
-                                                              ware: ware));
+                                                  context: context,
+                                                  builder: (context) =>
+                                                      WareInfoPanel(
+                                                          ware: ware));
                                             }
                                           } else {
                                             if (selectedItems
                                                 .map((e) => e.wareID)
                                                 .contains(ware.wareID)) {
                                               selectedItems.removeWhere(
-                                                  (element) =>
-                                                      ware.wareID ==
+                                                      (element) =>
+                                                  ware.wareID ==
                                                       element.wareID);
                                             } else {
                                               selectedItems.add(ware);
@@ -415,11 +397,11 @@ class _ListPartState extends State<ListPart> {
                                               .map((e) => e.wareID)
                                               .contains(ware.wareID),
                                           color: selectedWare?.wareID ==
-                                                  widget.wareList[index].wareID
+                                              wareList[index].wareID
                                               ? kSecondaryColor
                                               : kMainColor,
                                           surfaceColor: selectedWare?.wareID ==
-                                                  widget.wareList[index].wareID
+                                              wareList[index].wareID
                                               ? kSecondaryColor
                                               : null,
                                           type: "${index + 1}".toPersianDigit(),
@@ -431,11 +413,11 @@ class _ListPartState extends State<ListPart> {
                               else if(userProvider.listViewMode==ListViewMode.grid.value)
                                 SingleChildScrollView(
                                   child: StaggeredGrid.extent(
-                                              maxCrossAxisExtent: 150,
-                                              crossAxisSpacing: 0,
-                                              mainAxisSpacing: 0,
-                                      children: List.generate(widget.wareList.length,(index) {
-                                        Ware ware = widget.wareList[index];
+                                      maxCrossAxisExtent: 150,
+                                      crossAxisSpacing: 0,
+                                      mainAxisSpacing: 0,
+                                      children: List.generate(wareList.length,(index) {
+                                        Ware ware = wareList[index];
                                         return InkWell(
                                           onLongPress: () {
                                             if (!selectedItems
@@ -455,18 +437,18 @@ class _ListPartState extends State<ListPart> {
                                                 !isMobile
                                                     ? null
                                                     : showDialog(
-                                                        context: context,
-                                                        builder: (context) =>
-                                                            WareInfoPanel(
-                                                                ware: ware));
+                                                    context: context,
+                                                    builder: (context) =>
+                                                        WareInfoPanel(
+                                                            ware: ware));
                                               }
                                             } else {
                                               if (selectedItems
                                                   .map((e) => e.wareID)
                                                   .contains(ware.wareID)) {
                                                 selectedItems.removeWhere(
-                                                    (element) =>
-                                                        ware.wareID ==
+                                                        (element) =>
+                                                    ware.wareID ==
                                                         element.wareID);
                                               } else {
                                                 selectedItems.add(ware);
@@ -480,11 +462,11 @@ class _ListPartState extends State<ListPart> {
                                                 .map((e) => e.wareID)
                                                 .contains(ware.wareID),
                                             color: selectedWare?.wareID ==
-                                                    widget.wareList[index].wareID
+                                                wareList[index].wareID
                                                 ? kSecondaryColor
                                                 : kMainColor,
                                             surfaceColor: selectedWare?.wareID ==
-                                                    widget.wareList[index].wareID
+                                                wareList[index].wareID
                                                 ? kSecondaryColor
                                                 : null,
                                             type: "${index + 1}".toPersianDigit(),
@@ -521,34 +503,34 @@ class _ListPartState extends State<ListPart> {
                                                     .groupList
                                                     .map((group) {
                                                   bool groupExist =
-                                                      WareTools.groupExist(
-                                                          selectedWares:
-                                                              selectedItems,
-                                                          group: group);
+                                                  WareTools.groupExist(
+                                                      selectedWares:
+                                                      selectedItems,
+                                                      group: group);
                                                   return CheckButton(
                                                     label: group,
                                                     value: groupExist,
                                                     onChange: (val) {
                                                       if (groupExist) {
                                                         selectedItems.removeWhere(
-                                                            (element) =>
-                                                                element
-                                                                    .groupName ==
+                                                                (element) =>
+                                                            element
+                                                                .groupName ==
                                                                 group);
                                                       } else {
                                                         selectedItems.removeWhere(
-                                                            (element) =>
-                                                                element
-                                                                    .groupName ==
+                                                                (element) =>
+                                                            element
+                                                                .groupName ==
                                                                 group);
                                                         List<
                                                             Ware> wares = HiveBoxes
-                                                                .getWares()
+                                                            .getWares()
                                                             .values
                                                             .where((element) =>
-                                                                element
-                                                                    .groupName ==
-                                                                group)
+                                                        element
+                                                            .groupName ==
+                                                            group)
                                                             .toList();
                                                         selectedItems
                                                             .addAll(wares);
@@ -594,10 +576,10 @@ class _ListPartState extends State<ListPart> {
                                                     context: context,
                                                     builder: (_) => CustomAlert(
                                                         title:
-                                                            "آیا از حذف موارد انتخاب شده مطمئن هستید؟",
+                                                        "آیا از حذف موارد انتخاب شده مطمئن هستید؟",
                                                         onYes: () async{
                                                           for (Ware item
-                                                              in selectedItems) {
+                                                          in selectedItems) {
                                                             await deleteImageFile(item.imagePath);
                                                             item.delete();
                                                           }
@@ -630,9 +612,9 @@ class _ListPartState extends State<ListPart> {
                                                     builder: (context) =>
                                                         PrintPanel(
                                                             wares:
-                                                                selectedItems,
+                                                            selectedItems,
                                                             subGroup:
-                                                                "selected"));
+                                                            "selected"));
                                               },
                                               icon: CupertinoIcons.printer_fill,
                                               iconSize: 29,
@@ -652,9 +634,9 @@ class _ListPartState extends State<ListPart> {
                                                     builder: (context) =>
                                                         WareActionsPanel(
                                                             subGroup:
-                                                                "selected",
+                                                            "selected",
                                                             wares:
-                                                                selectedItems));
+                                                            selectedItems));
                                               },
                                             ),
                                           ],
@@ -679,3 +661,11 @@ class _ListPartState extends State<ListPart> {
     );
   }
 }
+
+
+
+
+
+
+
+

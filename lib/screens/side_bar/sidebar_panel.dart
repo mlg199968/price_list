@@ -16,8 +16,6 @@ import 'package:price_list/screens/shop_info_screen/shop_info_screen.dart';
 import 'package:provider/provider.dart';
 import '../../providers/user_provider.dart';
 import '../purchase_screen/authority_screen.dart';
-import '../purchase_screen/bazaar_subscription_screen.dart';
-import '../purchase_screen/myket_subscription_screen.dart';
 import '../purchase_screen/subscription_screen.dart';
 
 
@@ -233,16 +231,16 @@ class PurchaseButton extends StatelessWidget {
           return InkWell(
             onTap: () {
               //TODO: main purchases
-              // if(userProvider.subscription==null) {
-              //   Navigator.pushNamed(context, AuthorityScreen.id);
-              // }else{
-              //   Navigator.pushNamed(context, SubscriptionScreen.id);
-              // }
+              if(userProvider.subscription==null) {
+                Navigator.pushNamed(context, AuthorityScreen.id);
+              }else{
+                Navigator.pushNamed(context, SubscriptionScreen.id);
+              }
               if(Platform.isAndroid) {
                 //TODO: bazaar purchases
                 // Navigator.pushNamed(context, BazaarSubscriptionScreen.id);
                 //TODO: Myket purchase
-                Navigator.pushNamed(context, MyketSubscriptionScreen.id);
+                // Navigator.pushNamed(context, MyketSubscriptionScreen.id);
               }
             },
             child: Container(
